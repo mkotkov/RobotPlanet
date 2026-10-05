@@ -1,7 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using RobotPlanet.Core;
+using System.Collections.ObjectModel;
 using System.Windows;
-using RobotPlanet.Core;
-using RobotPlanet.Wpf.Properties;
+using System.Windows.Controls;
 using Res = RobotPlanet.Wpf.Properties.Resources;
 namespace RobotPlanet.Wpf
 {
@@ -51,7 +51,7 @@ namespace RobotPlanet.Wpf
 
         private void Work_Click(object sender, RoutedEventArgs e) =>
             Log(Selected?.DoWork() ?? Res.Err_No_Selection);
-            
+
         private void Crazy_Click(object sender, RoutedEventArgs e) =>
             Log(Selected?.CrazyAction() ?? Res.Err_No_Selection);
 
@@ -69,5 +69,18 @@ namespace RobotPlanet.Wpf
             Log(_world.Repair(Selected, TargetBox.SelectedItem as Robot));
 
         private void ClearLog_Click(object sender, RoutedEventArgs e) => _log.Clear();
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            bool narrow = e.NewSize.Width < 860;
+
+            Grid.SetColumnSpan(LeftPanel, narrow ? 2 : 1);
+            LeftPanel.Margin = narrow ? new Thickness(0, 0, 0, 12) : new Thickness(0, 0, 8, 12);
+
+            Grid.SetRow(RightPanel, narrow ? 2 : 1);
+            Grid.SetColumn(RightPanel, narrow ? 0 : 1);
+            Grid.SetColumnSpan(RightPanel, narrow ? 2 : 1);
+            RightPanel.Margin = narrow ? new Thickness(0, 0, 0, 12) : new Thickness(8, 0, 0, 12);
+        }
     }
 }
