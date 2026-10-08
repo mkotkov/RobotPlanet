@@ -289,4 +289,28 @@
     <value>{0} (#{1}) [{2}]</value>
     <comment>Robot</comment>
   </data>
+  <data name="Jester_DoWork_Ok" xml:space="preserve">
+    <value>{0} räägib halva nalja. Robotid ohkavad. Aku: {1}%.</value>
+    <comment>JesterBot</comment>
+  </data>
+  <data name="Jester_DoWork_LowBattery" xml:space="preserve">
+    <value>{0} on liiga väsinud, et naljatada.</value>
+    <comment>JesterBot</comment>
+  </data>
+  <data name="Jester_Crazy_Ok" xml:space="preserve">
+    <value>{0} lülitas sisse diskorežiimi ja tantsis tolmuimejaga! Aku: {1}%, terviklikkus: {2}.</value>
+    <comment>JesterBot</comment>
+  </data>
+  <data name="Jester_Crazy_LowBattery" xml:space="preserve">
+    <value>{0} unistab diskost, kuid aku on liiga tühi.</value>
+    <comment>JesterBot</comment>
+  </data>
+  <data name="Jester_Charge_Ok" xml:space="preserve">
+    <value>{0} laeb, nüüd {1}%. Naljad tulevad paremini.</value>
+    <comment>JesterBot</comment>
+  </data>
+  <data name="Jester_Scan" xml:space="preserve">
+    <value>{0} skaneerib tantsupõrandat. Kõik on lõbus!</value>
+    <comment>JesterBot</comment>
+  </data>
 </root>
