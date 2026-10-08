@@ -13,6 +13,7 @@ namespace RobotPlanet.Core
             [RobotKind.Explorer] = (id, n, b, i) => new ExplorerBot(id, n, b, i),
             [RobotKind.Repair] = (id, n, b, i) => new RepairBot(id, n, b, i),
             [RobotKind.Guard] = (id, n, b, i) => new GuardBot(id, n, b, i),
+            [RobotKind.Jester] = (id, n, b, i) => new JesterBot(id, n, b, i),
         };
 
         public ObservableCollection<Robot> Robots { get; } = new();

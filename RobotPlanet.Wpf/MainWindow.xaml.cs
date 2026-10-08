@@ -24,6 +24,7 @@ namespace RobotPlanet.Wpf
             _world.TryAdd(RobotKind.Explorer, 2, "Kosmos", 80, 100, out _);
             _world.TryAdd(RobotKind.Repair, 3, "Mutrivõti", 100, 60, out _);
             _world.TryAdd(RobotKind.Guard, 4, "Vaht", 100, 100, out _);
+            _world.TryAdd(RobotKind.Jester, 5, "Naljahammas", 90, 100, out _);
         }
 
         private Robot? Selected => RobotList.SelectedItem as Robot;

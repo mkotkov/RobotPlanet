@@ -4,6 +4,7 @@
         Cleaner, 
         Explorer, 
         Repair, 
-        Guard 
+        Guard,
+        Jester
     }
 }
