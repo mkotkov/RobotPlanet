@@ -133,6 +133,33 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to  Keskm. aku.
+        /// </summary>
+        public static string Col_AvgBattery {
+            get {
+                return ResourceManager.GetString("Col_AvgBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keskm. terv..
+        /// </summary>
+        public static string Col_AvgIntegrity {
+            get {
+                return ResourceManager.GetString("Col_AvgIntegrity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arv.
+        /// </summary>
+        public static string Col_Count {
+            get {
+                return ResourceManager.GetString("Col_Count", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Kogus peab olema täisarv..
         /// </summary>
         public static string Err_Amount_NotNumber {
@@ -232,6 +259,33 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hoidlad.
+        /// </summary>
+        public static string Group_Repos {
+            get {
+                return ResourceManager.GetString("Group_Repos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Otsi ja sorteeri.
+        /// </summary>
+        public static string Group_Search {
+            get {
+                return ResourceManager.GetString("Group_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kokkuvõte.
+        /// </summary>
+        public static string Group_Summary {
+            get {
+                return ResourceManager.GetString("Group_Summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Aku.
         /// </summary>
         public static string Lbl_Battery {
@@ -246,6 +300,15 @@ namespace RobotPlanet.Wpf.Properties {
         public static string Lbl_ChargeAmount {
             get {
                 return ResourceManager.GetString("Lbl_ChargeAmount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kahanevalt.
+        /// </summary>
+        public static string Lbl_Descending {
+            get {
+                return ResourceManager.GetString("Lbl_Descending", resourceCulture);
             }
         }
         
@@ -286,11 +349,74 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Otsi nime või ID järgi.
+        /// </summary>
+        public static string Lbl_Search {
+            get {
+                return ResourceManager.GetString("Lbl_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorteeri.
+        /// </summary>
+        public static string Lbl_Sort {
+            get {
+                return ResourceManager.GetString("Lbl_Sort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tüüp.
         /// </summary>
         public static string Lbl_Type {
             get {
                 return ResourceManager.GetString("Lbl_Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vali nimekirjast robot.
+        /// </summary>
+        public static string Msg_SelectRobot {
+            get {
+                return ResourceManager.GetString("Msg_SelectRobot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aku.
+        /// </summary>
+        public static string Sort_Battery {
+            get {
+                return ResourceManager.GetString("Sort_Battery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ID.
+        /// </summary>
+        public static string Sort_Id {
+            get {
+                return ResourceManager.GetString("Sort_Id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Terviklikkus.
+        /// </summary>
+        public static string Sort_Integrity {
+            get {
+                return ResourceManager.GetString("Sort_Integrity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nimi.
+        /// </summary>
+        public static string Sort_Name {
+            get {
+                return ResourceManager.GetString("Sort_Name", resourceCulture);
             }
         }
         

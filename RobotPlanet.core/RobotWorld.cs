@@ -1,40 +1,83 @@
 ﻿using RobotPlanet.Core.entities;
+using RobotPlanet.Core.events;
 using RobotPlanet.Core.@interface;
 using RobotPlanet.Core.Properties;
+using RobotPlanet.Core.repository;
 using System.Collections.ObjectModel;
 
 namespace RobotPlanet.Core
 {
+    /// <summary>
+    /// The world owns ONE repository per robot type and forwards all reactions
+    /// through a single event, so the ViewModel only has to subscribe once.
+    /// </summary>
     public class RobotWorld
     {
-        private static readonly Dictionary<RobotKind, Func<int, string, int, int, Robot>> Factories = new()
+        private readonly Dictionary<RobotKind, IRobotType> _types = new();
+        private readonly ObservableCollection<Robot> _robots = new();
+        private readonly ObservableCollection<IRobotRepository> _repositories = new();
+
+        public RobotWorld()
         {
-            [RobotKind.Cleaner] = (id, n, b, i) => new CleanerBot(id, n, b, i),
-            [RobotKind.Explorer] = (id, n, b, i) => new ExplorerBot(id, n, b, i),
-            [RobotKind.Repair] = (id, n, b, i) => new RepairBot(id, n, b, i),
-            [RobotKind.Guard] = (id, n, b, i) => new GuardBot(id, n, b, i),
-            [RobotKind.Jester] = (id, n, b, i) => new JesterBot(id, n, b, i),
-        };
+            Robots = new ReadOnlyObservableCollection<Robot>(_robots);
+            Repositories = new ReadOnlyObservableCollection<IRobotRepository>(_repositories);
 
-        public ObservableCollection<Robot> Robots { get; } = new();
+            // One line per robot type. A new type = new class + new RobotKind value + one line here.
+            Register(RobotKind.Cleaner, (id, name, battery, integrity) => new CleanerBot(id, name, battery, integrity));
+            Register(RobotKind.Explorer, (id, name, battery, integrity) => new ExplorerBot(id, name, battery, integrity));
+            Register(RobotKind.Repair, (id, name, battery, integrity) => new RepairBot(id, name, battery, integrity));
+            Register(RobotKind.Guard, (id, name, battery, integrity) => new GuardBot(id, name, battery, integrity));
+            Register(RobotKind.Jester, (id, name, battery, integrity) => new JesterBot(id, name, battery, integrity));
+        }
 
+        /// <summary>All robots of all types (handy for repair targets and summaries).</summary>
+        public ReadOnlyObservableCollection<Robot> Robots { get; }
+
+        /// <summary>One read-only repository view per robot type.</summary>
+        public ReadOnlyObservableCollection<IRobotRepository> Repositories { get; }
+
+        /// <summary>Every reaction of every repository, for the log.</summary>
+        public event EventHandler<ReactionEventArgs>? ReactionOccurred;
+
+        // ---- Registration ----
+        private void Register<T>(RobotKind kind, Func<int, string, int, int, T> factory) where T : Robot
+        {
+            var type = new RobotType<T>(factory);
+            type.Repository.ReactionOccurred += (_, e) => ReactionOccurred?.Invoke(this, e);
+            _types.Add(kind, type);
+            _repositories.Add(type.Repository);
+        }
+
+        // ---- Domain operations ----
         public bool TryAdd(RobotKind kind, int id, string name, int battery, int integrity, out string message)
         {
-            if (Robots.Any(r => r.Id == id))
+            if (!_types.TryGetValue(kind, out IRobotType? type))
+            {
+                message = Resources.World_UnknownKind;
+                return false;
+            }
+            if (_robots.Any(r => r.Id == id))
             {
                 message = string.Format(Resources.World_DuplicateId, id);
                 return false;
             }
+
             try
             {
-                Robot robot = Factories[kind](id, name, battery, integrity);
-                Robots.Add(robot);
+                Robot robot = type.CreateAndAdd(id, name, battery, integrity);
+                _robots.Add(robot);
                 message = string.Format(Resources.World_Added, robot);
                 return true;
             }
             catch (ArgumentException ex)
             {
+                // ArgumentException appends " (Parameter 'x')", so cut it off.
                 message = ex.Message.Split(" (Parameter", 2)[0];
+                return false;
+            }
+            catch (InvalidOperationException ex)
+            {
+                message = ex.Message;
                 return false;
             }
         }
@@ -42,8 +85,24 @@ namespace RobotPlanet.Core
         public string Remove(Robot? robot)
         {
             if (robot == null) return Resources.World_NoRobot;
-            Robots.Remove(robot);
+
+            IRobotType? type = FindType(robot);
+            if (type == null || !type.Remove(robot))
+                return string.Format(Resources.Repo_NotInRepository, robot.Name);
+
+            _robots.Remove(robot);
             return string.Format(Resources.World_Removed, robot);
+        }
+
+        /// <summary>Runs the robot's CrazyAction through its repository so the others can react.</summary>
+        public string CrazyAction(Robot? robot)
+        {
+            if (robot == null) return Resources.World_NoRobot;
+
+            IRobotType? type = FindType(robot);
+            return type == null
+                ? string.Format(Resources.Repo_NotInRepository, robot.Name)
+                : type.TriggerCrazyAction(robot);
         }
 
         public string Charge(Robot? robot, int amount)
@@ -70,6 +129,43 @@ namespace RobotPlanet.Core
             if (healer is IRepair repairer)
                 return repairer.Repair(target);
             return string.Format(Resources.World_NotRepairer, healer.Name);
+        }
+
+        private IRobotType? FindType(Robot robot) => _types.Values.FirstOrDefault(t => t.Owns(robot));
+
+        // ---- Hides the generic parameter so different Repository<T> can live in one dictionary ----
+        private interface IRobotType
+        {
+            bool Owns(Robot robot);
+            Robot CreateAndAdd(int id, string name, int battery, int integrity);
+            bool Remove(Robot robot);
+            string TriggerCrazyAction(Robot robot);
+        }
+
+        private sealed class RobotType<T> : IRobotType where T : Robot
+        {
+            private readonly Func<int, string, int, int, T> _factory;
+
+            public RobotType(Func<int, string, int, int, T> factory)
+            {
+                _factory = factory;
+            }
+
+            public Repository<T> Repository { get; } = new();
+
+            // Exact type match, so a CleanerBot never ends up in another type's repository.
+            public bool Owns(Robot robot) => robot.GetType() == typeof(T);
+
+            public Robot CreateAndAdd(int id, string name, int battery, int integrity)
+            {
+                T robot = _factory(id, name, battery, integrity);   // typed: no cast needed
+                Repository.Add(robot);
+                return robot;
+            }
+
+            public bool Remove(Robot robot) => Owns(robot) && Repository.Remove((T)robot);
+
+            public string TriggerCrazyAction(Robot robot) => Repository.TriggerCrazyAction((T)robot);
         }
     }
 }

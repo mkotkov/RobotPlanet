@@ -31,5 +31,12 @@ namespace RobotPlanet.Core.entities
                 return string.Format(Resources.Msg_Charge_Invalid, Name, amount);
             return string.Format(Resources.Cleaner_Charge_Ok, Name, Battery);
         }
+
+        public override string ReactToCrazyAction(Robot actor)
+        {
+            if (!TrySpendBattery(3))
+                return string.Format(Resources.Cleaner_React_Crazy_Tired, Name, actor.Name);
+            return string.Format(Resources.Cleaner_React_Crazy_Ok, Name, actor.Name, Battery);
+        }
     }
 }

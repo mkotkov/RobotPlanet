@@ -141,6 +141,15 @@
   <data name="Btn_Work" xml:space="preserve">
     <value>Tööta</value>
   </data>
+  <data name="Col_AvgBattery" xml:space="preserve">
+    <value> Keskm. aku</value>
+  </data>
+  <data name="Col_AvgIntegrity" xml:space="preserve">
+    <value>Keskm. terv.</value>
+  </data>
+  <data name="Col_Count" xml:space="preserve">
+    <value>Arv</value>
+  </data>
   <data name="Err_Amount_NotNumber" xml:space="preserve">
     <value>Kogus peab olema täisarv.</value>
   </data>
@@ -174,11 +183,23 @@
   <data name="Group_Log" xml:space="preserve">
     <value>Logi</value>
   </data>
+  <data name="Group_Repos" xml:space="preserve">
+    <value>Hoidlad</value>
+  </data>
+  <data name="Group_Search" xml:space="preserve">
+    <value>Otsi ja sorteeri</value>
+  </data>
+  <data name="Group_Summary" xml:space="preserve">
+    <value>Kokkuvõte</value>
+  </data>
   <data name="Lbl_Battery" xml:space="preserve">
     <value>Aku</value>
   </data>
   <data name="Lbl_ChargeAmount" xml:space="preserve">
     <value>Laadimiskogus</value>
+  </data>
+  <data name="Lbl_Descending" xml:space="preserve">
+    <value>Kahanevalt</value>
   </data>
   <data name="Lbl_Id" xml:space="preserve">
     <value>ID</value>
@@ -192,8 +213,29 @@
   <data name="Lbl_RepairTarget" xml:space="preserve">
     <value>Remondi sihtmärk</value>
   </data>
+  <data name="Lbl_Search" xml:space="preserve">
+    <value>Otsi nime või ID järgi</value>
+  </data>
+  <data name="Lbl_Sort" xml:space="preserve">
+    <value>Sorteeri</value>
+  </data>
   <data name="Lbl_Type" xml:space="preserve">
     <value>Tüüp</value>
+  </data>
+  <data name="Msg_SelectRobot" xml:space="preserve">
+    <value>Vali nimekirjast robot</value>
+  </data>
+  <data name="Sort_Battery" xml:space="preserve">
+    <value>Aku</value>
+  </data>
+  <data name="Sort_Id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Sort_Integrity" xml:space="preserve">
+    <value>Terviklikkus</value>
+  </data>
+  <data name="Sort_Name" xml:space="preserve">
+    <value>Nimi</value>
   </data>
   <data name="Window_Title" xml:space="preserve">
     <value>Robotite planeet</value>

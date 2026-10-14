@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using RobotPlanet.Core.Properties;
 
-namespace RobotPlanet.Core
+namespace RobotPlanet.Core.entities
 {
     public abstract class Robot : INotifyPropertyChanged
     {
@@ -119,5 +119,15 @@ namespace RobotPlanet.Core
 
         private void OnPropertyChanged([CallerMemberName] string? name = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+
+        public virtual string ReactToAdded(Robot newcomer) =>
+            string.Format(Resources.React_Added_Default, Name, newcomer.Name);
+
+        public virtual string ReactToRemoved(Robot departed) =>
+            string.Format(Resources.React_Removed_Default, Name, departed.Name);
+
+        public virtual string ReactToCrazyAction(Robot actor) =>
+            string.Format(Resources.React_Crazy_Default, Name, actor.Name);
     }
 }
