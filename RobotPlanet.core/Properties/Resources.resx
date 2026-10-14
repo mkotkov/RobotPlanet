@@ -313,4 +313,64 @@
     <value>{0} skaneerib tantsupõrandat. Kõik on lõbus!</value>
     <comment>JesterBot</comment>
   </data>
+  <data name="Repo_DuplicateId" xml:space="preserve">
+    <value>ID {0} on juba selles hoidlas.</value>
+    <comment>Repository</comment>
+  </data>
+  <data name="Repo_NotInRepository" xml:space="preserve">
+    <value>{0} ei ole selles hoidlas.</value>
+    <comment>Repository</comment>
+  </data>
+  <data name="React_Added_Default" xml:space="preserve">
+    <value>{0} tervitab uut tulijat {1}.</value>
+    <comment>React</comment>
+  </data>
+  <data name="React_Removed_Default" xml:space="preserve">
+    <value>{0} vaatab kurvalt, kuidas {1} lahkub.</value>
+    <comment>React</comment>
+  </data>
+  <data name="React_Crazy_Default" xml:space="preserve">
+    <value>{0} vaatab pealt, kuidas {1} hulluks läheb.</value>
+    <comment>React</comment>
+  </data>
+  <data name="Cleaner_React_Crazy_Ok" xml:space="preserve">
+    <value>{0} koristab {1} tekitatud segaduse ära. Aku: {2}.</value>
+    <comment>CleanerBot</comment>
+  </data>
+  <data name="Cleaner_React_Crazy_Tired" xml:space="preserve">
+    <value>{0} on liiga väsinud, et {1} segadust koristada.</value>
+    <comment>CleanerBot</comment>
+  </data>
+  <data name="Explorer_React_Added_Ok" xml:space="preserve">
+    <value>{0} asub uurima uut tulijat {1}. Aku: {2}.</value>
+    <comment>ExplorerBot</comment>
+  </data>
+  <data name="Explorer_React_Added_Tired" xml:space="preserve">
+    <value>{0} tahaks uurida tulijat {1}, kuid akut ei jätku.</value>
+    <comment>ExplorerBot</comment>
+  </data>
+  <data name="Explorer_React_Removed" xml:space="preserve">
+    <value>{0} märgib kaardile: {1} on kadunud, ehk avastas uue planeedi.</value>
+    <comment>ExplorerBot</comment>
+  </data>
+  <data name="Repair_React_Crazy" xml:space="preserve">
+    <value>{0} märkab, et {1} tegi pahandust, ja lappab end igaks juhuks: terviklikkus {2}.</value>
+    <comment>RepairBot</comment>
+  </data>
+  <data name="Repair_React_Removed" xml:space="preserve">
+    <value>{0} kogub lahkunud roboti {1} varuosad kokku.</value>
+    <comment>RepairBot</comment>
+  </data>
+  <data name="Guard_React_Added" xml:space="preserve">
+    <value>{0} kontrollib tulija {1} ID-d (#{2}) ja noogutab kahtlustavalt.</value>
+    <comment>GuardBot</comment>
+  </data>
+  <data name="Guard_React_Crazy" xml:space="preserve">
+    <value>{0} nõuab {1}-lt seletust: kelle vari see oli?</value>
+    <comment>GuardBot</comment>
+  </data>
+  <data name="World_UnknownKind" xml:space="preserve">
+    <value>Tundmatu roboti tüüp.</value>
+    <comment>World</comment>
+  </data>
 </root>

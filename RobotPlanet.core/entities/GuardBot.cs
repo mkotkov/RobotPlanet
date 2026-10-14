@@ -1,5 +1,5 @@
-﻿using RobotPlanet.Core.Properties;
-using RobotPlanet.Core.@interface;
+﻿using RobotPlanet.Core.@interface;
+using RobotPlanet.Core.Properties;
 
 namespace RobotPlanet.Core.entities
 {
@@ -20,5 +20,11 @@ namespace RobotPlanet.Core.entities
         }
 
         public string Scan() => string.Format(Resources.Guard_Scan, Name);
+
+        public override string ReactToAdded(Robot newcomer) =>
+            string.Format(Resources.Guard_React_Added, Name, newcomer.Name, newcomer.Id);
+
+        public override string ReactToCrazyAction(Robot actor) =>
+            string.Format(Resources.Guard_React_Crazy, Name, actor.Name);
     }
 }

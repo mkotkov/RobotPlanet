@@ -1,4 +1,6 @@
-﻿namespace RobotPlanet.Core.@interface
+﻿using RobotPlanet.Core.entities;
+
+namespace RobotPlanet.Core.@interface
 {
     public interface IRepair
     {

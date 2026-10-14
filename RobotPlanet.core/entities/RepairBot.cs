@@ -1,4 +1,5 @@
-﻿using RobotPlanet.Core.@interface;
+﻿using RobotPlanet.Core.entities;
+using RobotPlanet.Core.@interface;
 using RobotPlanet.Core.Properties;
 
 namespace RobotPlanet.Core.@interface
@@ -39,5 +40,14 @@ namespace RobotPlanet.Core.@interface
                 return string.Format(Resources.Msg_Charge_Invalid, Name, amount);
             return string.Format(Resources.Repair_Charge_Ok, Name, Battery);
         }
+
+        public override string ReactToCrazyAction(Robot actor)
+        {
+            TryRestoreIntegrity(3);
+            return string.Format(Resources.Repair_React_Crazy, Name, actor.Name, Integrity);
+        }
+
+        public override string ReactToRemoved(Robot departed) =>
+            string.Format(Resources.Repair_React_Removed, Name, departed.Name);
     }
 }

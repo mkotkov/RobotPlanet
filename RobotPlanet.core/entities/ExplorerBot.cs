@@ -33,5 +33,15 @@ namespace RobotPlanet.Core.entities
                 return string.Format(Resources.Msg_Charge_Invalid, Name, amount);
             return string.Format(Resources.Explorer_Charge_Ok, Name, Battery);
         }
+
+        public override string ReactToAdded(Robot newcomer)
+        {
+            if (!TrySpendBattery(2))
+                return string.Format(Resources.Explorer_React_Added_Tired, Name, newcomer.Name);
+            return string.Format(Resources.Explorer_React_Added_Ok, Name, newcomer.Name, Battery);
+        }
+
+        public override string ReactToRemoved(Robot departed) =>
+            string.Format(Resources.Explorer_React_Removed, Name, departed.Name);
     }
 }
