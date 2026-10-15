@@ -446,34 +446,6 @@ A = Sädel, B = Läige. Hoidlas olevad C-d lisatakse kasutajaliidese kaudu.
 * [ ] Tekstid on ressurssides, vigane sisend ei muuda olekut.
 * [ ] Lahendus kompileerub ja rakendus käivitub puhtalt clone'itud repost.
 
-## 14. Esitamine
-
-<!-- TÄIDA: sama info, mis läheb Moodle'isse. -->
-
-Moodle'isse lisatud andmed:
-
-| | |
-|---|---|
-| Git-repo link | `<REPOSITORY-URL>` |
-| Vol.1 lähte-commit | `<HASH>` (tag `vol1-final`) |
-| Vol.2 haru | `vol2/events-linq-mvvm` |
-| Vol.2 lõpp-commit | `<HASH>` |
-| Partneri MR/PR link | `<PR-LINK>` |
-
-Hoidla ajaloost on nähtav partneri panus, põhiautori (minu) review/approve ja merge.
-
-**Enne esitamist kontrolli (vt punkt 12):**
-
-| Nõue | Kontrollitud juhud |
-|---|---|
-| Reageerivad ainult sama hoidla teised objektid | A1–A5, 1–3 |
-| Eemaldatud objekt enam ei reageeri | A3, A4 |
-| Vähemalt üks reaktsioon muudab olekut | A2, 1, 2 |
-| UI ja logi uuenevad automaatselt | A2, 4, 17, 18, 19 |
-| LINQ-päringud töötavad | 16, 17, 18 |
-| Käsu `CanExecute` töötab | 6–9 |
-| Vigane sisend ei muuda olekut | 10–15 |
-
 ## 15. AI kasutamine
 
 <!-- KONTROLLI: jäta alles ainult need punktid, mida tegid ise. -->
