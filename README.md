@@ -22,8 +22,7 @@ Sama maailm ja samad tegelased kasvavad edasi: uut universumit ega uut projekti 
 11. [Iseseisvalt õpitud WPF UI elemendid](#11-iseseisvalt-õpitud-wpf-ui-elemendid)
 12. [Kontrollitud kasutusjuhud](#12-kontrollitud-kasutusjuhud)
 13. [Git-koostöö](#13-git-koostöö)
-14. [Esitamine](#14-esitamine)
-15. [AI kasutamine](#15-ai-kasutamine)
+14. [AI kasutamine](#15-ai-kasutamine)
 
 ---
 
