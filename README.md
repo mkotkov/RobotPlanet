@@ -2,8 +2,8 @@
 
 WPF-rakendus, kus erinevad robotid elavad samas maailmas, kuid käituvad erinevalt.
 
-* **Vol.1 (Kodutöö 3):** pärilus, liidesed, polümorfism, `CrazyAction()`, kollektsioon.
-* **Vol.2 (Kodutöö 4):** tüübipõhised hoidlad (generics), sündmused ja naabrite reaktsioonid, LINQ-päringud ja kohustuslik MVVM.
+* **Vol.1:** pärilus, liidesed, polümorfism, `CrazyAction()`, kollektsioon.
+* **Vol.2:** tüübipõhised hoidlad (generics), sündmused ja naabrite reaktsioonid, LINQ-päringud ja kohustuslik MVVM.
 
 Sama maailm ja samad tegelased kasvavad edasi: uut universumit ega uut projekti ei loodud.
 
