@@ -1,9 +1,10 @@
-using System.Collections.ObjectModel;
 using RobotPlanet.Core;
 using RobotPlanet.Core.entities;
 using RobotPlanet.Core.events;
 using RobotPlanet.Core.@interface;
 using RobotPlanet.Wpf.Properties;
+using System.Collections.ObjectModel;
+using System.Diagnostics.Metrics;
 
 namespace RobotPlanet.Wpf.ViewModels
 {
@@ -380,6 +381,12 @@ namespace RobotPlanet.Wpf.ViewModels
             world.TryAdd(RobotKind.Repair, 4, "Mutrivõti", 100, 60, out _);
             world.TryAdd(RobotKind.Guard, 5, "Vaht", 100, 100, out _);
             world.TryAdd(RobotKind.Jester, 6, "Naljahammas", 90, 100, out _);
+
+            // three new robots: Delivery, Inspector, Rescue
+            world.TryAdd(RobotKind.Delivery, 7, "Tarnija", 67, 89, out _);
+            world.TryAdd(RobotKind.Inspector, 8, "Inspektor 3000", 78, 56, out _);
+            world.TryAdd(RobotKind.Rescue, 9, "Superpäästja", 67, 52, out _);
+
             return world;
         }
     }
