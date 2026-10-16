@@ -373,4 +373,108 @@
     <value>Tundmatu roboti tüüp.</value>
     <comment>World</comment>
   </data>
+  <data name="Delivery_DoWork_LowBattery" xml:space="preserve">
+    <value>{0}: aku on liiga tühi, et pakke kohale toimetada.</value>
+    <comment>DeliveryBot</comment>
+  </data>
+  <data name="Delivery_DoWork_Ok" xml:space="preserve">
+    <value>{0} toimetab pakke kohale. Aku: {1}%.</value>
+    <comment>DeliveryBot</comment>
+  </data>
+  <data name="Delivery_Crazy_TooDamaged" xml:space="preserve">
+    <value>{0} sõidab ringiratast ja nimetab seda otsetee leidmiseks.</value>
+    <comment>DeliveryBot</comment>
+  </data>
+  <data name="Delivery_Crazy_LowBattery" xml:space="preserve">
+    <value>{0} tahab kõik pakid korraga kohale viia, kuid aku sai tühjaks.</value>
+    <comment>DeliveryBot</comment>
+  </data>
+  <data name="Delivery_Crazy_Ok" xml:space="preserve">
+    <value>{0} toimetas paki valele planeedile! Aku: {1}%, terviklikkus: {2}.</value>
+    <comment>DeliveryBot</comment>
+  </data>
+  <data name="Delivery_Charge_Ok" xml:space="preserve">
+    <value>{0} laeb, et järgmised pakid õigesse kohta viia. Aku: {1}%.</value>
+    <comment>DeliveryBot</comment>
+  </data>
+  <data name="Delivery_React_Crazy" xml:space="preserve">
+    <value>{0} korjab {1} mahapillatud pakid üles ja parandab end veidi. Terviklikkus: {2}.</value>
+    <comment>DeliveryBot</comment>
+  </data>
+  <data name="Delivery_React_Removed" xml:space="preserve">
+    <value>{0} võtab lahkunud roboti {1} viimase paki oma kanda.</value>
+    <comment>DeliveryBot</comment>
+  </data>
+  <data name="Inspector_Scan" xml:space="preserve">
+    <value>{0} kontrollib seadmeid: leidis kolm kriimu ja ühe väga kahtlase tolmukübeme.</value>
+    <comment>InspectorBot</comment>
+  </data>
+  <data name="Inspector_DoWork_LowBattery" xml:space="preserve">
+    <value>{0}: aku on liiga tühi, et seadmeid kontrollida.</value>
+    <comment>InspectorBot</comment>
+  </data>
+  <data name="Inspector_DoWork_Ok" xml:space="preserve">
+    <value>{0} kontrollib masinaid ja otsib vigu. Aku: {1}%.</value>
+    <comment>InspectorBot</comment>
+  </data>
+  <data name="Inspector_Crazy_TooDamaged" xml:space="preserve">
+    <value>{0} on ise nii katki, et peaks ennast kontrollima, kuid ei leia oma kasutusjuhendit.</value>
+    <comment>InspectorBot</comment>
+  </data>
+  <data name="Inspector_Crazy_LowBattery" xml:space="preserve">
+    <value>{0} tahab kõik tehase vead üles leida, kuid aku sai enne tühjaks.</value>
+    <comment>InspectorBot</comment>
+  </data>
+  <data name="Inspector_Crazy_Ok" xml:space="preserve">
+    <value>{0} kuulutas täiesti töökorras masina rikkis olevaks! Aku: {1}%, terviklikkus: {2}.</value>
+    <comment>InspectorBot</comment>
+  </data>
+  <data name="Inspector_Charge_Ok" xml:space="preserve">
+    <value>{0} laeb, et järgmine kontroll eriti põhjalik oleks. Aku: {1}%.</value>
+    <comment>InspectorBot</comment>
+  </data>
+  <data name="Inspector_React_Crazy" xml:space="preserve">
+    <value>{0} kontrollib pärast {1} trikki enda korrasolekut ja leiab, et vajab veidi hooldust. Terviklikkus: {2}.</value>
+    <comment>InspectorBot</comment>
+  </data>
+  <data name="Inspector_React_Removed" xml:space="preserve">
+    <value>{0} märgib lahkunud roboti {1} kontrollnimekirja: kadunud, põhjus teadmata.</value>
+    <comment>InspectorBot</comment>
+  </data>
+  <data name="Rescue_Scan" xml:space="preserve">
+    <value>{0} skaneerib päästeala: leidis kaks ellujäänut, kolm kivi ja ühe väga ehmunud põõsa.</value>
+    <comment>RescueBot</comment>
+  </data>
+  <data name="Rescue_DoWork_LowBattery" xml:space="preserve">
+    <value>{0}: aku on päästemissiooniks liiga tühi. Isegi häirekell ei aita.</value>
+    <comment>RescueBot</comment>
+  </data>
+  <data name="Rescue_DoWork_Ok" xml:space="preserve">
+    <value>{0} otsib abivajajaid ja puhastab teed rusudest. Aku: {1}%.</value>
+    <comment>RescueBot</comment>
+  </data>
+  <data name="Rescue_Crazy_TooDamaged" xml:space="preserve">
+    <value>{0} vajab ise päästmist, kuid keeldub oma päästmisplaani kinnitamast.</value>
+    <comment>RescueBot</comment>
+  </data>
+  <data name="Rescue_Crazy_LowBattery" xml:space="preserve">
+    <value>{0} tahab kõik hädasolijad korraga päästa, kuid aku otsustas enne missiooni lõppu pensionile minna.</value>
+    <comment>RescueBot</comment>
+  </data>
+  <data name="Rescue_Crazy_Ok" xml:space="preserve">
+    <value>{0} päästis prügikasti, kuid jättis abivajaja ootama! Aku: {1}%, terviklikkus: {2}.</value>
+    <comment>RescueBot</comment>
+  </data>
+  <data name="Rescue_Charge_Ok" xml:space="preserve">
+    <value>{0} laeb, et järgmisel päästemissioonil jälle kangelast mängida. Aku: {1}%.</value>
+    <comment>RescueBot</comment>
+  </data>
+  <data name="Rescue_React_Crazy" xml:space="preserve">
+    <value>{0} tormab pärast {1} trikki appi ja parandab end pääste käigus veidi. Terviklikkus: {2}.</value>
+    <comment>RescueBot</comment>
+  </data>
+  <data name="Rescue_React_Removed" xml:space="preserve">
+    <value>{0} märgib lahkunud roboti {1} kadunuks ja alustab kohe päästeoperatsiooni.</value>
+    <comment>RescueBot</comment>
+  </data>
 </root>
