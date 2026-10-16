@@ -5,6 +5,13 @@
         Explorer, 
         Repair, 
         Guard,
-        Jester
+        Jester,
+
+        // three new robots: Delivery, Inspector, Rescue
+        Delivery,
+
+        Inspector,
+
+        Rescue
     }
 }

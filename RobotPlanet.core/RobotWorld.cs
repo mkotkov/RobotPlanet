@@ -28,6 +28,11 @@ namespace RobotPlanet.Core
             Register(RobotKind.Repair, (id, name, battery, integrity) => new RepairBot(id, name, battery, integrity));
             Register(RobotKind.Guard, (id, name, battery, integrity) => new GuardBot(id, name, battery, integrity));
             Register(RobotKind.Jester, (id, name, battery, integrity) => new JesterBot(id, name, battery, integrity));
+
+            // three new robots: Delivery, Inspector, Rescue
+            Register(RobotKind.Delivery, (id, name, battery, integrity) => new DeliveryBot(id, name, battery, integrity));
+            Register(RobotKind.Inspector, (id, name, battery, integrity) => new InspectorBot(id, name, battery, integrity));
+            Register(RobotKind.Rescue, (id, name, battery, integrity) => new RescueBot(id, name, battery, integrity));
         }
 
         /// <summary>All robots of all types (handy for repair targets and summaries).</summary>
