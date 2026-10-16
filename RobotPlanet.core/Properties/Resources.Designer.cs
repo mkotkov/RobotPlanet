@@ -124,6 +124,78 @@ namespace RobotPlanet.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} laeb, et järgmised pakid õigesse kohta viia. Aku: {1}%..
+        /// </summary>
+        internal static string Delivery_Charge_Ok {
+            get {
+                return ResourceManager.GetString("Delivery_Charge_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} tahab kõik pakid korraga kohale viia, kuid aku sai tühjaks..
+        /// </summary>
+        internal static string Delivery_Crazy_LowBattery {
+            get {
+                return ResourceManager.GetString("Delivery_Crazy_LowBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} toimetas paki valele planeedile! Aku: {1}%, terviklikkus: {2}..
+        /// </summary>
+        internal static string Delivery_Crazy_Ok {
+            get {
+                return ResourceManager.GetString("Delivery_Crazy_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} sõidab ringiratast ja nimetab seda otsetee leidmiseks..
+        /// </summary>
+        internal static string Delivery_Crazy_TooDamaged {
+            get {
+                return ResourceManager.GetString("Delivery_Crazy_TooDamaged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: aku on liiga tühi, et pakke kohale toimetada..
+        /// </summary>
+        internal static string Delivery_DoWork_LowBattery {
+            get {
+                return ResourceManager.GetString("Delivery_DoWork_LowBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} toimetab pakke kohale. Aku: {1}%..
+        /// </summary>
+        internal static string Delivery_DoWork_Ok {
+            get {
+                return ResourceManager.GetString("Delivery_DoWork_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} korjab {1} mahapillatud pakid üles ja parandab end veidi. Terviklikkus: {2}..
+        /// </summary>
+        internal static string Delivery_React_Crazy {
+            get {
+                return ResourceManager.GetString("Delivery_React_Crazy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} võtab lahkunud roboti {1} viimase paki oma kanda..
+        /// </summary>
+        internal static string Delivery_React_Removed {
+            get {
+                return ResourceManager.GetString("Delivery_React_Removed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Aku laetus peab olema vahemikus 0–100..
         /// </summary>
         internal static string Err_Invalid_battery {
@@ -300,6 +372,87 @@ namespace RobotPlanet.Core.Properties {
         internal static string Guard_Scan {
             get {
                 return ResourceManager.GetString("Guard_Scan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} laeb, et järgmine kontroll eriti põhjalik oleks. Aku: {1}%..
+        /// </summary>
+        internal static string Inspector_Charge_Ok {
+            get {
+                return ResourceManager.GetString("Inspector_Charge_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} tahab kõik tehase vead üles leida, kuid aku sai enne tühjaks..
+        /// </summary>
+        internal static string Inspector_Crazy_LowBattery {
+            get {
+                return ResourceManager.GetString("Inspector_Crazy_LowBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} kuulutas täiesti töökorras masina rikkis olevaks! Aku: {1}%, terviklikkus: {2}..
+        /// </summary>
+        internal static string Inspector_Crazy_Ok {
+            get {
+                return ResourceManager.GetString("Inspector_Crazy_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} on ise nii katki, et peaks ennast kontrollima, kuid ei leia oma kasutusjuhendit..
+        /// </summary>
+        internal static string Inspector_Crazy_TooDamaged {
+            get {
+                return ResourceManager.GetString("Inspector_Crazy_TooDamaged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: aku on liiga tühi, et seadmeid kontrollida..
+        /// </summary>
+        internal static string Inspector_DoWork_LowBattery {
+            get {
+                return ResourceManager.GetString("Inspector_DoWork_LowBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} kontrollib masinaid ja otsib vigu. Aku: {1}%..
+        /// </summary>
+        internal static string Inspector_DoWork_Ok {
+            get {
+                return ResourceManager.GetString("Inspector_DoWork_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} kontrollib pärast {1} trikki enda korrasolekut ja leiab, et vajab veidi hooldust. Terviklikkus: {2}..
+        /// </summary>
+        internal static string Inspector_React_Crazy {
+            get {
+                return ResourceManager.GetString("Inspector_React_Crazy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} märgib lahkunud roboti {1} kontrollnimekirja: kadunud, põhjus teadmata..
+        /// </summary>
+        internal static string Inspector_React_Removed {
+            get {
+                return ResourceManager.GetString("Inspector_React_Removed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} kontrollib seadmeid: leidis kolm kriimu ja ühe väga kahtlase tolmukübeme..
+        /// </summary>
+        internal static string Inspector_Scan {
+            get {
+                return ResourceManager.GetString("Inspector_Scan", resourceCulture);
             }
         }
         
@@ -507,6 +660,87 @@ namespace RobotPlanet.Core.Properties {
         internal static string Repo_NotInRepository {
             get {
                 return ResourceManager.GetString("Repo_NotInRepository", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} laeb, et järgmisel päästemissioonil jälle kangelast mängida. Aku: {1}%..
+        /// </summary>
+        internal static string Rescue_Charge_Ok {
+            get {
+                return ResourceManager.GetString("Rescue_Charge_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} tahab kõik hädasolijad korraga päästa, kuid aku otsustas enne missiooni lõppu pensionile minna..
+        /// </summary>
+        internal static string Rescue_Crazy_LowBattery {
+            get {
+                return ResourceManager.GetString("Rescue_Crazy_LowBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} päästis prügikasti, kuid jättis abivajaja ootama! Aku: {1}%, terviklikkus: {2}..
+        /// </summary>
+        internal static string Rescue_Crazy_Ok {
+            get {
+                return ResourceManager.GetString("Rescue_Crazy_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} vajab ise päästmist, kuid keeldub oma päästmisplaani kinnitamast..
+        /// </summary>
+        internal static string Rescue_Crazy_TooDamaged {
+            get {
+                return ResourceManager.GetString("Rescue_Crazy_TooDamaged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: aku on päästemissiooniks liiga tühi. Isegi häirekell ei aita..
+        /// </summary>
+        internal static string Rescue_DoWork_LowBattery {
+            get {
+                return ResourceManager.GetString("Rescue_DoWork_LowBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} otsib abivajajaid ja puhastab teed rusudest. Aku: {1}%..
+        /// </summary>
+        internal static string Rescue_DoWork_Ok {
+            get {
+                return ResourceManager.GetString("Rescue_DoWork_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} tormab pärast {1} trikki appi ja parandab end pääste käigus veidi. Terviklikkus: {2}..
+        /// </summary>
+        internal static string Rescue_React_Crazy {
+            get {
+                return ResourceManager.GetString("Rescue_React_Crazy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} märgib lahkunud roboti {1} kadunuks ja alustab kohe päästeoperatsiooni..
+        /// </summary>
+        internal static string Rescue_React_Removed {
+            get {
+                return ResourceManager.GetString("Rescue_React_Removed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} skaneerib päästeala: leidis kaks ellujäänut, kolm kivi ja ühe väga ehmunud põõsa..
+        /// </summary>
+        internal static string Rescue_Scan {
+            get {
+                return ResourceManager.GetString("Rescue_Scan", resourceCulture);
             }
         }
         
