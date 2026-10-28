@@ -40,7 +40,7 @@ namespace RobotPlanet.Wpf.ViewModels
         public MainViewModel(RobotWorld world)
         {
             _world = world ?? throw new ArgumentNullException(nameof(world));
-
+            
             Repositories = new ReadOnlyCollection<RepositoryItem>(
                 _world.Repositories.Select(r => new RepositoryItem(r)).ToList());
             VisibleRobots = new ReadOnlyObservableCollection<Robot>(_visibleRobots);
@@ -48,6 +48,7 @@ namespace RobotPlanet.Wpf.ViewModels
             Log = new ReadOnlyObservableCollection<string>(_log);
             AllRobots = _world.Robots;
             Kinds = Enum.GetValues<RobotKind>();
+            Calculation = new CalculationViewModel(_world);
 
             SortOptions = new[]
             {
@@ -85,6 +86,7 @@ namespace RobotPlanet.Wpf.ViewModels
         public ReadOnlyObservableCollection<string> Log { get; }
         public IReadOnlyList<RobotKind> Kinds { get; }
         public IReadOnlyList<SortChoice> SortOptions { get; }
+        public CalculationViewModel Calculation { get; }
 
         public RepositoryItem? SelectedRepository
         {

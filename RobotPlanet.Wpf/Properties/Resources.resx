@@ -150,6 +150,38 @@
   <data name="Col_Count" xml:space="preserve">
     <value>Arv</value>
   </data>
+  <data name="Compare_Hint" xml:space="preserve">
+    <value>Võrdluseks käivita mõlemad režiimid samal sisendil (nupp Võrdle mõlemat).</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Match_No" xml:space="preserve">
+    <value>Tulemused ühtivad: EI</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Match_Yes" xml:space="preserve">
+    <value>Tulemused ühtivad: jah</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Note_Cancelled" xml:space="preserve">
+    <value>Võrdlus puudub: üks käivitus tühistati.</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Note_Input" xml:space="preserve">
+    <value>Võrdlus puudub: režiimid kasutasid erinevat sisendit.</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Parallel" xml:space="preserve">
+    <value>Paralleelselt: {0} s</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Sequential" xml:space="preserve">
+    <value>Järjestikku: {0} s</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Speedup" xml:space="preserve">
+    <value>Kiirenemine: ×{0}</value>
+    <comment>Compare</comment>
+  </data>
   <data name="Err_Amount_NotNumber" xml:space="preserve">
     <value>Kogus peab olema täisarv.</value>
   </data>
@@ -222,8 +254,52 @@
   <data name="Lbl_Type" xml:space="preserve">
     <value>Tüüp</value>
   </data>
+  <data name="Mode_Parallel" xml:space="preserve">
+    <value>Paralleelselt</value>
+    <comment>Mode</comment>
+  </data>
+  <data name="Mode_Sequential" xml:space="preserve">
+    <value>Järjestikku</value>
+    <comment>Mode</comment>
+  </data>
   <data name="Msg_SelectRobot" xml:space="preserve">
     <value>Vali nimekirjast robot</value>
+  </data>
+  <data name="Report_Counts" xml:space="preserve">
+    <value>Õnnestus: {0} · Viga: {1} · Tühistatud: {2}</value>
+    <comment>Report</comment>
+  </data>
+  <data name="Report_Total" xml:space="preserve">
+    <value>Kogu töö aeg: {0} s</value>
+    <comment>Report</comment>
+  </data>
+  <data name="Run_Elapsed" xml:space="preserve">
+    <value>Kulunud aeg: {0} s</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Cancelled" xml:space="preserve">
+    <value>Tühistatud</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Cancelling" xml:space="preserve">
+    <value>Tühistan…</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Done" xml:space="preserve">
+    <value>Valmis!</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Error" xml:space="preserve">
+    <value>Viga: {0}</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Idle" xml:space="preserve">
+    <value>Vali objektid ja töömaht, seejärel käivita arvutus.</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Running" xml:space="preserve">
+    <value>Töös: {0} ({1}/{2})</value>
+    <comment>Run</comment>
   </data>
   <data name="Sort_Battery" xml:space="preserve">
     <value>Aku</value>
@@ -236,6 +312,18 @@
   </data>
   <data name="Sort_Name" xml:space="preserve">
     <value>Nimi</value>
+  </data>
+  <data name="Status_Cancelled" xml:space="preserve">
+    <value>Tühistatud</value>
+    <comment>Status</comment>
+  </data>
+  <data name="Status_Failed" xml:space="preserve">
+    <value>Viga</value>
+    <comment>Status</comment>
+  </data>
+  <data name="Status_Success" xml:space="preserve">
+    <value>Õnnestus</value>
+    <comment>Status</comment>
   </data>
   <data name="Window_Title" xml:space="preserve">
     <value>Robotite planeet</value>

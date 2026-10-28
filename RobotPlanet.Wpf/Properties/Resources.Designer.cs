@@ -160,6 +160,78 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Võrdluseks käivita mõlemad režiimid samal sisendil (nupp Võrdle mõlemat)..
+        /// </summary>
+        public static string Compare_Hint {
+            get {
+                return ResourceManager.GetString("Compare_Hint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tulemused ühtivad: EI.
+        /// </summary>
+        public static string Compare_Match_No {
+            get {
+                return ResourceManager.GetString("Compare_Match_No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tulemused ühtivad: jah.
+        /// </summary>
+        public static string Compare_Match_Yes {
+            get {
+                return ResourceManager.GetString("Compare_Match_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Võrdlus puudub: üks käivitus tühistati..
+        /// </summary>
+        public static string Compare_Note_Cancelled {
+            get {
+                return ResourceManager.GetString("Compare_Note_Cancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Võrdlus puudub: režiimid kasutasid erinevat sisendit..
+        /// </summary>
+        public static string Compare_Note_Input {
+            get {
+                return ResourceManager.GetString("Compare_Note_Input", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paralleelselt: {0} s.
+        /// </summary>
+        public static string Compare_Parallel {
+            get {
+                return ResourceManager.GetString("Compare_Parallel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Järjestikku: {0} s.
+        /// </summary>
+        public static string Compare_Sequential {
+            get {
+                return ResourceManager.GetString("Compare_Sequential", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kiirenemine: ×{0}.
+        /// </summary>
+        public static string Compare_Speedup {
+            get {
+                return ResourceManager.GetString("Compare_Speedup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Kogus peab olema täisarv..
         /// </summary>
         public static string Err_Amount_NotNumber {
@@ -376,11 +448,110 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Paralleelselt.
+        /// </summary>
+        public static string Mode_Parallel {
+            get {
+                return ResourceManager.GetString("Mode_Parallel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Järjestikku.
+        /// </summary>
+        public static string Mode_Sequential {
+            get {
+                return ResourceManager.GetString("Mode_Sequential", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Vali nimekirjast robot.
         /// </summary>
         public static string Msg_SelectRobot {
             get {
                 return ResourceManager.GetString("Msg_SelectRobot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Õnnestus: {0} · Viga: {1} · Tühistatud: {2}.
+        /// </summary>
+        public static string Report_Counts {
+            get {
+                return ResourceManager.GetString("Report_Counts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kogu töö aeg: {0} s.
+        /// </summary>
+        public static string Report_Total {
+            get {
+                return ResourceManager.GetString("Report_Total", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kulunud aeg: {0} s.
+        /// </summary>
+        public static string Run_Elapsed {
+            get {
+                return ResourceManager.GetString("Run_Elapsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tühistatud.
+        /// </summary>
+        public static string Run_Status_Cancelled {
+            get {
+                return ResourceManager.GetString("Run_Status_Cancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tühistan….
+        /// </summary>
+        public static string Run_Status_Cancelling {
+            get {
+                return ResourceManager.GetString("Run_Status_Cancelling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Valmis!.
+        /// </summary>
+        public static string Run_Status_Done {
+            get {
+                return ResourceManager.GetString("Run_Status_Done", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Viga: {0}.
+        /// </summary>
+        public static string Run_Status_Error {
+            get {
+                return ResourceManager.GetString("Run_Status_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vali objektid ja töömaht, seejärel käivita arvutus..
+        /// </summary>
+        public static string Run_Status_Idle {
+            get {
+                return ResourceManager.GetString("Run_Status_Idle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Töös: {0} ({1}/{2}).
+        /// </summary>
+        public static string Run_Status_Running {
+            get {
+                return ResourceManager.GetString("Run_Status_Running", resourceCulture);
             }
         }
         
@@ -417,6 +588,33 @@ namespace RobotPlanet.Wpf.Properties {
         public static string Sort_Name {
             get {
                 return ResourceManager.GetString("Sort_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tühistatud.
+        /// </summary>
+        public static string Status_Cancelled {
+            get {
+                return ResourceManager.GetString("Status_Cancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Viga.
+        /// </summary>
+        public static string Status_Failed {
+            get {
+                return ResourceManager.GetString("Status_Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Õnnestus.
+        /// </summary>
+        public static string Status_Success {
+            get {
+                return ResourceManager.GetString("Status_Success", resourceCulture);
             }
         }
         
