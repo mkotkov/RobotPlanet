@@ -477,4 +477,56 @@
     <value>{0} märgib lahkunud roboti {1} kadunuks ja alustab kohe päästeoperatsiooni.</value>
     <comment>RescueBot</comment>
   </data>
+  <data name="Calc_NotOperational" xml:space="preserve">
+    <value>{0} ei ole töökorras (aku või terviklikkus on 0), seega arvutust ei saa teha.</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_Cleaning_Title" xml:space="preserve">
+    <value>Koristussimulatsioon</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_Route_Result1" xml:space="preserve">
+    <value>Parim retk läbib {0} punkti ja on {1} pikk (võrreldi {2} varianti).</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_Route_Title1" xml:space="preserve">
+    <value>Retkevariantide võrdlus</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_Cleaning_Result" xml:space="preserve">
+    <value>Keskmine kaetus {0} %, keskmiselt {1} sammu ({2} simulatsiooni).</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_Patrol_Title" xml:space="preserve">
+    <value>Patrulli simulatsioon</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_Patrol_Result" xml:space="preserve">
+    <value>Tuvastati {0} % sissetungijatest ({1} sissetungijat {2} tiksu jooksul).</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_Wear_Title" xml:space="preserve">
+    <value>Arenguprognoos</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_Wear_Result" xml:space="preserve">
+    <value>Terviklikkus langeb {0} päeva jooksul alla 20 tõenäosusega {1} %, keskmine lõppseis {2} ({3} prognoosi).</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_Cancelled_BeforeStart" xml:space="preserve">
+    <value>Tühistati enne alustamist.</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_Cancelled_Running" xml:space="preserve">
+    <value>Tühistati töö ajal.</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_Workload_Invalid" xml:space="preserve">
+    <value>Töömaht peab olema vahemikus 1–{0}.</value>
+    <comment>Calc</comment>
+  </data>
+  <data name="Calc_NoJobs" xml:space="preserve">
+    <value>Vali vähemalt üks objekt.</value>
+    <comment>Calc</comment>
+  </data>
 </root>

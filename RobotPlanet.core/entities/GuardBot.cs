@@ -1,4 +1,5 @@
-﻿using RobotPlanet.Core.@interface;
+﻿using RobotPlanet.Core.computation;
+using RobotPlanet.Core.@interface;
 using RobotPlanet.Core.Properties;
 
 namespace RobotPlanet.Core.entities
@@ -26,5 +27,7 @@ namespace RobotPlanet.Core.entities
 
         public override string ReactToCrazyAction(Robot actor) =>
             string.Format(Resources.Guard_React_Crazy, Name, actor.Name);
+
+        public override IRobotCalculation CreateCalculation() => new RouteComparisonCalculation();
     }
 }
