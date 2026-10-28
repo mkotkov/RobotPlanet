@@ -196,6 +196,9 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Box" Property="Background" Value="{StaticResource RowHover}"/>
                             </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4"/>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -368,12 +371,109 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- ===== Vol.3 ===== -->
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+        <!-- Slider: thin rounded track, lime fill, round white thumb -->
+        <Style x:Key="SliderFill" TargetType="RepeatButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Height="8" CornerRadius="4" Background="{StaticResource Lime}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SliderEmpty" TargetType="RepeatButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Height="28" Background="Transparent"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SliderThumb" TargetType="Thumb">
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Ellipse Fill="{StaticResource White}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Slider">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid MinHeight="28" Background="Transparent">
+                            <Border Height="8" CornerRadius="4" Background="#40808080" VerticalAlignment="Center"/>
+                            <Track x:Name="PART_Track" VerticalAlignment="Center">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource SliderFill}" Command="Slider.DecreaseLarge"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource SliderThumb}"/>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource SliderEmpty}" Command="Slider.IncreaseLarge"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Status chip of a report row: lime = success, red = failed, grey = cancelled -->
+        <Style x:Key="StatusChip" TargetType="Border">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,2"/>
+            <Setter Property="Background" Value="#8C9189"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="Success">
+                    <Setter Property="Background" Value="{StaticResource Lime}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="Failed">
+                    <Setter Property="Background" Value="#FF7A7A"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- One row of a report: name, status, duration, calculation title and the result or error text -->
+        <DataTemplate x:Key="OutcomeRowTemplate">
+            <Border CornerRadius="18" Background="{StaticResource Row}" Padding="14,10" Margin="0,0,0,8">
+                <StackPanel>
+                    <DockPanel LastChildFill="False">
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding DurationText}" Opacity="0.7"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" FontWeight="SemiBold"
+                                   VerticalAlignment="Center"/>
+                        <Border DockPanel.Dock="Left" Style="{StaticResource StatusChip}" Margin="10,0,0,0">
+                            <TextBlock Text="{Binding StatusText}" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource Ink}"/>
+                        </Border>
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Cap}" Text="{Binding CalculationTitle}" Margin="0,2,0,0"/>
+                    <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
     </Window.Resources>
 
     <!-- The whole page scrolls vertically, so nothing is cut off on small screens -->
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <Grid Margin="24">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -636,8 +736,106 @@
                 </GroupBox>
             </StackPanel>
 
+            <!-- ===================== VOL.3: CPU calculations ===================== -->
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="0,0,0,12">
+
+                <!-- Choose objects and workload, start, cancel, watch progress -->
+                <GroupBox Header="{x:Static p:Resources.Group_Compute}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_PickObjects}"/>
+                        <ItemsControl ItemsSource="{Binding Calculation.Targets}" Margin="0,8,0,0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox Margin="0,0,20,10" IsChecked="{Binding IsSelected}"
+                                              IsEnabled="{Binding DataContext.Calculation.CanEdit, RelativeSource={RelativeSource AncestorType=Window}}">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Robot.Name}" FontWeight="SemiBold"/>
+                                            <TextBlock Style="{StaticResource Cap}" Text="{Binding Robot.Kind}"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <WrapPanel>
+                            <Button Content="{x:Static p:Resources.Btn_SelectAll}" Command="{Binding Calculation.SelectAllCommand}"
+                                    Padding="16,6" Margin="0,0,8,0"/>
+                            <Button Content="{x:Static p:Resources.Btn_ClearSelection}" Command="{Binding Calculation.ClearSelectionCommand}"
+                                    Padding="16,6"/>
+                        </WrapPanel>
+
+                        <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Workload}" Margin="0,18,0,4"/>
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Width="52" TextAlignment="Right" FontSize="22"
+                                       FontWeight="SemiBold" VerticalAlignment="Center"
+                                       Text="{Binding Calculation.Workload}"/>
+                            <Slider Minimum="{Binding Calculation.WorkloadMin}" Maximum="{Binding Calculation.WorkloadMax}"
+                                    Value="{Binding Calculation.Workload}" TickFrequency="1" IsSnapToTickEnabled="True"
+                                    IsEnabled="{Binding Calculation.CanEdit}" VerticalAlignment="Center"/>
+                        </DockPanel>
+
+                        <WrapPanel Margin="0,16,0,0">
+                            <Button Content="{x:Static p:Resources.Btn_RunSequential}" Command="{Binding Calculation.RunSequentialCommand}"
+                                    Padding="20,10" Margin="0,0,8,8"/>
+                            <Button Content="{x:Static p:Resources.Btn_RunParallel}" Command="{Binding Calculation.RunParallelCommand}"
+                                    Padding="20,10" Margin="0,0,8,8"/>
+                            <Button Style="{StaticResource LimeButton}" Content="{x:Static p:Resources.Btn_RunBoth}"
+                                    Command="{Binding Calculation.RunBothCommand}" Padding="20,10" Margin="0,0,8,8"/>
+                            <Button Content="{x:Static p:Resources.Btn_Cancel}" Command="{Binding Calculation.CancelCommand}"
+                                    Padding="20,10" Margin="0,0,0,8"/>
+                        </WrapPanel>
+
+                        <ProgressBar Height="10" Margin="0,6,0,8" Minimum="0"
+                                     Maximum="{Binding Calculation.ProgressMaximum}"
+                                     Value="{Binding Calculation.ProgressValue, Mode=OneWay}"/>
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Margin="16,0,0,0" Opacity="0.7"
+                                       Text="{Binding Calculation.ElapsedText}"/>
+                            <TextBlock TextWrapping="Wrap" Text="{Binding Calculation.StatusText}"/>
+                        </DockPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Comparison of the two modes (lime card) -->
+                <GroupBox Header="{x:Static p:Resources.Group_Compare}" Margin="0,12,0,0"
+                          Background="{StaticResource Lime}" Foreground="{StaticResource Ink}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Calculation.SpeedupText}" FontSize="40" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Calculation.ComparisonText}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Report of the sequential mode -->
+                <GroupBox Header="{Binding Calculation.SequentialReport.Title}" Margin="0,12,0,0"
+                          Visibility="{Binding Calculation.SequentialReport.HasRows, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding Calculation.SequentialReport.Rows}"
+                                      ItemTemplate="{StaticResource OutcomeRowTemplate}"/>
+                        <TextBlock Style="{StaticResource Cap}" Text="{Binding Calculation.SequentialReport.CountsText}"
+                                   TextWrapping="Wrap" Margin="2,4,0,0"/>
+                        <TextBlock FontWeight="SemiBold" Text="{Binding Calculation.SequentialReport.TotalText}" Margin="2,4,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Report of the parallel mode -->
+                <GroupBox Header="{Binding Calculation.ParallelReport.Title}" Margin="0,12,0,0"
+                          Visibility="{Binding Calculation.ParallelReport.HasRows, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding Calculation.ParallelReport.Rows}"
+                                      ItemTemplate="{StaticResource OutcomeRowTemplate}"/>
+                        <TextBlock Style="{StaticResource Cap}" Text="{Binding Calculation.ParallelReport.CountsText}"
+                                   TextWrapping="Wrap" Margin="2,4,0,0"/>
+                        <TextBlock FontWeight="SemiBold" Text="{Binding Calculation.ParallelReport.TotalText}" Margin="2,4,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+
             <!-- ===================== BOTTOM: log (actions + reactions) ===================== -->
-            <GroupBox Grid.Row="3" Grid.ColumnSpan="2" Header="{x:Static p:Resources.Group_Log}">
+            <GroupBox Grid.Row="4" Grid.ColumnSpan="2" Header="{x:Static p:Resources.Group_Log}">
                 <DockPanel>
                     <Button DockPanel.Dock="Bottom" HorizontalAlignment="Left" Margin="0,10,0,0"
                             Content="{x:Static p:Resources.Btn_ClearLog}" Command="{Binding ClearLogCommand}"

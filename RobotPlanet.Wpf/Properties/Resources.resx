@@ -120,11 +120,17 @@
   <data name="Btn_Add" xml:space="preserve">
     <value>Lisa</value>
   </data>
+  <data name="Btn_Cancel" xml:space="preserve">
+    <value>Tühista</value>
+  </data>
   <data name="Btn_Charge" xml:space="preserve">
     <value>Lae</value>
   </data>
   <data name="Btn_ClearLog" xml:space="preserve">
     <value>Tühjenda logi</value>
+  </data>
+  <data name="Btn_ClearSelection" xml:space="preserve">
+    <value>Tühjenda valik</value>
   </data>
   <data name="Btn_Crazy" xml:space="preserve">
     <value>Hullumeelne tegevus!</value>
@@ -135,8 +141,20 @@
   <data name="Btn_Repair" xml:space="preserve">
     <value>Paranda</value>
   </data>
+  <data name="Btn_RunBoth" xml:space="preserve">
+    <value>Võrdle mõlemat</value>
+  </data>
+  <data name="Btn_RunParallel" xml:space="preserve">
+    <value>Paralleelselt</value>
+  </data>
+  <data name="Btn_RunSequential" xml:space="preserve">
+    <value>Järjestikku</value>
+  </data>
   <data name="Btn_Scan" xml:space="preserve">
     <value>Skanni</value>
+  </data>
+  <data name="Btn_SelectAll" xml:space="preserve">
+    <value>Vali kõik</value>
   </data>
   <data name="Btn_Work" xml:space="preserve">
     <value>Tööta</value>
@@ -202,27 +220,43 @@
   </data>
   <data name="Group_Actions" xml:space="preserve">
     <value>Tegevused</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Add" xml:space="preserve">
     <value>Lisa robot</value>
+    <comment>Group</comment>
+  </data>
+  <data name="Group_Compare" xml:space="preserve">
+    <value>Režiimide võrdlus</value>
+    <comment>Group</comment>
+  </data>
+  <data name="Group_Compute" xml:space="preserve">
+    <value>Arvutused (CPU)</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Details" xml:space="preserve">
     <value>Üksikasjad</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_List" xml:space="preserve">
     <value>Robotid</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Log" xml:space="preserve">
     <value>Logi</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Repos" xml:space="preserve">
     <value>Hoidlad</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Search" xml:space="preserve">
     <value>Otsi ja sorteeri</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Summary" xml:space="preserve">
     <value>Kokkuvõte</value>
+    <comment>Group</comment>
   </data>
   <data name="Lbl_Battery" xml:space="preserve">
     <value>Aku</value>
@@ -242,6 +276,10 @@
   <data name="Lbl_Name" xml:space="preserve">
     <value>Nimi</value>
   </data>
+  <data name="Lbl_PickObjects" xml:space="preserve">
+    <value>Vali objektid arvutuseks:</value>
+    <comment>Lbl</comment>
+  </data>
   <data name="Lbl_RepairTarget" xml:space="preserve">
     <value>Remondi sihtmärk</value>
   </data>
@@ -253,6 +291,9 @@
   </data>
   <data name="Lbl_Type" xml:space="preserve">
     <value>Tüüp</value>
+  </data>
+  <data name="Lbl_Workload" xml:space="preserve">
+    <value>Töömaht (intensiivsus):</value>
   </data>
   <data name="Mode_Parallel" xml:space="preserve">
     <value>Paralleelselt</value>

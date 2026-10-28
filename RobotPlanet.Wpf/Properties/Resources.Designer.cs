@@ -70,6 +70,15 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tühista.
+        /// </summary>
+        public static string Btn_Cancel {
+            get {
+                return ResourceManager.GetString("Btn_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lae.
         /// </summary>
         public static string Btn_Charge {
@@ -84,6 +93,15 @@ namespace RobotPlanet.Wpf.Properties {
         public static string Btn_ClearLog {
             get {
                 return ResourceManager.GetString("Btn_ClearLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tühjenda valik.
+        /// </summary>
+        public static string Btn_ClearSelection {
+            get {
+                return ResourceManager.GetString("Btn_ClearSelection", resourceCulture);
             }
         }
         
@@ -115,11 +133,47 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Võrdle mõlemat.
+        /// </summary>
+        public static string Btn_RunBoth {
+            get {
+                return ResourceManager.GetString("Btn_RunBoth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paralleelselt.
+        /// </summary>
+        public static string Btn_RunParallel {
+            get {
+                return ResourceManager.GetString("Btn_RunParallel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Järjestikku.
+        /// </summary>
+        public static string Btn_RunSequential {
+            get {
+                return ResourceManager.GetString("Btn_RunSequential", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Skanni.
         /// </summary>
         public static string Btn_Scan {
             get {
                 return ResourceManager.GetString("Btn_Scan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vali kõik.
+        /// </summary>
+        public static string Btn_SelectAll {
+            get {
+                return ResourceManager.GetString("Btn_SelectAll", resourceCulture);
             }
         }
         
@@ -304,6 +358,24 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Režiimide võrdlus.
+        /// </summary>
+        public static string Group_Compare {
+            get {
+                return ResourceManager.GetString("Group_Compare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arvutused (CPU).
+        /// </summary>
+        public static string Group_Compute {
+            get {
+                return ResourceManager.GetString("Group_Compute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Üksikasjad.
         /// </summary>
         public static string Group_Details {
@@ -412,6 +484,15 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Vali objektid arvutuseks:.
+        /// </summary>
+        public static string Lbl_PickObjects {
+            get {
+                return ResourceManager.GetString("Lbl_PickObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remondi sihtmärk.
         /// </summary>
         public static string Lbl_RepairTarget {
@@ -444,6 +525,15 @@ namespace RobotPlanet.Wpf.Properties {
         public static string Lbl_Type {
             get {
                 return ResourceManager.GetString("Lbl_Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Töömaht (intensiivsus):.
+        /// </summary>
+        public static string Lbl_Workload {
+            get {
+                return ResourceManager.GetString("Lbl_Workload", resourceCulture);
             }
         }
         
