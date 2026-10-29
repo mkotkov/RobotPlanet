@@ -61,6 +61,123 @@ namespace RobotPlanet.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tühistati enne alustamist..
+        /// </summary>
+        internal static string Calc_Cancelled_BeforeStart {
+            get {
+                return ResourceManager.GetString("Calc_Cancelled_BeforeStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tühistati töö ajal..
+        /// </summary>
+        internal static string Calc_Cancelled_Running {
+            get {
+                return ResourceManager.GetString("Calc_Cancelled_Running", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keskmine kaetus {0} %, keskmiselt {1} sammu ({2} simulatsiooni)..
+        /// </summary>
+        internal static string Calc_Cleaning_Result {
+            get {
+                return ResourceManager.GetString("Calc_Cleaning_Result", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Koristussimulatsioon.
+        /// </summary>
+        internal static string Calc_Cleaning_Title {
+            get {
+                return ResourceManager.GetString("Calc_Cleaning_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vali vähemalt üks objekt..
+        /// </summary>
+        internal static string Calc_NoJobs {
+            get {
+                return ResourceManager.GetString("Calc_NoJobs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ei ole töökorras (aku või terviklikkus on 0), seega arvutust ei saa teha..
+        /// </summary>
+        internal static string Calc_NotOperational {
+            get {
+                return ResourceManager.GetString("Calc_NotOperational", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tuvastati {0} % sissetungijatest ({1} sissetungijat {2} tiksu jooksul)..
+        /// </summary>
+        internal static string Calc_Patrol_Result {
+            get {
+                return ResourceManager.GetString("Calc_Patrol_Result", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patrulli simulatsioon.
+        /// </summary>
+        internal static string Calc_Patrol_Title {
+            get {
+                return ResourceManager.GetString("Calc_Patrol_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parim retk läbib {0} punkti ja on {1} pikk (võrreldi {2} varianti)..
+        /// </summary>
+        internal static string Calc_Route_Result1 {
+            get {
+                return ResourceManager.GetString("Calc_Route_Result1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retkevariantide võrdlus.
+        /// </summary>
+        internal static string Calc_Route_Title1 {
+            get {
+                return ResourceManager.GetString("Calc_Route_Title1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Terviklikkus langeb {0} päeva jooksul alla 20 tõenäosusega {1} %, keskmine lõppseis {2} ({3} prognoosi)..
+        /// </summary>
+        internal static string Calc_Wear_Result {
+            get {
+                return ResourceManager.GetString("Calc_Wear_Result", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arenguprognoos.
+        /// </summary>
+        internal static string Calc_Wear_Title {
+            get {
+                return ResourceManager.GetString("Calc_Wear_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Töömaht peab olema vahemikus 1–{0}..
+        /// </summary>
+        internal static string Calc_Workload_Invalid {
+            get {
+                return ResourceManager.GetString("Calc_Workload_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} laeb, nüüd {1}%. Tolmuimeja nurrub..
         /// </summary>
         internal static string Cleaner_Charge_Ok {

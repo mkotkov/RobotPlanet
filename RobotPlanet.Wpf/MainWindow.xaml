@@ -196,6 +196,9 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Box" Property="Background" Value="{StaticResource RowHover}"/>
                             </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4"/>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -368,291 +371,637 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- ===== Vol.3 ===== -->
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+        <!-- Slider: thin rounded track, lime fill, round white thumb -->
+        <Style x:Key="SliderFill" TargetType="RepeatButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Height="8" CornerRadius="4" Background="{StaticResource Lime}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SliderEmpty" TargetType="RepeatButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Height="28" Background="Transparent"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SliderThumb" TargetType="Thumb">
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Ellipse Fill="{StaticResource White}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Slider">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid MinHeight="28" Background="Transparent">
+                            <Border Height="8" CornerRadius="4" Background="#40808080" VerticalAlignment="Center"/>
+                            <Track x:Name="PART_Track" VerticalAlignment="Center">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource SliderFill}" Command="Slider.DecreaseLarge"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource SliderThumb}"/>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource SliderEmpty}" Command="Slider.IncreaseLarge"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Status chip of a report row: lime = success, red = failed, grey = cancelled -->
+        <Style x:Key="StatusChip" TargetType="Border">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,2"/>
+            <Setter Property="Background" Value="#8C9189"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="Success">
+                    <Setter Property="Background" Value="{StaticResource Lime}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="Failed">
+                    <Setter Property="Background" Value="#FF7A7A"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- One row of a report: name, status, duration, calculation title and the result or error text -->
+        <DataTemplate x:Key="OutcomeRowTemplate">
+            <Border CornerRadius="18" Background="{StaticResource Row}" Padding="14,10" Margin="0,0,0,8">
+                <StackPanel>
+                    <DockPanel LastChildFill="False">
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding DurationText}" Opacity="0.7"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" FontWeight="SemiBold"
+                                   VerticalAlignment="Center"/>
+                        <Border DockPanel.Dock="Left" Style="{StaticResource StatusChip}" Margin="10,0,0,0">
+                            <TextBlock Text="{Binding StatusText}" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource Ink}"/>
+                        </Border>
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Cap}" Text="{Binding CalculationTitle}" Margin="0,2,0,0"/>
+                    <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <!-- ===== Tabs and the log expander ===== -->
+        <Style TargetType="TabControl">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <DockPanel>
+                            <ScrollViewer DockPanel.Dock="Top" Margin="0,0,0,14" Focusable="False"
+                                          HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                                <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
+                            </ScrollViewer>
+                            <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent"/>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="TabItem">
+            <Setter Property="Foreground" Value="{StaticResource Text}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="Bd" CornerRadius="20" Background="{StaticResource Row}"
+                                Padding="22,9" Margin="0,0,8,0">
+                            <ContentPresenter ContentSource="Header" HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource RowHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Lime}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Ink}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Expander: a card whose header toggles the content (used for the log) -->
+        <Style TargetType="Expander">
+            <Setter Property="Foreground" Value="{StaticResource Text}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Expander">
+                        <Border Background="{StaticResource Card}" CornerRadius="28" Padding="18,12">
+                            <DockPanel>
+                                <ToggleButton DockPanel.Dock="Top" Cursor="Hand" Focusable="False"
+                                              Foreground="{StaticResource Text}"
+                                              IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <DockPanel Background="Transparent">
+                                                <Grid DockPanel.Dock="Right" Width="14" Height="10" VerticalAlignment="Center">
+                                                    <Path x:Name="ArrowDown" Data="M 1 2 L 7 8 L 13 2"
+                                                          Stroke="{StaticResource Lime}" StrokeThickness="2"/>
+                                                    <Path x:Name="ArrowUp" Data="M 1 8 L 7 2 L 13 8"
+                                                          Stroke="{StaticResource Lime}" StrokeThickness="2"
+                                                          Visibility="Collapsed"/>
+                                                </Grid>
+                                                <ContentPresenter TextElement.FontSize="12" Opacity="0.6"
+                                                                  VerticalAlignment="Center"
+                                                                  Content="{Binding Header, RelativeSource={RelativeSource AncestorType=Expander}}"/>
+                                            </DockPanel>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="ArrowDown" Property="Visibility" Value="Collapsed"/>
+                                                    <Setter TargetName="ArrowUp" Property="Visibility" Value="Visible"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <ContentPresenter x:Name="ExpandSite" Margin="0,12,0,0" Visibility="Collapsed"/>
+                            </DockPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Setter TargetName="ExpandSite" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
-    <!-- The whole page scrolls vertically, so nothing is cut off on small screens -->
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <Grid Margin="24">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+    <!-- The window has a fixed frame (title, tabs, log). Each tab scrolls by itself when it is taller than the window. -->
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <!-- Title -->
-            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="{x:Static p:Resources.Window_Title}"
-                       FontSize="28" FontWeight="SemiBold" TextWrapping="Wrap" Margin="4,0,0,16"/>
+        <TextBlock Grid.Row="0" Text="{x:Static p:Resources.Window_Title}"
+                   FontSize="28" FontWeight="SemiBold" TextWrapping="Wrap" Margin="4,0,0,14"/>
 
-            <!-- ===================== LEFT: repositories, search, robots, add ===================== -->
-            <StackPanel x:Name="LeftPanel" Grid.Row="1" Grid.Column="0" Margin="0,0,8,12">
+        <TabControl Grid.Row="1">
 
-                <!-- Repositories: one per robot type -->
-                <GroupBox Header="{x:Static p:Resources.Group_Repos}">
-                    <ListBox Style="{StaticResource ChipList}"
-                             ItemContainerStyle="{StaticResource ChipItem}"
-                             ItemsSource="{Binding Repositories}"
-                             SelectedItem="{Binding SelectedRepository}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding Count}" Margin="10,0,0,0" Opacity="0.6"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </GroupBox>
-
-                <!-- LINQ: search (Where) and sort (OrderBy / OrderByDescending) -->
-                <GroupBox Header="{x:Static p:Resources.Group_Search}" Margin="0,12,0,0">
-                    <StackPanel>
-                        <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Search}"
-                                   TextWrapping="Wrap" Margin="2,0,2,4"/>
-                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Margin="2,0,2,10"/>
-
-                        <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Sort}"
-                                   Margin="2,0,2,4"/>
-                        <ComboBox ItemsSource="{Binding SortOptions}"
-                                  SelectedItem="{Binding SelectedSort}" Margin="2,0,2,10">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Label}"/>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-
-                        <CheckBox IsChecked="{Binding SortDescending}" Margin="2,0"
-                                  Content="{x:Static p:Resources.Lbl_Descending}"/>
-                    </StackPanel>
-                </GroupBox>
-
-                <!-- Robots of the selected repository (result of the LINQ query) -->
-                <GroupBox Header="{x:Static p:Resources.Group_List}" Margin="0,12,0,0">
-                    <ListBox MinHeight="120" HorizontalContentAlignment="Stretch"
-                             ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                             ItemsSource="{Binding VisibleRobots}"
-                             SelectedItem="{Binding SelectedRobot}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Mode=OneWay}" FontWeight="SemiBold"
-                                               TextWrapping="Wrap" Margin="0,0,0,8"/>
-                                    <ProgressBar Value="{Binding Battery, Mode=OneWay}" Maximum="100" Height="8"
-                                                 Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
-                                    <ProgressBar Value="{Binding Integrity, Mode=OneWay}" Maximum="100" Height="8"
-                                                 Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
-                                                 Opacity="0.5" Margin="0,5,0,0"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </GroupBox>
-
-                <!-- Add robot -->
-                <GroupBox Header="{x:Static p:Resources.Group_Add}" Margin="0,12,0,0">
+            <!-- ===================== TAB 1: robots (repositories, search, list | details, actions) ===================== -->
+            <TabItem Header="{x:Static p:Resources.Tab_Robots}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Type}"
-                                   Margin="2,2,16,2" VerticalAlignment="Center"/>
-                        <ComboBox Grid.Row="0" Grid.Column="1" Margin="2,3"
-                                  ItemsSource="{Binding Kinds}" SelectedItem="{Binding NewKind}"/>
-                        <TextBlock Grid.Row="1" Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Id}"
-                                   Margin="2,2,16,2" VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" Margin="2,3"
-                                 Text="{Binding NewId, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="2" Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Name}"
-                                   Margin="2,2,16,2" VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="2" Grid.Column="1" Margin="2,3"
-                                 Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="3" Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Battery}"
-                                   Margin="2,2,16,2" VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="3" Grid.Column="1" Margin="2,3"
-                                 Text="{Binding NewBattery, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="4" Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Integrity}"
-                                   Margin="2,2,16,2" VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="4" Grid.Column="1" Margin="2,3"
-                                 Text="{Binding NewIntegrity, UpdateSourceTrigger=PropertyChanged}"/>
-                        <WrapPanel Grid.Row="5" Grid.ColumnSpan="2" Margin="0,12,0,0">
-                            <Button Style="{StaticResource LimeButton}" Content="{x:Static p:Resources.Btn_Add}"
-                                    Command="{Binding AddCommand}" Padding="20,8" Margin="2,2,8,2"/>
-                            <Button Content="{x:Static p:Resources.Btn_Remove}"
-                                    Command="{Binding RemoveCommand}" Padding="20,8" Margin="2"/>
-                        </WrapPanel>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel x:Name="LeftPanel" Grid.Row="0" Grid.Column="0" Margin="0,0,8,12">
+                            <!-- Repositories: one per robot type -->
+                            <GroupBox Header="{x:Static p:Resources.Group_Repos}">
+                                <ListBox Style="{StaticResource ChipList}"
+                                                         ItemContainerStyle="{StaticResource ChipItem}"
+                                                         ItemsSource="{Binding Repositories}"
+                                                         SelectedItem="{Binding SelectedRepository}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding Count}" Margin="10,0,0,0" Opacity="0.6"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </GroupBox>
+
+
+
+                            <!-- LINQ: search (Where) and sort (OrderBy / OrderByDescending) -->
+                            <GroupBox Header="{x:Static p:Resources.Group_Search}" Margin="0,12,0,0">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Search}"
+                                                               TextWrapping="Wrap" Margin="2,0,2,4"/>
+                                    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Margin="2,0,2,10"/>
+
+                                    <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Sort}"
+                                                               Margin="2,0,2,4"/>
+                                    <ComboBox ItemsSource="{Binding SortOptions}"
+                                                              SelectedItem="{Binding SelectedSort}" Margin="2,0,2,10">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Label}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+
+                                    <CheckBox IsChecked="{Binding SortDescending}" Margin="2,0"
+                                                              Content="{x:Static p:Resources.Lbl_Descending}"/>
+                                </StackPanel>
+                            </GroupBox>
+
+
+
+                            <!-- Robots of the selected repository (result of the LINQ query) -->
+                            <GroupBox Header="{x:Static p:Resources.Group_List}" Margin="0,12,0,0">
+                                <ListBox MinHeight="120" HorizontalContentAlignment="Stretch"
+                                                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                                         ItemsSource="{Binding VisibleRobots}"
+                                                         SelectedItem="{Binding SelectedRobot}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Mode=OneWay}" FontWeight="SemiBold"
+                                                                           TextWrapping="Wrap" Margin="0,0,0,8"/>
+                                                <ProgressBar Value="{Binding Battery, Mode=OneWay}" Maximum="100" Height="8"
+                                                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
+                                                <ProgressBar Value="{Binding Integrity, Mode=OneWay}" Maximum="100" Height="8"
+                                                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                                             Opacity="0.5" Margin="0,5,0,0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </GroupBox>
+
+
+                        </StackPanel>
+
+                        <StackPanel x:Name="RightPanel" Grid.Row="0" Grid.Column="1" Margin="8,0,0,12">
+                            <!-- Details of the selected robot (lime card) -->
+                            <GroupBox Header="{x:Static p:Resources.Group_Details}"
+                                                      Background="{StaticResource Lime}" Foreground="{StaticResource Ink}">
+                                <Grid>
+                                    <!-- Shown only while no robot is selected -->
+                                    <TextBlock Text="{x:Static p:Resources.Msg_SelectRobot}" TextWrapping="Wrap">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedRobot}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+                                    <!-- Hidden while no robot is selected -->
+                                    <StackPanel>
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedRobot}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+
+                                        <TextBlock Text="{Binding SelectedRobot.Name, Mode=OneWay}" FontSize="22"
+                                                                   FontWeight="Bold" TextWrapping="Wrap"/>
+                                        <TextBlock Style="{StaticResource Cap}" Text="{Binding SelectedRobot.Kind, Mode=OneWay}"/>
+
+                                        <UniformGrid Columns="2" Margin="0,16,0,0">
+                                            <StackPanel Margin="0,0,10,0">
+                                                <TextBlock FontSize="34" FontWeight="SemiBold">
+                                                                    <Run Text="{Binding SelectedRobot.Battery, Mode=OneWay}"/><Run Text="%" FontSize="20"/>
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Battery}"
+                                                                           TextWrapping="Wrap" Margin="0,0,0,8"/>
+                                                <ProgressBar Value="{Binding SelectedRobot.Battery, Mode=OneWay}" Maximum="100"
+                                                                             Foreground="{StaticResource Ink}" Background="#26000000"/>
+                                            </StackPanel>
+                                            <StackPanel Margin="10,0,0,0">
+                                                <TextBlock FontSize="34" FontWeight="SemiBold">
+                                                                    <Run Text="{Binding SelectedRobot.Integrity, Mode=OneWay}"/><Run Text="%" FontSize="20"/>
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Integrity}"
+                                                                           TextWrapping="Wrap" Margin="0,0,0,8"/>
+                                                <ProgressBar Value="{Binding SelectedRobot.Integrity, Mode=OneWay}" Maximum="100"
+                                                                             Foreground="{StaticResource Ink}" Background="#26000000"/>
+                                            </StackPanel>
+                                        </UniformGrid>
+                                    </StackPanel>
+                                </Grid>
+                            </GroupBox>
+
+
+
+                            <!-- Actions: each button is a command, CanExecute dims it when it does not apply -->
+                            <GroupBox Header="{x:Static p:Resources.Group_Actions}" Margin="0,12,0,0">
+                                <StackPanel>
+                                    <Button Content="{x:Static p:Resources.Btn_Work}" Command="{Binding WorkCommand}"
+                                                            Padding="4,10" Margin="2"/>
+                                    <Button Style="{StaticResource LimeButton}" Content="{x:Static p:Resources.Btn_Crazy}"
+                                                            Command="{Binding CrazyCommand}" Padding="4,10" Margin="2"/>
+
+                                    <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_ChargeAmount}"
+                                                               TextWrapping="Wrap" Margin="4,16,2,4"/>
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Content="{x:Static p:Resources.Btn_Charge}"
+                                                                Command="{Binding ChargeCommand}" Padding="20,8" Margin="8,2,2,2"/>
+                                        <TextBox Margin="2" FontSize="18"
+                                                                 Text="{Binding ChargeAmount, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DockPanel>
+
+                                    <Button Content="{x:Static p:Resources.Btn_Scan}" Command="{Binding ScanCommand}"
+                                                            Margin="2,14,2,2" Padding="4,10"/>
+
+                                    <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_RepairTarget}"
+                                                               TextWrapping="Wrap" Margin="4,16,2,4"/>
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Content="{x:Static p:Resources.Btn_Repair}"
+                                                                Command="{Binding RepairCommand}" Padding="20,8" Margin="8,2,2,2"/>
+                                        <ComboBox Margin="2,3" ItemsSource="{Binding AllRobots}"
+                                                                  SelectedItem="{Binding RepairTarget}"/>
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+
+
+                        </StackPanel>
                     </Grid>
-                </GroupBox>
-            </StackPanel>
+                </ScrollViewer>
+            </TabItem>
 
-            <!-- ===================== RIGHT: details, actions, summary ===================== -->
-            <StackPanel x:Name="RightPanel" Grid.Row="1" Grid.Column="1" Margin="8,0,0,12">
+            <!-- ===================== TAB 2: management (add robot, summary) ===================== -->
+            <TabItem Header="{x:Static p:Resources.Tab_Manage}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="0,0,0,12">
+                        <!-- Add robot -->
+                        <GroupBox Header="{x:Static p:Resources.Group_Add}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Type}"
+                                                           Margin="2,2,16,2" VerticalAlignment="Center"/>
+                                <ComboBox Grid.Row="0" Grid.Column="1" Margin="2,3"
+                                                          ItemsSource="{Binding Kinds}" SelectedItem="{Binding NewKind}"/>
+                                <TextBlock Grid.Row="1" Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Id}"
+                                                           Margin="2,2,16,2" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Margin="2,3"
+                                                         Text="{Binding NewId, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock Grid.Row="2" Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Name}"
+                                                           Margin="2,2,16,2" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" Margin="2,3"
+                                                         Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock Grid.Row="3" Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Battery}"
+                                                           Margin="2,2,16,2" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="3" Grid.Column="1" Margin="2,3"
+                                                         Text="{Binding NewBattery, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock Grid.Row="4" Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Integrity}"
+                                                           Margin="2,2,16,2" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="4" Grid.Column="1" Margin="2,3"
+                                                         Text="{Binding NewIntegrity, UpdateSourceTrigger=PropertyChanged}"/>
+                                <WrapPanel Grid.Row="5" Grid.ColumnSpan="2" Margin="0,12,0,0">
+                                    <Button Style="{StaticResource LimeButton}" Content="{x:Static p:Resources.Btn_Add}"
+                                                            Command="{Binding AddCommand}" Padding="20,8" Margin="2,2,8,2"/>
+                                    <Button Content="{x:Static p:Resources.Btn_Remove}"
+                                                            Command="{Binding RemoveCommand}" Padding="20,8" Margin="2"/>
+                                </WrapPanel>
+                            </Grid>
+                        </GroupBox>
 
-                <!-- Details of the selected robot (lime card) -->
-                <GroupBox Header="{x:Static p:Resources.Group_Details}"
-                          Background="{StaticResource Lime}" Foreground="{StaticResource Ink}">
-                    <Grid>
-                        <!-- Shown only while no robot is selected -->
-                        <TextBlock Text="{x:Static p:Resources.Msg_SelectRobot}" TextWrapping="Wrap">
+                        <!-- LINQ: GroupBy summary over all repositories -->
+                        <GroupBox Header="{x:Static p:Resources.Group_Summary}" Margin="0,12,0,0">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="48"/>
+                                        <ColumnDefinition Width="64"/>
+                                        <ColumnDefinition Width="64"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Type}"/>
+                                    <TextBlock Grid.Column="1" Style="{StaticResource Cap}" HorizontalAlignment="Right"
+                                                               Text="{x:Static p:Resources.Col_Count}"/>
+                                    <TextBlock Grid.Column="2" Style="{StaticResource Cap}" HorizontalAlignment="Right"
+                                                               TextWrapping="Wrap" Text="{x:Static p:Resources.Col_AvgBattery}"/>
+                                    <TextBlock Grid.Column="3" Style="{StaticResource Cap}" HorizontalAlignment="Right"
+                                                               TextWrapping="Wrap" Text="{x:Static p:Resources.Col_AvgIntegrity}"/>
+                                </Grid>
+                                <ItemsControl ItemsSource="{Binding Summary}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,5">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="48"/>
+                                                    <ColumnDefinition Width="64"/>
+                                                    <ColumnDefinition Width="64"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold"
+                                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Grid.Column="1" HorizontalAlignment="Right"
+                                                                           Text="{Binding Count}"/>
+                                                <TextBlock Grid.Column="2" HorizontalAlignment="Right">
+                                                                    <Run Text="{Binding AverageBattery, Mode=OneWay}"/><Run Text="%"/>
+                                                </TextBlock>
+                                                <TextBlock Grid.Column="3" HorizontalAlignment="Right">
+                                                                    <Run Text="{Binding AverageIntegrity, Mode=OneWay}"/><Run Text="%"/>
+                                                </TextBlock>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ===================== TAB 3: CPU calculations (Vol.3): controls and comparison ===================== -->
+            <TabItem Header="{x:Static p:Resources.Tab_Compute}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="0,0,0,12">
+                        <!-- Choose objects and workload, start, cancel, watch progress -->
+                        <GroupBox Header="{x:Static p:Resources.Group_Compute}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_PickObjects}"/>
+                                <ItemsControl ItemsSource="{Binding Calculation.Targets}" Margin="0,8,0,0">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Margin="0,0,20,10" IsChecked="{Binding IsSelected}"
+                                                                      IsEnabled="{Binding DataContext.Calculation.CanEdit, RelativeSource={RelativeSource AncestorType=Window}}">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Robot.Name}" FontWeight="SemiBold"/>
+                                                    <TextBlock Style="{StaticResource Cap}" Text="{Binding Robot.Kind}"/>
+                                                </StackPanel>
+                                            </CheckBox>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <WrapPanel>
+                                    <Button Content="{x:Static p:Resources.Btn_SelectAll}" Command="{Binding Calculation.SelectAllCommand}"
+                                                            Padding="16,6" Margin="0,0,8,0"/>
+                                    <Button Content="{x:Static p:Resources.Btn_ClearSelection}" Command="{Binding Calculation.ClearSelectionCommand}"
+                                                            Padding="16,6"/>
+                                </WrapPanel>
+
+                                <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Workload}" Margin="0,18,0,4"/>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Width="52" TextAlignment="Right" FontSize="22"
+                                                               FontWeight="SemiBold" VerticalAlignment="Center"
+                                                               Text="{Binding Calculation.Workload}"/>
+                                    <Slider Minimum="{Binding Calculation.WorkloadMin}" Maximum="{Binding Calculation.WorkloadMax}"
+                                                            Value="{Binding Calculation.Workload}" TickFrequency="1" IsSnapToTickEnabled="True"
+                                                            IsEnabled="{Binding Calculation.CanEdit}" VerticalAlignment="Center"/>
+                                </DockPanel>
+
+                                <WrapPanel Margin="0,16,0,0">
+                                    <Button Content="{x:Static p:Resources.Btn_RunSequential}" Command="{Binding Calculation.RunSequentialCommand}"
+                                                            Padding="20,10" Margin="0,0,8,8"/>
+                                    <Button Content="{x:Static p:Resources.Btn_RunParallel}" Command="{Binding Calculation.RunParallelCommand}"
+                                                            Padding="20,10" Margin="0,0,8,8"/>
+                                    <Button Style="{StaticResource LimeButton}" Content="{x:Static p:Resources.Btn_RunBoth}"
+                                                            Command="{Binding Calculation.RunBothCommand}" Padding="20,10" Margin="0,0,8,8"/>
+                                    <Button Content="{x:Static p:Resources.Btn_Cancel}" Command="{Binding Calculation.CancelCommand}"
+                                                            Padding="20,10" Margin="0,0,0,8"/>
+                                </WrapPanel>
+
+                                <ProgressBar Height="10" Margin="0,6,0,8" Minimum="0"
+                                                             Maximum="{Binding Calculation.ProgressMaximum}"
+                                                             Value="{Binding Calculation.ProgressValue, Mode=OneWay}"/>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Margin="16,0,0,0" Opacity="0.7"
+                                                               Text="{Binding Calculation.ElapsedText}"/>
+                                    <TextBlock TextWrapping="Wrap" Text="{Binding Calculation.StatusText}"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </GroupBox>
+
+
+
+                        <!-- Comparison of the two modes (lime card) -->
+                        <GroupBox Header="{x:Static p:Resources.Group_Compare}" Margin="0,12,0,0"
+                                                  Background="{StaticResource Lime}" Foreground="{StaticResource Ink}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Calculation.SpeedupText}" FontSize="40" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding Calculation.ComparisonText}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </GroupBox>
+
+
+                        <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Msg_SeeReports}"
+                                   TextWrapping="Wrap" Margin="8,10,0,0"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ===================== TAB 4: reports of the two modes ===================== -->
+            <TabItem Header="{x:Static p:Resources.Tab_Reports}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="0,0,0,12">
+                        <!-- shown only while neither report has rows -->
+                        <TextBlock Text="{x:Static p:Resources.Msg_NoReports}" TextWrapping="Wrap" Margin="8,4,0,0">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SelectedRobot}" Value="{x:Null}">
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Calculation.SequentialReport.HasRows}" Value="False"/>
+                                                <Condition Binding="{Binding Calculation.ParallelReport.HasRows}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
+                                        </MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
+                        <!-- Report of the sequential mode -->
+                        <GroupBox Header="{Binding Calculation.SequentialReport.Title}"
+                                                  Visibility="{Binding Calculation.SequentialReport.HasRows, Converter={StaticResource BoolToVis}}">
+                            <StackPanel>
+                                <ItemsControl ItemsSource="{Binding Calculation.SequentialReport.Rows}"
+                                                              ItemTemplate="{StaticResource OutcomeRowTemplate}"/>
+                                <TextBlock Style="{StaticResource Cap}" Text="{Binding Calculation.SequentialReport.CountsText}"
+                                                           TextWrapping="Wrap" Margin="2,4,0,0"/>
+                                <TextBlock FontWeight="SemiBold" Text="{Binding Calculation.SequentialReport.TotalText}" Margin="2,4,0,0"/>
+                            </StackPanel>
+                        </GroupBox>
 
-                        <!-- Hidden while no robot is selected -->
-                        <StackPanel>
-                            <StackPanel.Style>
-                                <Style TargetType="StackPanel">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SelectedRobot}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </StackPanel.Style>
 
-                            <TextBlock Text="{Binding SelectedRobot.Name, Mode=OneWay}" FontSize="22"
-                                       FontWeight="Bold" TextWrapping="Wrap"/>
-                            <TextBlock Style="{StaticResource Cap}" Text="{Binding SelectedRobot.Kind, Mode=OneWay}"/>
 
-                            <UniformGrid Columns="2" Margin="0,16,0,0">
-                                <StackPanel Margin="0,0,10,0">
-                                    <TextBlock FontSize="34" FontWeight="SemiBold">
-                                        <Run Text="{Binding SelectedRobot.Battery, Mode=OneWay}"/><Run Text="%" FontSize="20"/>
-                                    </TextBlock>
-                                    <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Battery}"
-                                               TextWrapping="Wrap" Margin="0,0,0,8"/>
-                                    <ProgressBar Value="{Binding SelectedRobot.Battery, Mode=OneWay}" Maximum="100"
-                                                 Foreground="{StaticResource Ink}" Background="#26000000"/>
-                                </StackPanel>
-                                <StackPanel Margin="10,0,0,0">
-                                    <TextBlock FontSize="34" FontWeight="SemiBold">
-                                        <Run Text="{Binding SelectedRobot.Integrity, Mode=OneWay}"/><Run Text="%" FontSize="20"/>
-                                    </TextBlock>
-                                    <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Integrity}"
-                                               TextWrapping="Wrap" Margin="0,0,0,8"/>
-                                    <ProgressBar Value="{Binding SelectedRobot.Integrity, Mode=OneWay}" Maximum="100"
-                                                 Foreground="{StaticResource Ink}" Background="#26000000"/>
-                                </StackPanel>
-                            </UniformGrid>
-                        </StackPanel>
-                    </Grid>
-                </GroupBox>
-
-                <!-- Actions: each button is a command, CanExecute dims it when it does not apply -->
-                <GroupBox Header="{x:Static p:Resources.Group_Actions}" Margin="0,12,0,0">
-                    <StackPanel>
-                        <Button Content="{x:Static p:Resources.Btn_Work}" Command="{Binding WorkCommand}"
-                                Padding="4,10" Margin="2"/>
-                        <Button Style="{StaticResource LimeButton}" Content="{x:Static p:Resources.Btn_Crazy}"
-                                Command="{Binding CrazyCommand}" Padding="4,10" Margin="2"/>
-
-                        <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_ChargeAmount}"
-                                   TextWrapping="Wrap" Margin="4,16,2,4"/>
-                        <DockPanel>
-                            <Button DockPanel.Dock="Right" Content="{x:Static p:Resources.Btn_Charge}"
-                                    Command="{Binding ChargeCommand}" Padding="20,8" Margin="8,2,2,2"/>
-                            <TextBox Margin="2" FontSize="18"
-                                     Text="{Binding ChargeAmount, UpdateSourceTrigger=PropertyChanged}"/>
-                        </DockPanel>
-
-                        <Button Content="{x:Static p:Resources.Btn_Scan}" Command="{Binding ScanCommand}"
-                                Margin="2,14,2,2" Padding="4,10"/>
-
-                        <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_RepairTarget}"
-                                   TextWrapping="Wrap" Margin="4,16,2,4"/>
-                        <DockPanel>
-                            <Button DockPanel.Dock="Right" Content="{x:Static p:Resources.Btn_Repair}"
-                                    Command="{Binding RepairCommand}" Padding="20,8" Margin="8,2,2,2"/>
-                            <ComboBox Margin="2,3" ItemsSource="{Binding AllRobots}"
-                                      SelectedItem="{Binding RepairTarget}"/>
-                        </DockPanel>
+                        <!-- Report of the parallel mode -->
+                        <GroupBox Header="{Binding Calculation.ParallelReport.Title}" Margin="0,12,0,0"
+                                                  Visibility="{Binding Calculation.ParallelReport.HasRows, Converter={StaticResource BoolToVis}}">
+                            <StackPanel>
+                                <ItemsControl ItemsSource="{Binding Calculation.ParallelReport.Rows}"
+                                                              ItemTemplate="{StaticResource OutcomeRowTemplate}"/>
+                                <TextBlock Style="{StaticResource Cap}" Text="{Binding Calculation.ParallelReport.CountsText}"
+                                                           TextWrapping="Wrap" Margin="2,4,0,0"/>
+                                <TextBlock FontWeight="SemiBold" Text="{Binding Calculation.ParallelReport.TotalText}" Margin="2,4,0,0"/>
+                            </StackPanel>
+                        </GroupBox>
                     </StackPanel>
-                </GroupBox>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
 
-                <!-- LINQ: GroupBy summary over all repositories -->
-                <GroupBox Header="{x:Static p:Resources.Group_Summary}" Margin="0,12,0,0">
-                    <StackPanel>
-                        <Grid Margin="0,0,0,4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="48"/>
-                                <ColumnDefinition Width="64"/>
-                                <ColumnDefinition Width="64"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Type}"/>
-                            <TextBlock Grid.Column="1" Style="{StaticResource Cap}" HorizontalAlignment="Right"
-                                       Text="{x:Static p:Resources.Col_Count}"/>
-                            <TextBlock Grid.Column="2" Style="{StaticResource Cap}" HorizontalAlignment="Right"
-                                       TextWrapping="Wrap" Text="{x:Static p:Resources.Col_AvgBattery}"/>
-                            <TextBlock Grid.Column="3" Style="{StaticResource Cap}" HorizontalAlignment="Right"
-                                       TextWrapping="Wrap" Text="{x:Static p:Resources.Col_AvgIntegrity}"/>
-                        </Grid>
-                        <ItemsControl ItemsSource="{Binding Summary}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="48"/>
-                                            <ColumnDefinition Width="64"/>
-                                            <ColumnDefinition Width="64"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Grid.Column="1" HorizontalAlignment="Right"
-                                                   Text="{Binding Count}"/>
-                                        <TextBlock Grid.Column="2" HorizontalAlignment="Right">
-                                            <Run Text="{Binding AverageBattery, Mode=OneWay}"/><Run Text="%"/>
-                                        </TextBlock>
-                                        <TextBlock Grid.Column="3" HorizontalAlignment="Right">
-                                            <Run Text="{Binding AverageIntegrity, Mode=OneWay}"/><Run Text="%"/>
-                                        </TextBlock>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </GroupBox>
-            </StackPanel>
-
-            <!-- ===================== BOTTOM: log (actions + reactions) ===================== -->
-            <GroupBox Grid.Row="3" Grid.ColumnSpan="2" Header="{x:Static p:Resources.Group_Log}">
-                <DockPanel>
-                    <Button DockPanel.Dock="Bottom" HorizontalAlignment="Left" Margin="0,10,0,0"
-                            Content="{x:Static p:Resources.Btn_ClearLog}" Command="{Binding ClearLogCommand}"
-                            Padding="18,7"/>
-                    <ListBox MinHeight="90" MaxHeight="220"
-                             ItemContainerStyle="{StaticResource PlainItem}"
-                             ItemsSource="{Binding Log}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </DockPanel>
-            </GroupBox>
-        </Grid>
-    </ScrollViewer>
+        <!-- ===================== LOG: always visible below the tabs, can be collapsed ===================== -->
+        <Expander Grid.Row="2" Margin="0,12,0,0" IsExpanded="True"
+                  Header="{x:Static p:Resources.Group_Log}">
+            <DockPanel>
+                <Button DockPanel.Dock="Bottom" HorizontalAlignment="Left" Margin="0,10,0,0"
+                        Content="{x:Static p:Resources.Btn_ClearLog}" Command="{Binding ClearLogCommand}"
+                        Padding="18,7"/>
+                <ListBox MinHeight="60" MaxHeight="150"
+                         ItemContainerStyle="{StaticResource PlainItem}"
+                         ItemsSource="{Binding Log}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Expander>
+    </Grid>
 </Window>

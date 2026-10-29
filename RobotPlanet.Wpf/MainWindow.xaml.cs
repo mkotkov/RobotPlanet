@@ -15,7 +15,7 @@ namespace RobotPlanet.Wpf
             InitializeComponent();
         }
 
-        // On a narrow window the right column moves below the left one.
+        // On a narrow window the right column of the "Robotid" tab moves below the left one.
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             bool narrow = e.NewSize.Width < 860;
@@ -23,7 +23,7 @@ namespace RobotPlanet.Wpf
             Grid.SetColumnSpan(LeftPanel, narrow ? 2 : 1);
             LeftPanel.Margin = narrow ? new Thickness(0, 0, 0, 12) : new Thickness(0, 0, 8, 12);
 
-            Grid.SetRow(RightPanel, narrow ? 2 : 1);
+            Grid.SetRow(RightPanel, narrow ? 1 : 0);
             Grid.SetColumn(RightPanel, narrow ? 0 : 1);
             Grid.SetColumnSpan(RightPanel, narrow ? 2 : 1);
             RightPanel.Margin = narrow ? new Thickness(0, 0, 0, 12) : new Thickness(8, 0, 0, 12);

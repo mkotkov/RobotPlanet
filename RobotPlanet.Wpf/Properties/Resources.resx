@@ -120,11 +120,17 @@
   <data name="Btn_Add" xml:space="preserve">
     <value>Lisa</value>
   </data>
+  <data name="Btn_Cancel" xml:space="preserve">
+    <value>Tühista</value>
+  </data>
   <data name="Btn_Charge" xml:space="preserve">
     <value>Lae</value>
   </data>
   <data name="Btn_ClearLog" xml:space="preserve">
     <value>Tühjenda logi</value>
+  </data>
+  <data name="Btn_ClearSelection" xml:space="preserve">
+    <value>Tühjenda valik</value>
   </data>
   <data name="Btn_Crazy" xml:space="preserve">
     <value>Hullumeelne tegevus!</value>
@@ -135,8 +141,20 @@
   <data name="Btn_Repair" xml:space="preserve">
     <value>Paranda</value>
   </data>
+  <data name="Btn_RunBoth" xml:space="preserve">
+    <value>Võrdle mõlemat</value>
+  </data>
+  <data name="Btn_RunParallel" xml:space="preserve">
+    <value>Paralleelselt</value>
+  </data>
+  <data name="Btn_RunSequential" xml:space="preserve">
+    <value>Järjestikku</value>
+  </data>
   <data name="Btn_Scan" xml:space="preserve">
     <value>Skanni</value>
+  </data>
+  <data name="Btn_SelectAll" xml:space="preserve">
+    <value>Vali kõik</value>
   </data>
   <data name="Btn_Work" xml:space="preserve">
     <value>Tööta</value>
@@ -149,6 +167,38 @@
   </data>
   <data name="Col_Count" xml:space="preserve">
     <value>Arv</value>
+  </data>
+  <data name="Compare_Hint" xml:space="preserve">
+    <value>Võrdluseks käivita mõlemad režiimid samal sisendil (nupp Võrdle mõlemat).</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Match_No" xml:space="preserve">
+    <value>Tulemused ühtivad: EI</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Match_Yes" xml:space="preserve">
+    <value>Tulemused ühtivad: jah</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Note_Cancelled" xml:space="preserve">
+    <value>Võrdlus puudub: üks käivitus tühistati.</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Note_Input" xml:space="preserve">
+    <value>Võrdlus puudub: režiimid kasutasid erinevat sisendit.</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Parallel" xml:space="preserve">
+    <value>Paralleelselt: {0} s</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Sequential" xml:space="preserve">
+    <value>Järjestikku: {0} s</value>
+    <comment>Compare</comment>
+  </data>
+  <data name="Compare_Speedup" xml:space="preserve">
+    <value>Kiirenemine: ×{0}</value>
+    <comment>Compare</comment>
   </data>
   <data name="Err_Amount_NotNumber" xml:space="preserve">
     <value>Kogus peab olema täisarv.</value>
@@ -170,27 +220,43 @@
   </data>
   <data name="Group_Actions" xml:space="preserve">
     <value>Tegevused</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Add" xml:space="preserve">
     <value>Lisa robot</value>
+    <comment>Group</comment>
+  </data>
+  <data name="Group_Compare" xml:space="preserve">
+    <value>Režiimide võrdlus</value>
+    <comment>Group</comment>
+  </data>
+  <data name="Group_Compute" xml:space="preserve">
+    <value>Arvutused (CPU)</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Details" xml:space="preserve">
     <value>Üksikasjad</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_List" xml:space="preserve">
     <value>Robotid</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Log" xml:space="preserve">
     <value>Logi</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Repos" xml:space="preserve">
     <value>Hoidlad</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Search" xml:space="preserve">
     <value>Otsi ja sorteeri</value>
+    <comment>Group</comment>
   </data>
   <data name="Group_Summary" xml:space="preserve">
     <value>Kokkuvõte</value>
+    <comment>Group</comment>
   </data>
   <data name="Lbl_Battery" xml:space="preserve">
     <value>Aku</value>
@@ -210,6 +276,10 @@
   <data name="Lbl_Name" xml:space="preserve">
     <value>Nimi</value>
   </data>
+  <data name="Lbl_PickObjects" xml:space="preserve">
+    <value>Vali objektid arvutuseks:</value>
+    <comment>Lbl</comment>
+  </data>
   <data name="Lbl_RepairTarget" xml:space="preserve">
     <value>Remondi sihtmärk</value>
   </data>
@@ -222,8 +292,62 @@
   <data name="Lbl_Type" xml:space="preserve">
     <value>Tüüp</value>
   </data>
+  <data name="Lbl_Workload" xml:space="preserve">
+    <value>Töömaht (intensiivsus):</value>
+  </data>
+  <data name="Mode_Parallel" xml:space="preserve">
+    <value>Paralleelselt</value>
+    <comment>Mode</comment>
+  </data>
+  <data name="Mode_Sequential" xml:space="preserve">
+    <value>Järjestikku</value>
+    <comment>Mode</comment>
+  </data>
+  <data name="Msg_NoReports" xml:space="preserve">
+    <value>Rapordid puuduvad. Arvutuste käivitamiseks vali objektid ja kasuta vahekaarti "Arvutused".</value>
+  </data>
+  <data name="Msg_SeeReports" xml:space="preserve">
+    <value>Tulemuste üksikasjalikud raportid leiate vahekaardilt "Aruanded".</value>
+    <comment>+</comment>
+  </data>
   <data name="Msg_SelectRobot" xml:space="preserve">
     <value>Vali nimekirjast robot</value>
+  </data>
+  <data name="Report_Counts" xml:space="preserve">
+    <value>Õnnestus: {0} · Viga: {1} · Tühistatud: {2}</value>
+    <comment>Report</comment>
+  </data>
+  <data name="Report_Total" xml:space="preserve">
+    <value>Kogu töö aeg: {0} s</value>
+    <comment>Report</comment>
+  </data>
+  <data name="Run_Elapsed" xml:space="preserve">
+    <value>Kulunud aeg: {0} s</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Cancelled" xml:space="preserve">
+    <value>Tühistatud</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Cancelling" xml:space="preserve">
+    <value>Tühistan…</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Done" xml:space="preserve">
+    <value>Valmis!</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Error" xml:space="preserve">
+    <value>Viga: {0}</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Idle" xml:space="preserve">
+    <value>Vali objektid ja töömaht, seejärel käivita arvutus.</value>
+    <comment>Run</comment>
+  </data>
+  <data name="Run_Status_Running" xml:space="preserve">
+    <value>Töös: {0} ({1}/{2})</value>
+    <comment>Run</comment>
   </data>
   <data name="Sort_Battery" xml:space="preserve">
     <value>Aku</value>
@@ -236,6 +360,34 @@
   </data>
   <data name="Sort_Name" xml:space="preserve">
     <value>Nimi</value>
+  </data>
+  <data name="Status_Cancelled" xml:space="preserve">
+    <value>Tühistatud</value>
+    <comment>Status</comment>
+  </data>
+  <data name="Status_Failed" xml:space="preserve">
+    <value>Viga</value>
+    <comment>Status</comment>
+  </data>
+  <data name="Status_Success" xml:space="preserve">
+    <value>Õnnestus</value>
+    <comment>Status</comment>
+  </data>
+  <data name="Tab_Compute" xml:space="preserve">
+    <value>Arvutused</value>
+    <comment>Tab</comment>
+  </data>
+  <data name="Tab_Manage" xml:space="preserve">
+    <value>Haldus</value>
+    <comment>Tab</comment>
+  </data>
+  <data name="Tab_Reports" xml:space="preserve">
+    <value>Raportid</value>
+    <comment>Tab</comment>
+  </data>
+  <data name="Tab_Robots" xml:space="preserve">
+    <value>Robotid</value>
+    <comment>Tab</comment>
   </data>
   <data name="Window_Title" xml:space="preserve">
     <value>Robotite planeet</value>

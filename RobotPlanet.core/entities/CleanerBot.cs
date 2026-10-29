@@ -1,4 +1,5 @@
-﻿using RobotPlanet.Core.@interface;
+﻿using RobotPlanet.Core.computation;
+using RobotPlanet.Core.@interface;
 using RobotPlanet.Core.Properties;
 
 namespace RobotPlanet.Core.entities
@@ -38,5 +39,7 @@ namespace RobotPlanet.Core.entities
                 return string.Format(Resources.Cleaner_React_Crazy_Tired, Name, actor.Name);
             return string.Format(Resources.Cleaner_React_Crazy_Ok, Name, actor.Name, Battery);
         }
+
+        public override IRobotCalculation CreateCalculation() => new CleaningSimulationCalculation();
     }
 }

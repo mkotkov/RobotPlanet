@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using RobotPlanet.Core.Properties;
+using RobotPlanet.Core.computation;
 
 namespace RobotPlanet.Core.entities
 {
@@ -67,6 +68,8 @@ namespace RobotPlanet.Core.entities
 
         // Tavaline tegevus: virtual
         public virtual string DoWork() => string.Format(Resources.Robot_DoWork, Name);
+
+        public virtual IRobotCalculation CreateCalculation() => new WearForecastCalculation();
 
         // Hullumeelne tegevus: igal tüübil oma
         public abstract string CrazyAction();

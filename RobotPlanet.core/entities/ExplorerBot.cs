@@ -1,4 +1,5 @@
-﻿using RobotPlanet.Core.@interface;
+﻿using RobotPlanet.Core.computation;
+using RobotPlanet.Core.@interface;
 using RobotPlanet.Core.Properties;
 
 namespace RobotPlanet.Core.entities
@@ -43,5 +44,6 @@ namespace RobotPlanet.Core.entities
 
         public override string ReactToRemoved(Robot departed) =>
             string.Format(Resources.Explorer_React_Removed, Name, departed.Name);
+        public override IRobotCalculation CreateCalculation() => new RouteComparisonCalculation();
     }
 }
