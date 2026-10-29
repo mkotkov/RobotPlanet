@@ -303,6 +303,13 @@
     <value>Järjestikku</value>
     <comment>Mode</comment>
   </data>
+  <data name="Msg_NoReports" xml:space="preserve">
+    <value>Rapordid puuduvad. Arvutuste käivitamiseks vali objektid ja kasuta vahekaarti "Arvutused".</value>
+  </data>
+  <data name="Msg_SeeReports" xml:space="preserve">
+    <value>Tulemuste üksikasjalikud raportid leiate vahekaardilt "Aruanded".</value>
+    <comment>+</comment>
+  </data>
   <data name="Msg_SelectRobot" xml:space="preserve">
     <value>Vali nimekirjast robot</value>
   </data>
@@ -365,6 +372,22 @@
   <data name="Status_Success" xml:space="preserve">
     <value>Õnnestus</value>
     <comment>Status</comment>
+  </data>
+  <data name="Tab_Compute" xml:space="preserve">
+    <value>Arvutused</value>
+    <comment>Tab</comment>
+  </data>
+  <data name="Tab_Manage" xml:space="preserve">
+    <value>Haldamine</value>
+    <comment>Tab</comment>
+  </data>
+  <data name="Tab_Reports" xml:space="preserve">
+    <value>Aruanded</value>
+    <comment>Tab</comment>
+  </data>
+  <data name="Tab_Robots" xml:space="preserve">
+    <value>Robotid</value>
+    <comment>Tab</comment>
   </data>
   <data name="Window_Title" xml:space="preserve">
     <value>Robotite planeet</value>

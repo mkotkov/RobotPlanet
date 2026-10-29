@@ -556,6 +556,24 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rapordid puuduvad. Arvutuste käivitamiseks vali objektid ja kasuta vahekaarti &quot;Arvutused&quot;..
+        /// </summary>
+        public static string Msg_NoReports {
+            get {
+                return ResourceManager.GetString("Msg_NoReports", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tulemuste üksikasjalikud raportid leiate vahekaardilt &quot;Aruanded&quot;..
+        /// </summary>
+        public static string Msg_SeeReports {
+            get {
+                return ResourceManager.GetString("Msg_SeeReports", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Vali nimekirjast robot.
         /// </summary>
         public static string Msg_SelectRobot {
@@ -705,6 +723,42 @@ namespace RobotPlanet.Wpf.Properties {
         public static string Status_Success {
             get {
                 return ResourceManager.GetString("Status_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arvutused.
+        /// </summary>
+        public static string Tab_Compute {
+            get {
+                return ResourceManager.GetString("Tab_Compute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Haldamine.
+        /// </summary>
+        public static string Tab_Manage {
+            get {
+                return ResourceManager.GetString("Tab_Manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aruanded.
+        /// </summary>
+        public static string Tab_Reports {
+            get {
+                return ResourceManager.GetString("Tab_Reports", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Robotid.
+        /// </summary>
+        public static string Tab_Robots {
+            get {
+                return ResourceManager.GetString("Tab_Robots", resourceCulture);
             }
         }
         
