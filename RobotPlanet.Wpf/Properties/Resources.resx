@@ -378,11 +378,11 @@
     <comment>Tab</comment>
   </data>
   <data name="Tab_Manage" xml:space="preserve">
-    <value>Haldamine</value>
+    <value>Haldus</value>
     <comment>Tab</comment>
   </data>
   <data name="Tab_Reports" xml:space="preserve">
-    <value>Aruanded</value>
+    <value>Raportid</value>
     <comment>Tab</comment>
   </data>
   <data name="Tab_Robots" xml:space="preserve">

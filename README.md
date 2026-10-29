@@ -32,7 +32,7 @@ Sama maailm ja samad tegelased kasvavad edasi: uut universumit ega uut projekti 
 
 ## 1. Valitud maailm ja rakenduse eesmärk
 
-Valitud maailm: **ROBOT PLANET**. Planeedil elavad neli tüüpi roboteid: `CleanerBot`, `ExplorerBot`, `RepairBot` ja `GuardBot`. Neil on ühine baastüüp `Robot` (aku ja terviklikkus), kuid igaühel on oma tavaline tegevus, oma võimed (liidesed) ja oma hullumeelne tegevus `CrazyAction()`.
+Valitud maailm: **ROBOT PLANET**. Planeedil elavad kaheksa tüüpi roboteid: `CleanerBot`, `ExplorerBot`, `RepairBot`, `GuardBot`, `JesterBot`, `DeliveryBot`, `InspectorBot` ja `RescueBot`. Neil on ühine baastüüp `Robot` (aku ja terviklikkus), kuid igaühel on oma tavaline tegevus, oma võimed (liidesed) ja oma hullumeelne tegevus `CrazyAction()`.
 
 **Praktikumi garaaži põhimõte (Vol.2):** iga robotitüüp saab oma hoidla ning selles olevad robotid reageerivad üksteise tegevusele. Näiteks kui üks `CleanerBot` küürib end värvist puhtaks, koristavad teised `CleanerBot`-id tema segaduse ära. `ExplorerBot`-id seda ei märka, sest nad elavad teises hoidlas.
 
@@ -43,13 +43,13 @@ Kõik domeenireeglid (robotid, hoidlad, sündmused, reaktsioonid) asuvad Core-pr
 **Nõuded:** Windows 10/11, .NET 10 SDK, Visual Studio töökoormusega *.NET desktop development*.
 
 ```bash
-git clone https://github.com/mkotkov/RobotPlanet.git
+git clone <REPOSITORY-URL>
 cd RobotPlanet
 git checkout vol3/parallel-cpu
 dotnet run --project RobotPlanet.Wpf -c Release
 ```
 
-Alternatiiv: ava `RobotPlanet.sln` Visual Studios, määra `RobotPlanet.Wpf` käivitusprojektiks ja vajuta **F5**.
+Alternatiiv: ava `RobotPlanet.slnx` Visual Studios, määra `RobotPlanet.Wpf` käivitusprojektiks ja vajuta **F5**.
 
 Kiirenemise nägemiseks käivita **Release**-konfiguratsioonis (Visual Studios vali *Release* ja vajuta **Ctrl+F5**). *Debug*-ehitus on aeglasem ja annab väiksema vahe. Vol.2 töö asub harus `vol2/events-linq-mvvm`.
 
@@ -66,9 +66,10 @@ Kiirenemise nägemiseks käivita **Release**-konfiguratsioonis (Visual Studios v
 ## 3. Projekti struktuur
 
 ```
-RobotPlanet.sln
+RobotPlanet.slnx
 ├── RobotPlanet.Core                 MODEL (klassiteek, ei sõltu WPF-ist)
-│   ├── entities/                    Robot, CleanerBot, ExplorerBot, RepairBot, GuardBot
+│   ├── entities/                    Robot, CleanerBot, ExplorerBot, RepairBot, GuardBot,
+│   │                                JesterBot, DeliveryBot, InspectorBot, RescueBot
 │   ├── interface/                   IChargeable, IScan, IRepair, IRepository<T>, IRobotRepository
 │   ├── events/                      RobotEventKind, RobotEventArgs, ReactionEventArgs
 │   ├── repository/                  Repository<T>
@@ -123,6 +124,10 @@ classDiagram
     Robot <|-- ExplorerBot
     Robot <|-- RepairBot
     Robot <|-- GuardBot
+    Robot <|-- JesterBot
+    Robot <|-- DeliveryBot
+    Robot <|-- InspectorBot
+    Robot <|-- RescueBot
 
     IChargeable <|.. CleanerBot
     IChargeable <|.. ExplorerBot
@@ -130,6 +135,13 @@ classDiagram
     IChargeable <|.. RepairBot
     IRepair <|.. RepairBot
     IScan <|.. GuardBot
+    IScan <|.. JesterBot
+    IChargeable <|.. JesterBot
+    IChargeable <|.. DeliveryBot
+    IChargeable <|.. InspectorBot
+    IScan <|.. InspectorBot
+    IChargeable <|.. RescueBot
+    IScan <|.. RescueBot
 ```
 
 ### Klassid
@@ -140,8 +152,12 @@ classDiagram
 | `ExplorerBot` | `IChargeable`, `IScan` | uurib ümbrust, −10 akut | avastab "uue planeedi", mis on tema enda vari: −20 akut |
 | `RepairBot` | `IChargeable`, `IRepair` | ootab katkiseid (olek ei muutu) | parandab kõike järjest: −10 akut, −5 terviklikkust |
 | `GuardBot` | `IScan` | patrullib (olek ei muutu) | arreteerib oma varju: −5 terviklikkust |
+| `JesterBot` | `IChargeable`, `IScan` | teeb nalja, −8 akut | etendab liiga hoogsalt: −20 akut |
+| `DeliveryBot` | `IChargeable` | toimetab pakke, −5 akut | veab pakke liiga kiiresti: −10 akut, −5 terviklikkust |
+| `InspectorBot` | `IChargeable`, `IScan` | kontrollib objekte, −5 akut | inspekteerib kõike korraga: −10 akut, −5 terviklikkust |
+| `RescueBot` | `IChargeable`, `IScan` | valmistub päästeks, −7 akut | ryhib päästma kõiki: −12 akut, −8 terviklikkust |
 
-`ExplorerBot` ja `RepairBot` täidavad kaht rolli korraga (kaks liidest).
+`ExplorerBot`, `RepairBot`, `JesterBot`, `InspectorBot` ja `RescueBot` täidavad kaht rolli korraga (kaks liidest).
 
 ### Liidesed
 
@@ -178,6 +194,17 @@ classDiagram
 | `RepairBot` | muidu | aku −10, terviklikkus −5 |
 | `GuardBot` | terviklikkus < 30 | jääb vahipostil magama, olek ei muutu |
 | `GuardBot` | muidu | terviklikkus −5 |
+| `JesterBot` | aku < 20 | keeldub, olek ei muutu |
+| `JesterBot` | aku ≥ 20 | aku −20 |
+| `DeliveryBot` | terviklikkus < 20 | keeldub (liiga katki), olek ei muutu |
+| `DeliveryBot` | aku < 10 | keeldub, olek ei muutu |
+| `DeliveryBot` | muidu | aku −10, terviklikkus −5 |
+| `InspectorBot` | terviklikkus < 20 | keeldub (liiga katki), olek ei muutu |
+| `InspectorBot` | aku < 10 | keeldub, olek ei muutu |
+| `InspectorBot` | muidu | aku −10, terviklikkus −5 |
+| `RescueBot` | terviklikkus < 23 | keeldub (liiga katki), olek ei muutu |
+| `RescueBot` | aku < 12 | keeldub, olek ei muutu |
+| `RescueBot` | muidu | aku −12, terviklikkus −8 |
 
 ### Olekureeglid ja valideerimine
 
@@ -228,6 +255,10 @@ flowchart LR
     W --> E["Hoidla: ExplorerBot"]
     W --> R["Hoidla: RepairBot"]
     W --> G["Hoidla: GuardBot"]
+    W --> J["Hoidla: JesterBot"]
+    W --> D["Hoidla: DeliveryBot"]
+    W --> I["Hoidla: InspectorBot"]
+    W --> RS["Hoidla: RescueBot"]
     C --> C1[Sädel]
     C --> C2[Läige]
     E --> E1[Kosmos]
@@ -270,6 +301,12 @@ Iga sündmus kannab `RobotEventArgs`: `Source` (milline robot tegevuse põhjusta
 | `RepairBot` | eemaldamine | kogub lahkunu varuosad | ei |
 | `GuardBot` | lisamine | kontrollib tulija ID-d | ei |
 | `GuardBot` | CrazyAction | nõuab tegijalt seletust | ei |
+| `DeliveryBot` | CrazyAction | märkab pahandust ja parandab end | **jah:** terviklikkus +3 (kuni 100) |
+| `DeliveryBot` | eemaldamine | märgib lahkunu kohaletoimetuse nimekirjast | ei |
+| `InspectorBot` | CrazyAction | kontrollib tegija tegevust ja parandab end | **jah:** terviklikkus +3 (kuni 100) |
+| `InspectorBot` | eemaldamine | kirjutab lahkumise kohta aruande | ei |
+| `RescueBot` | CrazyAction | tõttab appi ja parandab end | **jah:** terviklikkus +6 (kuni 100) |
+| `RescueBot` | eemaldamine | märgib lahkunu päästenimekirja | ei |
 
 Vähemalt kolm reaktsiooni muudavad reageerija olekut (aku või terviklikkus).
 
@@ -513,36 +550,36 @@ A = Sädel, B = Läige. Hoidlas olevad C-d lisatakse kasutajaliidese kaudu.
 
 | # | Tegevus | Oodatud tulemus | ☑ |
 |---|---|---|---|
-| A1 | Lehel **Robotid** vali hoidla `CleanerBot`. Lehel **Haldus** lisa vormis tüüp `Cleaner`, nimi `Gamma` (C) | Logis "Lisatud: Gamma (#6) [CleanerBot]." ja **kaks** reaktsiooni (Sädel ja Läige tervitavad). Gamma ise ei reageeri | ☐ |
-| A2 | Vali Gamma ja vajuta **Hullumeelne tegevus!** | Gamma aku 85, terv. 90. Sädel ja Läige reageerivad ja nende aku on 97. Logis 1 tegevuse rida + 2 reaktsiooni. Gamma ei reageeri iseendale | ☐ |
-| A3 | Lehel **Robotid** vali Läige (B), lehel **Haldus** vajuta **Eemalda valitud** | Logis "Eemaldatud: Läige (#2) [CleanerBot]." ja reageerivad **Sädel ja Gamma**. Läige ei reageeri | ☐ |
-| A4 | Vali Gamma ja vajuta uuesti **Hullumeelne tegevus!** | Gamma aku 70, terv. 80. Reageerib **ainult Sädel** (aku 94). Läige reaktsiooni logis pole | ☐ |
-| A5 | Vaata hoidlaid `ExplorerBot`, `RepairBot`, `GuardBot` | Kosmos (aku 80), Mutrivõti (terv. 60) ja Vaht (100/100) ei ole muutunud ega esine logis (teised hoidlad ei reageeri) | ☐ |
+| A1 | Lehel **Robotid** vali hoidla `CleanerBot`. Lehel **Haldus** lisa vormis tüüp `Cleaner`, nimi `Gamma` (C) | Logis "Lisatud: Gamma (#6) [CleanerBot]." ja **kaks** reaktsiooni (Sädel ja Läige tervitavad). Gamma ise ei reageeri | ☑ |
+| A2 | Vali Gamma ja vajuta **Hullumeelne tegevus!** | Gamma aku 85, terv. 90. Sädel ja Läige reageerivad ja nende aku on 97. Logis 1 tegevuse rida + 2 reaktsiooni. Gamma ei reageeri iseendale | ☑ |
+| A3 | Lehel **Robotid** vali Läige (B), lehel **Haldus** vajuta **Eemalda valitud** | Logis "Eemaldatud: Läige (#2) [CleanerBot]." ja reageerivad **Sädel ja Gamma**. Läige ei reageeri | ☑ |
+| A4 | Vali Gamma ja vajuta uuesti **Hullumeelne tegevus!** | Gamma aku 70, terv. 80. Reageerib **ainult Sädel** (aku 94). Läige reaktsiooni logis pole | ☑ |
+| A5 | Vaata hoidlaid `ExplorerBot`, `RepairBot`, `GuardBot` | Kosmos (aku 80), Mutrivõti (terv. 60) ja Vaht (100/100) ei ole muutunud ega esine logis (teised hoidlad ei reageeri) | ☑ |
 
 ### Muud kasutusjuhud
 
 | # | Tegevus | Oodatud tulemus | ☑ |
 |---|---|---|---|
-| 1 | Lehel **Haldus** lisa vormis tüüp `Explorer`, nimi `Uurija` | Kosmos reageerib ja tema aku muutub 80 → 78. Uurija ei reageeri. Puhastajate hoidlat see ei puuduta | ☐ |
-| 2 | Lehel **Haldus** lisa tüüp `Repair`, nimi `Võti`. Võti valitakse automaatselt, lehel **Robotid** vajuta **Hullumeelne tegevus!** | Võti aku 90, terv. 95. Mutrivõti reageerib ja lappab end: terviklikkus 60 → 63 | ☐ |
-| 3 | Lehel **Haldus** lisa tüüp `Guard`, nimi `Valvur` | Vaht kontrollib tulija ID-d (#6). Olek ei muutu. Valvur ei reageeri | ☐ |
-| 4 | Sädel teeb **Hullumeelne tegevus!**. Siis vali hoidla `RepairBot`, vali Mutrivõti, sihtmärgiks Sädel, **Paranda** | Sädel terv. 90 → 100, Mutrivõtme aku 100 → 90. Logis "Mutrivõti asub tööle. Sädel sai remonditud: terviklikkus 90 → 100." | ☐ |
-| 5 | Lehel **Haldus** lisa tüüp `Explorer`, nimi `Väsinud`, aku `15`. Uus robot valitakse automaatselt, lehel **Robotid** vajuta **Hullumeelne tegevus!** | Robot keeldub (aku jääb 15). Kosmos reageerib katsele üldise reaktsiooniga (vt punkt "Teadlikud otsused") | ☐ |
-| 6 | Vali Vaht (`GuardBot`) | **Lae** on tuhm (`is IChargeable` ei ole täidetud), **Skanni** aktiivne | ☐ |
-| 7 | Vali Sädel (`CleanerBot`) | **Skanni** on tuhm (`is IScan` ei ole täidetud), **Lae** aktiivne | ☐ |
-| 8 | Ära vali ühtegi robotit | **Tööta**, **Hullumeelne tegevus!**, **Lae**, **Skanni**, **Paranda** ja **Eemalda valitud** (lehel **Haldus**) on tuhmid. Üksikasjade kaardil on vihje | ☐ |
-| 9 | Käivita rakendus ja vaata lehel **Haldus** vormi "Lisa robot" (tüüp valimata, nimi tühi) | **Lisa** on tuhm. Muutub aktiivseks, kui tüüp on valitud ja nimi sisestatud (ID pakutakse automaatselt) | ☐ |
-| 10 | Lehel **Haldus** vali tüüp, sisesta nimi ja ID `abc` ning vajuta **Lisa** | Logis "ID peab olema täisarv.", robotit ei lisata | ☐ |
-| 11 | Lehel **Haldus** lisa robot ID-ga, mis on juba kasutusel (nt `1`) | Logis "ID 1 on juba kasutusel.", robotit ei lisata (kehtib ka teise tüübi puhul) | ☐ |
-| 12 | Lehel **Haldus** lisa robot nimega `A` | Logis nime viga, robotit ei lisata | ☐ |
-| 13 | Lehel **Haldus** lisa robot akuga `150` | Logis "Aku laetus peab olema vahemikus 0–100.", robotit ei lisata | ☐ |
-| 14 | Vali Sädel, sisesta laadimiskogus `abc` ja vajuta **Lae** | Logis "Kogus peab olema täisarv.", aku ei muutu | ☐ |
-| 15 | Vali Sädel, sisesta laadimiskogus `-5` ja vajuta **Lae** | Logis "Sädel: vigane laadimiskogus (-5), olek jäi muutmata.", aku ei muutu | ☐ |
-| 16 | **LINQ Where:** kirjuta otsingusse `säd` (hoidla `CleanerBot`) | Nimekirjas on ainult Sädel (suur- ja väiketähti ei arvestata). Tühjenda väli: mõlemad tagasi. Otsing `2` leiab Läige (ID järgi) | ☐ |
-| 17 | **LINQ OrderBy:** juhu 4 või A2 järel vali sorteerimine "Aku" | Nimekiri järjestub aku järgi kasvavalt. Märkeruut "Kahanevalt" pöörab järjekorra. Valitud robot jääb valituks | ☐ |
-| 18 | **LINQ GroupBy:** vaata lehel **Haldus** kaarti "Kokkuvõte" | Neli rida (`CleanerBot` 2, 100 % / 100 %; `ExplorerBot` 1, 80 % / 100 %; `GuardBot` 1, 100 % / 100 %; `RepairBot` 1, 100 % / 60 %). Pärast **Sädeli Hullumeelset tegevust** on `CleanerBot` keskmine aku 91 % ja terviklikkus 95 % | ☐ |
-| 19 | Lisa või eemalda robot (leht **Haldus**) ja vaata lehel **Robotid** hoidla "chip"-i | Hoidla "chip" näitab uut robotite arvu kohe | ☐ |
-| 20 | Vähenda akent alla ~860 px | Parem veerg liigub vasaku alla, leht kerib vertikaalselt, midagi ei lõigata ära | ☐ |
+| 1 | Lehel **Haldus** lisa vormis tüüp `Explorer`, nimi `Uurija` | Kosmos reageerib ja tema aku muutub 80 → 78. Uurija ei reageeri. Puhastajate hoidlat see ei puuduta | ☑ |
+| 2 | Lehel **Haldus** lisa tüüp `Repair`, nimi `Võti`. Võti valitakse automaatselt, lehel **Robotid** vajuta **Hullumeelne tegevus!** | Võti aku 90, terv. 95. Mutrivõti reageerib ja lappab end: terviklikkus 60 → 63 | ☑ |
+| 3 | Lehel **Haldus** lisa tüüp `Guard`, nimi `Valvur` | Vaht kontrollib tulija ID-d (#6). Olek ei muutu. Valvur ei reageeri | ☑ |
+| 4 | Sädel teeb **Hullumeelne tegevus!**. Siis vali hoidla `RepairBot`, vali Mutrivõti, sihtmärgiks Sädel, **Paranda** | Sädel terv. 90 → 100, Mutrivõtme aku 100 → 90. Logis "Mutrivõti asub tööle. Sädel sai remonditud: terviklikkus 90 → 100." | ☑ |
+| 5 | Lehel **Haldus** lisa tüüp `Explorer`, nimi `Väsinud`, aku `15`. Uus robot valitakse automaatselt, lehel **Robotid** vajuta **Hullumeelne tegevus!** | Robot keeldub (aku jääb 15). Kosmos reageerib katsele üldise reaktsiooniga (vt punkt "Teadlikud otsused") | ☑ |
+| 6 | Vali Vaht (`GuardBot`) | **Lae** on tuhm (`is IChargeable` ei ole täidetud), **Skanni** aktiivne | ☑ |
+| 7 | Vali Sädel (`CleanerBot`) | **Skanni** on tuhm (`is IScan` ei ole täidetud), **Lae** aktiivne | ☑ |
+| 8 | Ära vali ühtegi robotit | **Tööta**, **Hullumeelne tegevus!**, **Lae**, **Skanni**, **Paranda** ja **Eemalda valitud** (lehel **Haldus**) on tuhmid. Üksikasjade kaardil on vihje | ☑ |
+| 9 | Käivita rakendus ja vaata lehel **Haldus** vormi "Lisa robot" (tüüp valimata, nimi tühi) | **Lisa** on tuhm. Muutub aktiivseks, kui tüüp on valitud ja nimi sisestatud (ID pakutakse automaatselt) | ☑ |
+| 10 | Lehel **Haldus** vali tüüp, sisesta nimi ja ID `abc` ning vajuta **Lisa** | Logis "ID peab olema täisarv.", robotit ei lisata | ☑ |
+| 11 | Lehel **Haldus** lisa robot ID-ga, mis on juba kasutusel (nt `1`) | Logis "ID 1 on juba kasutusel.", robotit ei lisata (kehtib ka teise tüübi puhul) | ☑ |
+| 12 | Lehel **Haldus** lisa robot nimega `A` | Logis nime viga, robotit ei lisata | ☑ |
+| 13 | Lehel **Haldus** lisa robot akuga `150` | Logis "Aku laetus peab olema vahemikus 0–100.", robotit ei lisata | ☑ |
+| 14 | Vali Sädel, sisesta laadimiskogus `abc` ja vajuta **Lae** | Logis "Kogus peab olema täisarv.", aku ei muutu | ☑ |
+| 15 | Vali Sädel, sisesta laadimiskogus `-5` ja vajuta **Lae** | Logis "Sädel: vigane laadimiskogus (-5), olek jäi muutmata.", aku ei muutu | ☑ |
+| 16 | **LINQ Where:** kirjuta otsingusse `säd` (hoidla `CleanerBot`) | Nimekirjas on ainult Sädel (suur- ja väiketähti ei arvestata). Tühjenda väli: mõlemad tagasi. Otsing `2` leiab Läige (ID järgi) | ☑ |
+| 17 | **LINQ OrderBy:** juhu 4 või A2 järel vali sorteerimine "Aku" | Nimekiri järjestub aku järgi kasvavalt. Märkeruut "Kahanevalt" pöörab järjekorra. Valitud robot jääb valituks | ☑ |
+| 18 | **LINQ GroupBy:** vaata lehel **Haldus** kaarti "Kokkuvõte" | Neli rida (`CleanerBot` 2, 100 % / 100 %; `ExplorerBot` 1, 80 % / 100 %; `GuardBot` 1, 100 % / 100 %; `RepairBot` 1, 100 % / 60 %). Pärast **Sädeli Hullumeelset tegevust** on `CleanerBot` keskmine aku 91 % ja terviklikkus 95 % | ☑ |
+| 19 | Lisa või eemalda robot (leht **Haldus**) ja vaata lehel **Robotid** hoidla "chip"-i | Hoidla "chip" näitab uut robotite arvu kohe | ☑ |
+| 20 | Vähenda akent alla ~860 px | Parem veerg liigub vasaku alla, leht kerib vertikaalselt, midagi ei lõigata ära | ☑ |
 
 ### Vol.3 kasutusjuhud (arvutused)
 
@@ -550,19 +587,19 @@ Lehel **Arvutused** (tulemused lehel **Raportid**). Kui pole öeldud teisiti, on
 
 | # | Tegevus | Oodatud tulemus | ☑ |
 |---|---|---|---|
-| V1 | **Võrdle mõlemat** | Lehel **Raportid** on mõlemad raportid (**Järjestikku**, **Paralleelselt**) täidetud, kummaski neli rida staatusega **Õnnestus**. Mõlemal on "Kogu töö aeg" ja nimede/tulemuste kokkuvõte. Laimikaardil on "Kiirenemine: ×…" ja "Tulemused ühtivad: jah". Olek "Valmis." | ☐ |
-| V2 | Ainult **Järjestikku** | Ilmub ainult järjestikune raport. Paralleelne raport on peidus ja võrdluskaart näitab vihjet "Võrdluseks käivita mõlemad režiimid…" | ☐ |
-| V3 | Ainult **Paralleelselt** | Ilmub ainult paralleelne raport, nelja rea järjekord on sama mis valikus | ☐ |
-| V4 | Ilma valikuta (**Tühjenda valik**) | **Järjestikku**, **Paralleelselt** ja **Võrdle mõlemat** on tuhmid, **Tühista** on tuhm. **Vali kõik** teeb need aktiivseks | ☐ |
-| V5 | Töö ajal (töömaht 30 ja **Võrdle mõlemat**) | Kell "Kulunud aeg" tiksub, edenemisriba täitub, akent saab liigutada ning lehti vahetada (lehel **Raportid** ilmuvad read ükshaaval). Märkeruudud ja liugur on töö ajal tuhmid | ☐ |
-| V6 | **Viga:** lehel **Haldus** lisa tüüp `Explorer`, nimi `Tühiaku`, aku `0`; lehel **Arvutused** vali kõik, **Võrdle mõlemat** | Tühiaku rida on punase staatusega **Viga** ja veateatega ("… ei ole töökorras …"). Ülejäänud neli on **Õnnestus**. Loendur "Viga: 1". Töö lõpeb olekuga "Valmis." (mitte tühistatud). Mõlemas režiimis sama tulemus | ☐ |
-| V7 | **Tühistamine paralleelselt:** töömaht 50, **Paralleelselt**, varsti **Tühista** | Kõik read on halli staatusega **Tühistatud**, töö peatub vähem kui sekundiga, **Tühista** tuhmub, olek "Tühistatud." | ☐ |
-| V8 | **Tühistamine järjestikku:** töömaht 50, **Järjestikku**, varsti **Tühista** | Käimasoleva objekti rida: "Tühistati töö ajal.", järgmiste ridade tekst: "Tühistati enne alustamist." (neid ei alustatud) | ☐ |
-| V9 | **Võrdle mõlemat** ja tühista järjestikuse režiimi ajal | Paralleelne režiim ei alga, paralleelset raportit pole, võrdluskaart näitab vihjet | ☐ |
-| V10 | Pärast tühistamist käivita uuesti töömahuga 5 | Uus käivitus töötab tavaliselt ja lõpeb olekuga "Valmis." | ☐ |
-| V11 | **Hetktõmmis:** vali ainult Sädel, käivita ja jäta tulemus meelde. Tee Sädelile kaks korda **Hullumeelne tegevus!** (aku langeb), käivita uuesti | Uus tulemus on teine (väiksem kaetus), sest uus hetktõmmis on muutunud andmetest | ☐ |
-| V12 | Käivita sama sisend kaks korda (sama valik ja töömaht) | Tulemuste tekstid ja numbrid on iga kord täpselt samad (deterministlik), ainult kestused erinevad | ☐ |
-| V13 | Vähenda akent alla ~860 px | Märkeruudud, nupud ja raporti read murduvad uuele reale, midagi ei lõigata ära | ☐ |
+| V1 | **Võrdle mõlemat** | Lehel **Raportid** on mõlemad raportid (**Järjestikku**, **Paralleelselt**) täidetud, kummaski neli rida staatusega **Õnnestus**. Mõlemal on "Kogu töö aeg" ja nimede/tulemuste kokkuvõte. Laimikaardil on "Kiirenemine: ×…" ja "Tulemused ühtivad: jah". Olek "Valmis." | ☑ |
+| V2 | Ainult **Järjestikku** | Ilmub ainult järjestikune raport. Paralleelne raport on peidus ja võrdluskaart näitab vihjet "Võrdluseks käivita mõlemad režiimid…" | ☑ |
+| V3 | Ainult **Paralleelselt** | Ilmub ainult paralleelne raport, nelja rea järjekord on sama mis valikus | ☑ |
+| V4 | Ilma valikuta (**Tühjenda valik**) | **Järjestikku**, **Paralleelselt** ja **Võrdle mõlemat** on tuhmid, **Tühista** on tuhm. **Vali kõik** teeb need aktiivseks | ☑ |
+| V5 | Töö ajal (töömaht 30 ja **Võrdle mõlemat**) | Kell "Kulunud aeg" tiksub, edenemisriba täitub, akent saab liigutada ning lehti vahetada (lehel **Raportid** ilmuvad read ükshaaval). Märkeruudud ja liugur on töö ajal tuhmid | ☑ |
+| V6 | **Viga:** lehel **Haldus** lisa tüüp `Explorer`, nimi `Tühiaku`, aku `0`; lehel **Arvutused** vali kõik, **Võrdle mõlemat** | Tühiaku rida on punase staatusega **Viga** ja veateatega ("… ei ole töökorras …"). Ülejäänud neli on **Õnnestus**. Loendur "Viga: 1". Töö lõpeb olekuga "Valmis." (mitte tühistatud). Mõlemas režiimis sama tulemus | ☑ |
+| V7 | **Tühistamine paralleelselt:** töömaht 50, **Paralleelselt**, varsti **Tühista** | Kõik read on halli staatusega **Tühistatud**, töö peatub vähem kui sekundiga, **Tühista** tuhmub, olek "Tühistatud." | ☑ |
+| V8 | **Tühistamine järjestikku:** töömaht 50, **Järjestikku**, varsti **Tühista** | Käimasoleva objekti rida: "Tühistati töö ajal.", järgmiste ridade tekst: "Tühistati enne alustamist." (neid ei alustatud) | ☑ |
+| V9 | **Võrdle mõlemat** ja tühista järjestikuse režiimi ajal | Paralleelne režiim ei alga, paralleelset raportit pole, võrdluskaart näitab vihjet | ☑ |
+| V10 | Pärast tühistamist käivita uuesti töömahuga 5 | Uus käivitus töötab tavaliselt ja lõpeb olekuga "Valmis." | ☑ |
+| V11 | **Hetktõmmis:** vali ainult Sädel, käivita ja jäta tulemus meelde. Tee Sädelile kaks korda **Hullumeelne tegevus!** (aku langeb), käivita uuesti | Uus tulemus on teine (väiksem kaetus), sest uus hetktõmmis on muutunud andmetest | ☑ |
+| V12 | Käivita sama sisend kaks korda (sama valik ja töömaht) | Tulemuste tekstid ja numbrid on iga kord täpselt samad (deterministlik), ainult kestused erinevad | ☑ |
+| V13 | Vähenda akent alla ~860 px | Märkeruudud, nupud ja raporti read murduvad uuele reale, midagi ei lõigata ära | ☑ |
 
 ## 15. Git-koostöö
 
@@ -598,14 +635,14 @@ Lehel **Arvutused** (tulemused lehel **Raportid**). Kui pole öeldud teisiti, on
 
 **Review checklist (mida kontrollisin):**
 
-* [ * ] Uus klass pärib `Robot`-ist ja kasutab `override`-i (`CrazyAction`, vähemalt üks `ReactTo...`).
-* [ * ] Uus `RobotKind` väärtus ja üks `Register`-rida `RobotWorld`-is.
-* [ * ] Tüübil on oma hoidla ja ta ei satu teise hoidlasse.
-* [ * ] Vähemalt üks reaktsioon jätab logikirje ja muudab reageerija olekut.
-* [ * ] Tegija ei reageeri iseendale ja eemaldatud robot enam ei reageeri.
-* [ * ] Domeeniloogika on Core-projektis, kood-taga ja View ei sisalda äriloogikat.
-* [ * ] Tekstid on ressurssides, vigane sisend ei muuda olekut.
-* [ * ] Lahendus kompileerub ja rakendus käivitub puhtalt clone'itud repost.
+* [ ] Uus klass pärib `Robot`-ist ja kasutab `override`-i (`CrazyAction`, vähemalt üks `ReactTo...`).
+* [ ] Uus `RobotKind` väärtus ja üks `Register`-rida `RobotWorld`-is.
+* [ ] Tüübil on oma hoidla ja ta ei satu teise hoidlasse.
+* [ ] Vähemalt üks reaktsioon jätab logikirje ja muudab reageerija olekut.
+* [ ] Tegija ei reageeri iseendale ja eemaldatud robot enam ei reageeri.
+* [ ] Domeeniloogika on Core-projektis, kood-taga ja View ei sisalda äriloogikat.
+* [ ] Tekstid on ressurssides, vigane sisend ei muuda olekut.
+* [ ] Lahendus kompileerub ja rakendus käivitub puhtalt clone'itud repost.
 
 ### Vol.3
 
@@ -628,7 +665,7 @@ Moodle'isse lisatud andmed:
 
 | | |
 |---|---|
-| Git-repo link | `https://github.com/mkotkov/RobotPlanet.git` |
+| Git-repo link | `<REPOSITORY-URL>` |
 | Vol.1 lähte-commit | `<HASH>` (tag `vol1-final`) |
 | Vol.2 haru | `vol2/events-linq-mvvm` |
 | Vol.2 lõpp-commit | `<HASH>` |

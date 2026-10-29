@@ -736,7 +736,7 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Haldamine.
+        ///   Looks up a localized string similar to Haldus.
         /// </summary>
         public static string Tab_Manage {
             get {
@@ -745,7 +745,7 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Aruanded.
+        ///   Looks up a localized string similar to Raportid.
         /// </summary>
         public static string Tab_Reports {
             get {

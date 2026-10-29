@@ -174,13 +174,13 @@ namespace RobotPlanet.Wpf.ViewModels
         public string NewBattery
         {
             get => _newBattery;
-            set => SetProperty(ref _newBattery, value ?? "");
+            set { if (SetProperty(ref _newBattery, value ?? "")) AddCommand.RaiseCanExecuteChanged(); }
         }
 
         public string NewIntegrity
         {
             get => _newIntegrity;
-            set => SetProperty(ref _newIntegrity, value ?? "");
+            set { if (SetProperty(ref _newIntegrity, value ?? "")) AddCommand.RaiseCanExecuteChanged(); }
         }
 
         public string ChargeAmount
