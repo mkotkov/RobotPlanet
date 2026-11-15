@@ -354,6 +354,17 @@ namespace RobotPlanet.Wpf.ViewModels
         /// <summary>Keeps the list of choosable objects in step with the world (robots added or removed).</summary>
         private void OnRobotsChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
+            // The whole world was replaced (a saved world was loaded): build the list again.
+            // The new robots follow as single Add events, so after a Reset the list is empty.
+            if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                _targets.Clear();
+                foreach (Robot robot in _world.Robots)
+                    _targets.Add(new CalculationTarget(robot, OnSelectionChanged));
+                RaiseCommandsChanged();
+                return;
+            }
+
             if (e.OldItems != null)
             {
                 foreach (Robot removed in e.OldItems.OfType<Robot>())

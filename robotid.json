@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "robots": [
+    {
+      "id": 1,
+      "type": "Cleaner",
+      "name": "Sädel",
+      "battery": 88,
+      "integrity": 100,
+      "group": "Alfa"
+    },
+    {
+      "id": 2,
+      "type": "Cleaner",
+      "name": "Läige",
+      "battery": 88,
+      "integrity": 100,
+      "group": "Alfa"
+    },
+    {
+      "id": 3,
+      "type": "Explorer",
+      "name": "Kosmos",
+      "battery": 80,
+      "integrity": 100,
+      "group": "Alfa"
+    },
+    {
+      "id": 4,
+      "type": "Repair",
+      "name": "Mutrivõti",
+      "battery": 100,
+      "integrity": 60,
+      "group": "Alfa"
+    },
+    {
+      "id": 5,
+      "type": "Guard",
+      "name": "Vaht",
+      "battery": 100,
+      "integrity": 100,
+      "group": "Alfa"
+    },
+    {
+      "id": 6,
+      "type": "Jester",
+      "name": "Naljahammas",
+      "battery": 90,
+      "integrity": 100,
+      "group": "Alfa"
+    },
+    {
+      "id": 7,
+      "type": "Delivery",
+      "name": "Tarnija",
+      "battery": 67,
+      "integrity": 89,
+      "group": "Alfa"
+    },
+    {
+      "id": 8,
+      "type": "Inspector",
+      "name": "Inspektor 3000",
+      "battery": 78,
+      "integrity": 56,
+      "group": "Alfa"
+    },
+    {
+      "id": 9,
+      "type": "Rescue",
+      "name": "Superpäästja",
+      "battery": 67,
+      "integrity": 52,
+      "group": "Alfa"
+    },
+    {
+      "id": 10,
+      "type": "Cleaner",
+      "name": "ansdklasd",
+      "battery": 25,
+      "integrity": 60,
+      "group": "Alfa"
+    }
+  ]
+}

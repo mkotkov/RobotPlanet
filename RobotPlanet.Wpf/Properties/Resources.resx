@@ -123,6 +123,9 @@
   <data name="Btn_Cancel" xml:space="preserve">
     <value>Tühista</value>
   </data>
+  <data name="Btn_ChangeGroup" xml:space="preserve">
+    <value>Muuda rühma</value>
+  </data>
   <data name="Btn_Charge" xml:space="preserve">
     <value>Lae</value>
   </data>
@@ -134,6 +137,9 @@
   </data>
   <data name="Btn_Crazy" xml:space="preserve">
     <value>Hullumeelne tegevus!</value>
+  </data>
+  <data name="Btn_Load" xml:space="preserve">
+    <value>Laadi</value>
   </data>
   <data name="Btn_Remove" xml:space="preserve">
     <value>Eemalda valitud</value>
@@ -149,6 +155,9 @@
   </data>
   <data name="Btn_RunSequential" xml:space="preserve">
     <value>Järjestikku</value>
+  </data>
+  <data name="Btn_Save" xml:space="preserve">
+    <value>Salvesta</value>
   </data>
   <data name="Btn_Scan" xml:space="preserve">
     <value>Skanni</value>
@@ -200,6 +209,15 @@
     <value>Kiirenemine: ×{0}</value>
     <comment>Compare</comment>
   </data>
+  <data name="Dialog_DefaultName" xml:space="preserve">
+    <value>robotid</value>
+  </data>
+  <data name="Dialog_OpenTitle" xml:space="preserve">
+    <value>Laadi maailm</value>
+  </data>
+  <data name="Dialog_SaveTitle" xml:space="preserve">
+    <value>Salvesta maailm</value>
+  </data>
   <data name="Err_Amount_NotNumber" xml:space="preserve">
     <value>Kogus peab olema täisarv.</value>
   </data>
@@ -217,6 +235,18 @@
   </data>
   <data name="Err_No_Type" xml:space="preserve">
     <value>Vali roboti tüüp.</value>
+  </data>
+  <data name="File_Loaded" xml:space="preserve">
+    <value>{0} Allikas: {1}</value>
+  </data>
+  <data name="File_Saved" xml:space="preserve">
+    <value>Salvestatud: {0} tegelast ({1}).</value>
+  </data>
+  <data name="File_Unexpected" xml:space="preserve">
+    <value>Ootamatu viga: {0}</value>
+  </data>
+  <data name="File_WorldKept" xml:space="preserve">
+    <value>Senine maailm jäi muutmata.</value>
   </data>
   <data name="Group_Actions" xml:space="preserve">
     <value>Tegevused</value>
@@ -266,6 +296,9 @@
   </data>
   <data name="Lbl_Descending" xml:space="preserve">
     <value>Kahanevalt</value>
+  </data>
+  <data name="Lbl_Group" xml:space="preserve">
+    <value>Rühm</value>
   </data>
   <data name="Lbl_Id" xml:space="preserve">
     <value>ID</value>
@@ -372,6 +405,9 @@
   <data name="Status_Success" xml:space="preserve">
     <value>Õnnestus</value>
     <comment>Status</comment>
+  </data>
+  <data name="Storage_Label" xml:space="preserve">
+    <value>Salvestusteenus: {0}</value>
   </data>
   <data name="Tab_Compute" xml:space="preserve">
     <value>Arvutused</value>

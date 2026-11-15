@@ -11,6 +11,7 @@ namespace RobotPlanet.Core.entities
 
         private int _battery;
         private int _integrity;
+        private RobotGroup _group = RobotGroup.Alfa;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -39,6 +40,17 @@ namespace RobotPlanet.Core.entities
                 _integrity = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsOperational));
+            }
+        }
+
+        public RobotGroup Group
+        {
+            get => _group;
+            private set
+            {
+                if (_group == value) return;
+                _group = value;
+                OnPropertyChanged();
             }
         }
 
@@ -132,5 +144,17 @@ namespace RobotPlanet.Core.entities
 
         public virtual string ReactToCrazyAction(Robot actor) =>
             string.Format(Resources.React_Crazy_Default, Name, actor.Name);
+
+        // <summary>Moves the robot to another group. An unknown group changes nothing.</summary>
+        public string ChangeGroup(RobotGroup group)
+        {
+            if (!Enum.IsDefined(group))
+                return Resources.Robot_Group_Invalid;
+            if (group == Group)
+                return string.Format(Resources.Robot_Group_Same, Name, group);
+
+            Group = group;
+            return string.Format(Resources.Robot_Group_Changed, Name, group);
+        }
     }
 }

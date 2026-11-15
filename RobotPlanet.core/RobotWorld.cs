@@ -11,7 +11,7 @@ namespace RobotPlanet.Core
     /// The world owns ONE repository per robot type and forwards all reactions
     /// through a single event, so the ViewModel only has to subscribe once.
     /// </summary>
-    public class RobotWorld
+    public partial class RobotWorld
     {
         private readonly Dictionary<RobotKind, IRobotType> _types = new();
         private readonly ObservableCollection<Robot> _robots = new();
@@ -139,7 +139,7 @@ namespace RobotPlanet.Core
         private IRobotType? FindType(Robot robot) => _types.Values.FirstOrDefault(t => t.Owns(robot));
 
         // ---- Hides the generic parameter so different Repository<T> can live in one dictionary ----
-        private interface IRobotType
+        private partial interface IRobotType
         {
             bool Owns(Robot robot);
             Robot CreateAndAdd(int id, string name, int battery, int integrity);
@@ -147,7 +147,7 @@ namespace RobotPlanet.Core
             string TriggerCrazyAction(Robot robot);
         }
 
-        private sealed class RobotType<T> : IRobotType where T : Robot
+        private sealed partial class RobotType<T> : IRobotType where T : Robot
         {
             private readonly Func<int, string, int, int, T> _factory;
 
