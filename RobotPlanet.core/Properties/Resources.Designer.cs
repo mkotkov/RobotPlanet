@@ -628,6 +628,96 @@ namespace RobotPlanet.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maailm laaditud: {0} tegelast..
+        /// </summary>
+        internal static string Load_Done {
+            get {
+                return ResourceManager.GetString("Load_Done", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tegelane nr {0}: ID {1} esineb failis mitu korda..
+        /// </summary>
+        internal static string Load_DuplicateId {
+            get {
+                return ResourceManager.GetString("Load_DuplicateId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tegelane nr {0}: väli {1} puudub..
+        /// </summary>
+        internal static string Load_FieldMissing {
+            get {
+                return ResourceManager.GetString("Load_FieldMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tegelane nr {0}: {1}.
+        /// </summary>
+        internal static string Load_InvalidRobot {
+            get {
+                return ResourceManager.GetString("Load_InvalidRobot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fail ei sisalda maailma andmeid..
+        /// </summary>
+        internal static string Load_NoData {
+            get {
+                return ResourceManager.GetString("Load_NoData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failis puudub tegelaste loend..
+        /// </summary>
+        internal static string Load_NoRobots {
+            get {
+                return ResourceManager.GetString("Load_NoRobots", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tegelane nr {0} on tühi..
+        /// </summary>
+        internal static string Load_RobotEmpty {
+            get {
+                return ResourceManager.GetString("Load_RobotEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tegelane nr {0}: tundmatu rühm {1}..
+        /// </summary>
+        internal static string Load_UnknownGroup {
+            get {
+                return ResourceManager.GetString("Load_UnknownGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tegelane nr {0}: tundmatu tüüp {1}..
+        /// </summary>
+        internal static string Load_UnknownType {
+            get {
+                return ResourceManager.GetString("Load_UnknownType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Faili versioon {0} ei ole toetatud (toetatud versioon: {1})..
+        /// </summary>
+        internal static string Load_Version {
+            get {
+                return ResourceManager.GetString("Load_Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}: vigane laadimiskogus ({1}), olek jäi muutmata..
         /// </summary>
         internal static string Msg_Charge_Invalid {
@@ -871,6 +961,33 @@ namespace RobotPlanet.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} kuulub nüüd rühma {1}..
+        /// </summary>
+        internal static string Robot_Group_Changed {
+            get {
+                return ResourceManager.GetString("Robot_Group_Changed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tundmatu rühm..
+        /// </summary>
+        internal static string Robot_Group_Invalid {
+            get {
+                return ResourceManager.GetString("Robot_Group_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} on juba rühmas {1}..
+        /// </summary>
+        internal static string Robot_Group_Same {
+            get {
+                return ResourceManager.GetString("Robot_Group_Same", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} on juba ideaalses korras, remonti pole vaja..
         /// </summary>
         internal static string Robot_Repair_AlreadyPerfect {
@@ -903,6 +1020,87 @@ namespace RobotPlanet.Core.Properties {
         internal static string Robot_ToString {
             get {
                 return ResourceManager.GetString("Robot_ToString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fail ei ole korrektne {0}-fail: {1}.
+        /// </summary>
+        internal static string Storage_BadFormat {
+            get {
+                return ResourceManager.GetString("Storage_BadFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fail on tühi..
+        /// </summary>
+        internal static string Storage_EmptyFile {
+            get {
+                return ResourceManager.GetString("Storage_EmptyFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to JSON (.json)|.json|XML (.xml)|.xml.
+        /// </summary>
+        internal static string Storage_FileFilter {
+            get {
+                return ResourceManager.GetString("Storage_FileFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Faili ei leitud: {0}.
+        /// </summary>
+        internal static string Storage_FileNotFound {
+            get {
+                return ResourceManager.GetString("Storage_FileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to sisu puudub.
+        /// </summary>
+        internal static string Storage_NoContent {
+            get {
+                return ResourceManager.GetString("Storage_NoContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Faili tee puudub..
+        /// </summary>
+        internal static string Storage_PathEmpty {
+            get {
+                return ResourceManager.GetString("Storage_PathEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Faili lugemine ebaõnnestus ({0}): {1}.
+        /// </summary>
+        internal static string Storage_ReadFailed {
+            get {
+                return ResourceManager.GetString("Storage_ReadFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toetatud on ainult .json ja .xml failid..
+        /// </summary>
+        internal static string Storage_UnknownExtension {
+            get {
+                return ResourceManager.GetString("Storage_UnknownExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Faili salvestamine ebaõnnestus ({0}): {1}.
+        /// </summary>
+        internal static string Storage_WriteFailed {
+            get {
+                return ResourceManager.GetString("Storage_WriteFailed", resourceCulture);
             }
         }
         

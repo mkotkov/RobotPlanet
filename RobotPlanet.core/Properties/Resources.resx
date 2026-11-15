@@ -529,4 +529,92 @@
     <value>Vali vähemalt üks objekt.</value>
     <comment>Calc</comment>
   </data>
+  <data name="Robot_Group_Changed" xml:space="preserve">
+    <value>{0} kuulub nüüd rühma {1}.</value>
+    <comment>Robot_Group</comment>
+  </data>
+  <data name="Robot_Group_Same" xml:space="preserve">
+    <value>{0} on juba rühmas {1}.</value>
+    <comment>Robot_Group</comment>
+  </data>
+  <data name="Robot_Group_Invalid" xml:space="preserve">
+    <value>Tundmatu rühm.</value>
+    <comment>Robot_Group</comment>
+  </data>
+  <data name="Load_NoData" xml:space="preserve">
+    <value>Fail ei sisalda maailma andmeid.</value>
+    <comment>Load</comment>
+  </data>
+  <data name="Load_Version" xml:space="preserve">
+    <value>Faili versioon {0} ei ole toetatud (toetatud versioon: {1}).</value>
+    <comment>Load</comment>
+  </data>
+  <data name="Load_NoRobots" xml:space="preserve">
+    <value>Failis puudub tegelaste loend.</value>
+    <comment>Load</comment>
+  </data>
+  <data name="Load_RobotEmpty" xml:space="preserve">
+    <value>Tegelane nr {0} on tühi.</value>
+    <comment>Load</comment>
+  </data>
+  <data name="Load_FieldMissing" xml:space="preserve">
+    <value>Tegelane nr {0}: väli {1} puudub.</value>
+    <comment>Load</comment>
+  </data>
+  <data name="Load_UnknownType" xml:space="preserve">
+    <value>Tegelane nr {0}: tundmatu tüüp {1}.</value>
+    <comment>Load</comment>
+  </data>
+  <data name="Load_UnknownGroup" xml:space="preserve">
+    <value>Tegelane nr {0}: tundmatu rühm {1}.</value>
+    <comment>Load</comment>
+  </data>
+  <data name="Load_InvalidRobot" xml:space="preserve">
+    <value>Tegelane nr {0}: {1}</value>
+    <comment>Load</comment>
+  </data>
+  <data name="Load_DuplicateId" xml:space="preserve">
+    <value>Tegelane nr {0}: ID {1} esineb failis mitu korda.</value>
+    <comment>Load</comment>
+  </data>
+  <data name="Load_Done" xml:space="preserve">
+    <value>Maailm laaditud: {0} tegelast.</value>
+    <comment>Load</comment>
+  </data>
+  <data name="Storage_PathEmpty" xml:space="preserve">
+    <value>Faili tee puudub.</value>
+    <comment>Storage</comment>
+  </data>
+  <data name="Storage_FileNotFound" xml:space="preserve">
+    <value>Faili ei leitud: {0}</value>
+    <comment>Storage</comment>
+  </data>
+  <data name="Storage_EmptyFile" xml:space="preserve">
+    <value>Fail on tühi.</value>
+    <comment>Storage</comment>
+  </data>
+  <data name="Storage_NoContent" xml:space="preserve">
+    <value>sisu puudub</value>
+    <comment>Storage</comment>
+  </data>
+  <data name="Storage_BadFormat" xml:space="preserve">
+    <value>Fail ei ole korrektne {0}-fail: {1}</value>
+    <comment>Storage</comment>
+  </data>
+  <data name="Storage_ReadFailed" xml:space="preserve">
+    <value>Faili lugemine ebaõnnestus ({0}): {1}</value>
+    <comment>Storage</comment>
+  </data>
+  <data name="Storage_WriteFailed" xml:space="preserve">
+    <value>Faili salvestamine ebaõnnestus ({0}): {1}</value>
+    <comment>Storage</comment>
+  </data>
+  <data name="Storage_UnknownExtension" xml:space="preserve">
+    <value>Toetatud on ainult .json ja .xml failid.</value>
+    <comment>Storage</comment>
+  </data>
+  <data name="Storage_FileFilter" xml:space="preserve">
+    <value>JSON (.json)|.json|XML (.xml)|.xml</value>
+    <comment>Storage</comment>
+  </data>
 </root>
