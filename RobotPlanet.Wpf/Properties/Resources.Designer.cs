@@ -763,6 +763,33 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Seadistus.
+        /// </summary>
+        public static string Settings_Title {
+            get {
+                return ResourceManager.GetString("Settings_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tundmatu salvestusviis “{0}”. Lubatud on File ja LocalDb, kasutatakse File..
+        /// </summary>
+        public static string Settings_UnknownStorage {
+            get {
+                return ResourceManager.GetString("Settings_UnknownStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Seadistusfaili {0} ei saa lugeda: {1} Kasutatakse vaikeseadeid..
+        /// </summary>
+        public static string Settings_Unreadable {
+            get {
+                return ResourceManager.GetString("Settings_Unreadable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Aku.
         /// </summary>
         public static string Sort_Battery {

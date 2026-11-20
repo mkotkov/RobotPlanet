@@ -617,4 +617,20 @@
     <value>JSON (.json)|.json|XML (.xml)|.xml</value>
     <comment>Storage</comment>
   </data>
+  <data name="Db_NoConnectionString" xml:space="preserve">
+    <value>Andmebaasi ühendusstring puudub.</value>
+    <comment>Db</comment>
+  </data>
+  <data name="Db_Failed" xml:space="preserve">
+    <value>Andmebaasi viga: {0} Kontrolli, et LocalDB on paigaldatud ja ühendus on õigesti seadistatud (vt README).</value>
+    <comment>Db</comment>
+  </data>
+  <data name="Db_NoWorld" xml:space="preserve">
+    <value>Andmebaasis ei ole veel salvestatud maailma.</value>
+    <comment>Db</comment>
+  </data>
+  <data name="Db_BadName" xml:space="preserve">
+    <value>Andmebaasi nimi {0} ei sobi: lubatud on tähed, numbrid ja alakriips (kuni 64 märki), nimi ei tohi olla master.</value>
+    <comment>Db</comment>
+  </data>
 </root>

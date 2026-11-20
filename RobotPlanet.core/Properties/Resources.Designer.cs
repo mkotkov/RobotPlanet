@@ -241,6 +241,42 @@ namespace RobotPlanet.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Andmebaasi nimi {0} ei sobi: lubatud on tähed, numbrid ja alakriips (kuni 64 märki), nimi ei tohi olla master..
+        /// </summary>
+        internal static string Db_BadName {
+            get {
+                return ResourceManager.GetString("Db_BadName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Andmebaasi viga: {0} Kontrolli, et LocalDB on paigaldatud ja ühendus on õigesti seadistatud (vt README)..
+        /// </summary>
+        internal static string Db_Failed {
+            get {
+                return ResourceManager.GetString("Db_Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Andmebaasi ühendusstring puudub..
+        /// </summary>
+        internal static string Db_NoConnectionString {
+            get {
+                return ResourceManager.GetString("Db_NoConnectionString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Andmebaasis ei ole veel salvestatud maailma..
+        /// </summary>
+        internal static string Db_NoWorld {
+            get {
+                return ResourceManager.GetString("Db_NoWorld", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} laeb, et järgmised pakid õigesse kohta viia. Aku: {1}%..
         /// </summary>
         internal static string Delivery_Charge_Ok {

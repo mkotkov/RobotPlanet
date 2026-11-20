@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RobotPlanet.Wpf": {
+      "commandName": "Project",
+      "commandLineArgs": "--storage=LocalDb"
+    }
+  }
+}

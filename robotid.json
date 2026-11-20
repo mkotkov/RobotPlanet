@@ -5,7 +5,7 @@
       "id": 1,
       "type": "Cleaner",
       "name": "Sädel",
-      "battery": 88,
+      "battery": 100,
       "integrity": 100,
       "group": "Alfa"
     },
@@ -13,7 +13,7 @@
       "id": 2,
       "type": "Cleaner",
       "name": "Läige",
-      "battery": 88,
+      "battery": 100,
       "integrity": 100,
       "group": "Alfa"
     },
@@ -71,14 +71,6 @@
       "name": "Superpäästja",
       "battery": 67,
       "integrity": 52,
-      "group": "Alfa"
-    },
-    {
-      "id": 10,
-      "type": "Cleaner",
-      "name": "ansdklasd",
-      "battery": 25,
-      "integrity": 60,
       "group": "Alfa"
     }
   ]

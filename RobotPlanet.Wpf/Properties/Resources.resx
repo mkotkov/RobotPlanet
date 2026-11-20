@@ -382,6 +382,18 @@
     <value>Töös: {0} ({1}/{2})</value>
     <comment>Run</comment>
   </data>
+  <data name="Settings_Title" xml:space="preserve">
+    <value>Seadistus</value>
+    <comment>Settings</comment>
+  </data>
+  <data name="Settings_UnknownStorage" xml:space="preserve">
+    <value>Tundmatu salvestusviis “{0}”. Lubatud on File ja LocalDb, kasutatakse File.</value>
+    <comment>Settings</comment>
+  </data>
+  <data name="Settings_Unreadable" xml:space="preserve">
+    <value>Seadistusfaili {0} ei saa lugeda: {1} Kasutatakse vaikeseadeid.</value>
+    <comment>Settings</comment>
+  </data>
   <data name="Sort_Battery" xml:space="preserve">
     <value>Aku</value>
   </data>
