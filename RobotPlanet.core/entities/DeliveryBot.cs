@@ -1,4 +1,5 @@
-﻿using RobotPlanet.Core.entities;
+using RobotPlanet.Core.computation;
+using RobotPlanet.Core.entities;
 using RobotPlanet.Core.@interface;
 using RobotPlanet.Core.Properties;
 
@@ -6,6 +7,8 @@ namespace RobotPlanet.Core.@interface
 {
     public class DeliveryBot : Robot, IChargeable
     {
+        private DeliveryBot() { }
+
         public DeliveryBot(int id, string name, int battery = MaxLevel, int integrity = MaxLevel)
             : base(id, name, battery, integrity) { }
 
@@ -31,7 +34,7 @@ namespace RobotPlanet.Core.@interface
         {
             if (!TryAddBattery(amount))
                 return string.Format(Resources.Msg_Charge_Invalid, Name, amount);
-            return string.Format(Resources.Repair_Charge_Ok, Name, Battery);
+            return string.Format(Resources.Delivery_Charge_Ok, Name, Battery);
         }
 
         public override string ReactToCrazyAction(Robot actor)

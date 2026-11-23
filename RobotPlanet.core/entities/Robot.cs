@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using RobotPlanet.Core.Properties;
 using RobotPlanet.Core.computation;
@@ -15,8 +15,8 @@ namespace RobotPlanet.Core.entities
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public int Id { get; }
-        public string Name { get; }
+        public int Id { get; private set; }
+        public RobotName Name { get; private set; }
         public string Kind => GetType().Name;
 
         public int Battery
@@ -56,15 +56,16 @@ namespace RobotPlanet.Core.entities
 
         public bool IsOperational => Battery > 0 && Integrity > 0;
 
-        protected Robot(int id, string name, int battery = MaxLevel, int integrity = MaxLevel)
+        // Parameterless constructor required by EF Core for materializing entities from the database.
+        protected Robot()
+        {
+        }
+
+        protected Robot(int id, RobotName name, int battery = MaxLevel, int integrity = MaxLevel)
         {
             if (id < 0 || id > 999999)
                 throw new ArgumentException(Resources.Err_Invalid_id, nameof(id));
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException(Resources.Err_Invalid_name, nameof(name));
-
-            name = name.Trim();
-            if (name.Length < 2 || name.Length > 20)
+            if (string.IsNullOrWhiteSpace(name.Value))
                 throw new ArgumentException(Resources.Err_Invalid_name, nameof(name));
 
             if (battery < 0 || battery > MaxLevel)
@@ -76,6 +77,11 @@ namespace RobotPlanet.Core.entities
             Name = name;
             Battery = battery;
             Integrity = integrity;
+        }
+
+        protected Robot(int id, string name, int battery = MaxLevel, int integrity = MaxLevel)
+            : this(id, RobotName.Create(name), battery, integrity)
+        {
         }
 
         // Tavaline tegevus: virtual
@@ -135,7 +141,6 @@ namespace RobotPlanet.Core.entities
         private void OnPropertyChanged([CallerMemberName] string? name = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-
         public virtual string ReactToAdded(Robot newcomer) =>
             string.Format(Resources.React_Added_Default, Name, newcomer.Name);
 
@@ -145,7 +150,7 @@ namespace RobotPlanet.Core.entities
         public virtual string ReactToCrazyAction(Robot actor) =>
             string.Format(Resources.React_Crazy_Default, Name, actor.Name);
 
-        // <summary>Moves the robot to another group. An unknown group changes nothing.</summary>
+        /// <summary>Moves the robot to another group. An unknown group changes nothing.</summary>
         public string ChangeGroup(RobotGroup group)
         {
             if (!Enum.IsDefined(group))
