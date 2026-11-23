@@ -11,7 +11,7 @@ namespace RobotPlanet.Core.repository
     /// A repository for ONE robot type. Robots inside it react to each other's events.
     /// Robots in other repositories never hear about them.
     /// </summary>
-    public class Repository<T> : IRepository<T>, IRobotRepository where T : Robot
+    public partial class Repository<T> : IRepository<T>, IRobotRepository where T : Robot
     {
         private readonly ObservableCollection<T> _items = new();
         private readonly Dictionary<T, Subscription> _subscriptions = new();

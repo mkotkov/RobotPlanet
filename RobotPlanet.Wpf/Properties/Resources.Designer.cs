@@ -79,6 +79,15 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Muuda rühma.
+        /// </summary>
+        public static string Btn_ChangeGroup {
+            get {
+                return ResourceManager.GetString("Btn_ChangeGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lae.
         /// </summary>
         public static string Btn_Charge {
@@ -111,6 +120,15 @@ namespace RobotPlanet.Wpf.Properties {
         public static string Btn_Crazy {
             get {
                 return ResourceManager.GetString("Btn_Crazy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Laadi.
+        /// </summary>
+        public static string Btn_Load {
+            get {
+                return ResourceManager.GetString("Btn_Load", resourceCulture);
             }
         }
         
@@ -156,6 +174,15 @@ namespace RobotPlanet.Wpf.Properties {
         public static string Btn_RunSequential {
             get {
                 return ResourceManager.GetString("Btn_RunSequential", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Salvesta.
+        /// </summary>
+        public static string Btn_Save {
+            get {
+                return ResourceManager.GetString("Btn_Save", resourceCulture);
             }
         }
         
@@ -286,6 +313,33 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to robotid.
+        /// </summary>
+        public static string Dialog_DefaultName {
+            get {
+                return ResourceManager.GetString("Dialog_DefaultName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Laadi maailm.
+        /// </summary>
+        public static string Dialog_OpenTitle {
+            get {
+                return ResourceManager.GetString("Dialog_OpenTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Salvesta maailm.
+        /// </summary>
+        public static string Dialog_SaveTitle {
+            get {
+                return ResourceManager.GetString("Dialog_SaveTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Kogus peab olema täisarv..
         /// </summary>
         public static string Err_Amount_NotNumber {
@@ -336,6 +390,42 @@ namespace RobotPlanet.Wpf.Properties {
         public static string Err_No_Type {
             get {
                 return ResourceManager.GetString("Err_No_Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Allikas: {1}.
+        /// </summary>
+        public static string File_Loaded {
+            get {
+                return ResourceManager.GetString("File_Loaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Salvestatud: {0} tegelast ({1})..
+        /// </summary>
+        public static string File_Saved {
+            get {
+                return ResourceManager.GetString("File_Saved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ootamatu viga: {0}.
+        /// </summary>
+        public static string File_Unexpected {
+            get {
+                return ResourceManager.GetString("File_Unexpected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Senine maailm jäi muutmata..
+        /// </summary>
+        public static string File_WorldKept {
+            get {
+                return ResourceManager.GetString("File_WorldKept", resourceCulture);
             }
         }
         
@@ -453,6 +543,15 @@ namespace RobotPlanet.Wpf.Properties {
         public static string Lbl_Descending {
             get {
                 return ResourceManager.GetString("Lbl_Descending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rühm.
+        /// </summary>
+        public static string Lbl_Group {
+            get {
+                return ResourceManager.GetString("Lbl_Group", resourceCulture);
             }
         }
         
@@ -664,6 +763,33 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Seadistus.
+        /// </summary>
+        public static string Settings_Title {
+            get {
+                return ResourceManager.GetString("Settings_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tundmatu salvestusviis “{0}”. Lubatud on File ja LocalDb, kasutatakse File..
+        /// </summary>
+        public static string Settings_UnknownStorage {
+            get {
+                return ResourceManager.GetString("Settings_UnknownStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Seadistusfaili {0} ei saa lugeda: {1} Kasutatakse vaikeseadeid..
+        /// </summary>
+        public static string Settings_Unreadable {
+            get {
+                return ResourceManager.GetString("Settings_Unreadable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Aku.
         /// </summary>
         public static string Sort_Battery {
@@ -723,6 +849,15 @@ namespace RobotPlanet.Wpf.Properties {
         public static string Status_Success {
             get {
                 return ResourceManager.GetString("Status_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Salvestusteenus: {0}.
+        /// </summary>
+        public static string Storage_Label {
+            get {
+                return ResourceManager.GetString("Storage_Label", resourceCulture);
             }
         }
         

@@ -13,9 +13,7 @@
         FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="14">
 
     <!-- The View gets everything from the ViewModel. No logic lives in MainWindow.xaml.cs. -->
-    <Window.DataContext>
-        <vm:MainViewModel/>
-    </Window.DataContext>
+    <!-- The DataContext is the MainViewModel. It is given to the window by dependency injection (App.xaml.cs, MainWindow.xaml.cs). -->
 
     <Window.Resources>
         <!-- Colours -->
@@ -569,8 +567,19 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="{x:Static p:Resources.Window_Title}"
-                   FontSize="28" FontWeight="SemiBold" TextWrapping="Wrap" Margin="4,0,0,14"/>
+        <!-- Title and file buttons. The storage text shows which IWorldStorage implementation DI gave to the ViewModel. -->
+        <DockPanel Grid.Row="0" Margin="4,0,0,14" LastChildFill="True">
+            <WrapPanel DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="12,0,0,0">
+                <TextBlock Style="{StaticResource Cap}" VerticalAlignment="Center" Margin="0,0,14,0"
+                           Text="{Binding StorageText}"/>
+                <Button Content="{x:Static p:Resources.Btn_Save}" Command="{Binding SaveCommand}"
+                        Padding="20,8" Margin="0,0,8,0"/>
+                <Button Content="{x:Static p:Resources.Btn_Load}" Command="{Binding LoadCommand}"
+                        Padding="20,8"/>
+            </WrapPanel>
+            <TextBlock Text="{x:Static p:Resources.Window_Title}" FontSize="28" FontWeight="SemiBold"
+                       TextWrapping="Wrap" VerticalAlignment="Center"/>
+        </DockPanel>
 
         <TabControl Grid.Row="1">
 
@@ -691,6 +700,9 @@
                                         <TextBlock Text="{Binding SelectedRobot.Name, Mode=OneWay}" FontSize="22"
                                                                    FontWeight="Bold" TextWrapping="Wrap"/>
                                         <TextBlock Style="{StaticResource Cap}" Text="{Binding SelectedRobot.Kind, Mode=OneWay}"/>
+                                        <TextBlock Style="{StaticResource Cap}">
+                                            <Run Text="{x:Static p:Resources.Lbl_Group}"/><Run Text=": "/><Run Text="{Binding SelectedRobot.Group, Mode=OneWay}"/>
+                                        </TextBlock>
 
                                         <UniformGrid Columns="2" Margin="0,16,0,0">
                                             <StackPanel Margin="0,0,10,0">
@@ -745,6 +757,15 @@
                                                                 Command="{Binding RepairCommand}" Padding="20,8" Margin="8,2,2,2"/>
                                         <ComboBox Margin="2,3" ItemsSource="{Binding AllRobots}"
                                                                   SelectedItem="{Binding RepairTarget}"/>
+                                    </DockPanel>
+
+                                    <TextBlock Style="{StaticResource Cap}" Text="{x:Static p:Resources.Lbl_Group}"
+                                               TextWrapping="Wrap" Margin="4,16,2,4"/>
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Content="{x:Static p:Resources.Btn_ChangeGroup}"
+                                                Command="{Binding ChangeGroupCommand}" Padding="20,8" Margin="8,2,2,2"/>
+                                        <ComboBox Margin="2,3" ItemsSource="{Binding Groups}"
+                                                  SelectedItem="{Binding SelectedGroup}"/>
                                     </DockPanel>
                                 </StackPanel>
                             </GroupBox>

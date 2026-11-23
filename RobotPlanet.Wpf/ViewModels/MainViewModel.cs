@@ -2,7 +2,9 @@ using RobotPlanet.Core;
 using RobotPlanet.Core.entities;
 using RobotPlanet.Core.events;
 using RobotPlanet.Core.@interface;
+using RobotPlanet.Core.storage;
 using RobotPlanet.Wpf.Properties;
+using RobotPlanet.Wpf.Services;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Metrics;
 
@@ -19,6 +21,11 @@ namespace RobotPlanet.Wpf.ViewModels
         private readonly ObservableCollection<GroupSummary> _summary = new();
         private readonly ObservableCollection<string> _log = new();
         private readonly List<string> _pendingReactions = new();
+        private readonly IWorldStorage _storage;
+        private readonly IFileDialogService _dialogs;
+
+        // A database has no file, so a storage that is not file based gets this fixed location.
+        private const string DatabaseLocation = "world";
 
         private RepositoryItem? _selectedRepository;
         private Robot? _selectedRobot;
@@ -32,14 +39,19 @@ namespace RobotPlanet.Wpf.ViewModels
         private string _newBattery = "100";
         private string _newIntegrity = "100";
         private string _chargeAmount = "30";
+        private RobotGroup _selectedGroup = RobotGroup.Alfa;
+        private bool _isBusy;
 
-        public MainViewModel() : this(CreateDemoWorld())
-        {
-        }
-
-        public MainViewModel(RobotWorld world)
+        /// <summary>
+        /// Everything the ViewModel needs comes in through the constructor (dependency injection, see App.xaml.cs).
+        /// It only knows the IWorldStorage interface: which implementation it is was decided when the application started.
+        /// </summary>
+        public MainViewModel(RobotWorld world, IWorldStorage storage, IFileDialogService dialogs)
         {
             _world = world ?? throw new ArgumentNullException(nameof(world));
+            _storage = storage ?? throw new ArgumentNullException(nameof(storage));
+            _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
+            StorageText = string.Format(Resources.Storage_Label, _storage.GetType().Name);
             
             Repositories = new ReadOnlyCollection<RepositoryItem>(
                 _world.Repositories.Select(r => new RepositoryItem(r)).ToList());
@@ -48,6 +60,7 @@ namespace RobotPlanet.Wpf.ViewModels
             Log = new ReadOnlyObservableCollection<string>(_log);
             AllRobots = _world.Robots;
             Kinds = Enum.GetValues<RobotKind>();
+            Groups = Enum.GetValues<RobotGroup>();
             Calculation = new CalculationViewModel(_world);
 
             SortOptions = new[]
@@ -69,6 +82,15 @@ namespace RobotPlanet.Wpf.ViewModels
             ScanCommand = new RelayCommand(Scan, () => SelectedRobot is IScan);
             RepairCommand = new RelayCommand(Repair, () => SelectedRobot is IRepair && RepairTarget != null);
             ClearLogCommand = new RelayCommand(() => _log.Clear());
+            ChangeGroupCommand = new RelayCommand(ChangeGroup, () => SelectedRobot != null);
+            SaveCommand = new RelayCommand(() => _ = SaveAsync(), () => !IsBusy);
+            // Loading replaces the robots, so it waits until no calculation is running.
+            LoadCommand = new RelayCommand(() => _ = LoadAsync(), () => !IsBusy && !Calculation.IsRunning);
+            Calculation.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(CalculationViewModel.IsRunning))
+                    LoadCommand.RaiseCanExecuteChanged();
+            };
 
             // The world forwards every reaction of every repository through this one event.
             _world.ReactionOccurred += (_, e) => _pendingReactions.Add(e.Message);
@@ -88,6 +110,31 @@ namespace RobotPlanet.Wpf.ViewModels
         public IReadOnlyList<SortChoice> SortOptions { get; }
         public CalculationViewModel Calculation { get; }
 
+        // ---- Vol.4: group, saving and loading ----
+
+        public IReadOnlyList<RobotGroup> Groups { get; }
+
+        /// <summary>Tells the user which storage implementation the application was started with (chosen by DI).</summary>
+        public string StorageText { get; }
+
+        public RobotGroup SelectedGroup
+        {
+            get => _selectedGroup;
+            set => SetProperty(ref _selectedGroup, value);
+        }
+
+        /// <summary>True while a file is being saved or loaded. The buttons are disabled meanwhile.</summary>
+        public bool IsBusy
+        {
+            get => _isBusy;
+            private set
+            {
+                if (!SetProperty(ref _isBusy, value)) return;
+                SaveCommand.RaiseCanExecuteChanged();
+                LoadCommand.RaiseCanExecuteChanged();
+            }
+        }
+
         public RepositoryItem? SelectedRepository
         {
             get => _selectedRepository;
@@ -105,7 +152,11 @@ namespace RobotPlanet.Wpf.ViewModels
             set
             {
                 if (SetProperty(ref _selectedRobot, value))
+                {
+                    if (value != null)
+                        SelectedGroup = value.Group;
                     RaiseRobotCommandsChanged();
+                }
             }
         }
 
@@ -199,6 +250,9 @@ namespace RobotPlanet.Wpf.ViewModels
         public RelayCommand ScanCommand { get; }
         public RelayCommand RepairCommand { get; }
         public RelayCommand ClearLogCommand { get; }
+        public RelayCommand ChangeGroupCommand { get; }
+        public RelayCommand SaveCommand { get; }
+        public RelayCommand LoadCommand { get; }
 
         private bool CanAdd() =>
             NewKind != null &&
@@ -254,6 +308,102 @@ namespace RobotPlanet.Wpf.ViewModels
 
         private void Repair() => Run(() => _world.Repair(SelectedRobot, RepairTarget));
 
+        // ---------------- Group, saving and loading (Vol.4) ----------------
+
+        private void ChangeGroup() => Run(() => _world.ChangeGroup(SelectedRobot, SelectedGroup));
+
+        /// <summary>
+        /// Saves the world through the injected storage. The ViewModel does not know if it is JSON, XML or a database.
+        /// The file is chosen by the dialog service and all reading and writing happens inside the storage.
+        /// </summary>
+        private async Task SaveAsync()
+        {
+            string? path = AskPath(save: true);
+            if (path == null) return;                       // the user closed the dialog
+
+            // Copy the state NOW, on the UI thread. The storage only gets this plain copy (no robots, no events).
+            WorldDto dto = _world.CreateDto();
+
+            IsBusy = true;
+            try
+            {
+                await _storage.SaveAsync(dto, path);
+                AddLogLines(string.Format(Resources.File_Saved, dto.Robots?.Count ?? 0, path));
+            }
+            catch (WorldStorageException ex)
+            {
+                AddLogLines(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                AddLogLines(string.Format(Resources.File_Unexpected, ex.Message));
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        /// <summary>
+        /// Loads a world. The current world is replaced only AFTER the file was read successfully and checked.
+        /// If anything is wrong the user sees an understandable message and the current world stays as it is.
+        /// </summary>
+        private async Task LoadAsync()
+        {
+            string? path = AskPath(save: false);
+            if (path == null) return;
+
+            IsBusy = true;
+            try
+            {
+                WorldDto dto = await _storage.LoadAsync(path);
+
+                // Back on the UI thread: check the data and replace the world in one step.
+                // The collections tell the UI about the change; on success Run also refreshes the lists, selection and buttons.
+                if (_world.TryLoad(dto, out string message))
+                {
+                    Run(() => string.Format(Resources.File_Loaded, message, path));
+                    NewId = SuggestNextId();
+                }
+                else
+                {
+                    AddLogLines(message, Resources.File_WorldKept);
+                }
+            }
+            catch (WorldStorageException ex)
+            {
+                AddLogLines(ex.Message, Resources.File_WorldKept);
+            }
+            catch (Exception ex)
+            {
+                AddLogLines(string.Format(Resources.File_Unexpected, ex.Message), Resources.File_WorldKept);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        /// <summary>A file based storage needs a file from the dialog; a database storage does not.</summary>
+        private string? AskPath(bool save)
+        {
+            if (_storage is IFileWorldStorage fileStorage)
+            {
+                return save
+                    ? _dialogs.PickSavePath(fileStorage.FileFilter, Resources.Dialog_DefaultName)
+                    : _dialogs.PickOpenPath(fileStorage.FileFilter);
+            }
+
+            return DatabaseLocation;
+        }
+
+        /// <summary>Writes lines to the log in reading order (newest block on top) without running an action.</summary>
+        private void AddLogLines(params string[] messages)
+        {
+            for (int i = messages.Length - 1; i >= 0; i--)
+                _log.Insert(0, $"[{DateTime.Now:HH:mm:ss}] {messages[i]}");
+        }
+
         // ---------------- Log ----------------
 
         /// <summary>
@@ -296,6 +446,7 @@ namespace RobotPlanet.Wpf.ViewModels
             ChargeCommand.RaiseCanExecuteChanged();
             ScanCommand.RaiseCanExecuteChanged();
             RepairCommand.RaiseCanExecuteChanged();
+            ChangeGroupCommand.RaiseCanExecuteChanged();
         }
 
         // ---------------- LINQ ----------------
@@ -374,22 +525,5 @@ namespace RobotPlanet.Wpf.ViewModels
         private string SuggestNextId() =>
             (_world.Robots.Select(r => r.Id).DefaultIfEmpty(0).Max() + 1).ToString();
 
-        private static RobotWorld CreateDemoWorld()
-        {
-            var world = new RobotWorld();
-            world.TryAdd(RobotKind.Cleaner, 1, "Sädel", 100, 100, out _);
-            world.TryAdd(RobotKind.Cleaner, 2, "Läige", 100, 100, out _);
-            world.TryAdd(RobotKind.Explorer, 3, "Kosmos", 80, 100, out _);
-            world.TryAdd(RobotKind.Repair, 4, "Mutrivõti", 100, 60, out _);
-            world.TryAdd(RobotKind.Guard, 5, "Vaht", 100, 100, out _);
-            world.TryAdd(RobotKind.Jester, 6, "Naljahammas", 90, 100, out _);
-
-            // three new robots: Delivery, Inspector, Rescue
-            world.TryAdd(RobotKind.Delivery, 7, "Tarnija", 67, 89, out _);
-            world.TryAdd(RobotKind.Inspector, 8, "Inspektor 3000", 78, 56, out _);
-            world.TryAdd(RobotKind.Rescue, 9, "Superpäästja", 67, 52, out _);
-
-            return world;
-        }
     }
 }

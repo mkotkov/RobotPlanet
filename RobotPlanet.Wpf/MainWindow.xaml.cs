@@ -1,18 +1,21 @@
-﻿using System.Windows;
+﻿using RobotPlanet.Wpf.ViewModels;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace RobotPlanet.Wpf
 {
     /// <summary>
     /// The View has no domain logic and no event handlers for buttons.
-    /// The DataContext (MainViewModel) is set in MainWindow.xaml.
+    /// The DataContext (MainViewModel) is received through the constructor.
     /// The only code here is pure layout.
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        // The ViewModel is created and given by dependency injection (see App.xaml.cs).
+        public MainWindow(MainViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
         }
 
         // On a narrow window the right column of the "Robotid" tab moves below the left one.
