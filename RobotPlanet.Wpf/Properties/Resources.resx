@@ -218,6 +218,26 @@
   <data name="Dialog_SaveTitle" xml:space="preserve">
     <value>Salvesta maailm</value>
   </data>
+  <data name="EfCore_BadVersion" xml:space="preserve">
+    <value>EF Core andmebaasi skeemi versioon {0} ei ole toetatud (toetatud versioon: {1}).</value>
+    <comment>EfCore</comment>
+  </data>
+  <data name="EfCore_Failed" xml:space="preserve">
+    <value>EF Core andmebaasi viga: {0} Kontrolli, et LocalDB on paigaldatud ja migratsioonid on rakendatud.</value>
+    <comment>EfCore</comment>
+  </data>
+  <data name="EfCore_InvalidDto" xml:space="preserve">
+    <value>EF Core salvestamiseks edastatud andmed on puudulikud.</value>
+    <comment>EfCore</comment>
+  </data>
+  <data name="EfCore_NoWorld" xml:space="preserve">
+    <value>EF Core andmebaasis ei ole veel salvestatud maailma.</value>
+    <comment>EfCore</comment>
+  </data>
+  <data name="EfCore_UnknownType" xml:space="preserve">
+    <value>Tundmatu roboti tüüp EF Core salvestamisel: {0}.</value>
+    <comment>EfCore</comment>
+  </data>
   <data name="Err_Amount_NotNumber" xml:space="preserve">
     <value>Kogus peab olema täisarv.</value>
   </data>

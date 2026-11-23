@@ -4,8 +4,7 @@ using RobotPlanet.Core.storage;
 
 namespace RobotPlanet.Core
 {
-    // Vol.4: saving and loading the world. This is a separate file (partial class), so the registrations
-    // in RobotWorld.cs (including the ones added by the partner) stay untouched.
+    // Vol.4 & Vol.5: saving and loading the world (both DTO-based and direct EF Core TPH domain entities).
     public partial class RobotWorld
     {
         // ---- members added to the private nested types declared in RobotWorld.cs ----
@@ -40,12 +39,17 @@ namespace RobotPlanet.Core
             {
                 Id = robot.Id,
                 Type = KindOf(robot).ToString(),
-                Name = robot.Name,
+                Name = robot.Name.Value,
                 Battery = robot.Battery,
                 Integrity = robot.Integrity,
                 Group = robot.Group.ToString()
             }).ToList()
         };
+
+        /// <summary>
+        /// Creates a snapshot list of domain Robot entities on the UI thread (for EF Core TPH persistence).
+        /// </summary>
+        public IReadOnlyList<Robot> CreateRobotsSnapshot() => _robots.ToList();
 
         // ---- loading ----
 
@@ -139,15 +143,7 @@ namespace RobotPlanet.Core
             }
 
             // 2. Everything is valid: replace the world.
-            foreach (IRobotType entry in _types.Values)
-                entry.Clear();
-            _robots.Clear();
-
-            foreach ((IRobotType entry, Robot robot) in built)
-            {
-                entry.Restore(robot);
-                _robots.Add(robot);
-            }
+            ApplyLoadedRobots(built);
 
             message = string.Format(Resources.Load_Done, built.Count);
             return true;
@@ -159,31 +155,121 @@ namespace RobotPlanet.Core
             }
         }
 
-        // ---- group ----
+        /// <summary>
+        /// Replaces the world directly with materialized domain entities (e.g., from EF Core TPH).
+        /// Validates invariants and unique IDs atomically before replacing the current world.
+        /// </summary>
+        public bool TryLoadRobots(IEnumerable<Robot>? robots, out string message)
+        {
+            if (robots == null)
+            {
+                message = Resources.Load_NoRobots;
+                return false;
+            }
+
+            var list = robots.ToList();
+            var built = new List<(IRobotType Entry, Robot Robot)>();
+            var usedIds = new HashSet<int>();
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                int number = i + 1;
+                Robot? robot = list[i];
+                if (robot == null)
+                {
+                    message = string.Format(Resources.Load_RobotEmpty, number);
+                    return false;
+                }
+
+                IRobotType? entry = FindType(robot);
+                if (entry == null)
+                {
+                    message = string.Format(Resources.Load_UnknownType, number, robot.GetType().Name);
+                    return false;
+                }
+
+                if (!Enum.IsDefined(robot.Group))
+                {
+                    message = string.Format(Resources.Load_UnknownGroup, number, robot.Group);
+                    return false;
+                }
+
+                if (robot.Id < 0 || robot.Id > 999999)
+                {
+                    message = string.Format(Resources.Load_InvalidRobot, number, Resources.Err_Invalid_id);
+                    return false;
+                }
+
+                if (string.IsNullOrWhiteSpace(robot.Name.Value) ||
+                    robot.Name.Value.Length < RobotName.MinLength ||
+                    robot.Name.Value.Length > RobotName.MaxLength)
+                {
+                    message = string.Format(Resources.Load_InvalidRobot, number, Resources.Err_Invalid_name);
+                    return false;
+                }
+
+                if (robot.Battery < 0 || robot.Battery > Robot.MaxLevel)
+                {
+                    message = string.Format(Resources.Load_InvalidRobot, number, Resources.Err_Invalid_battery);
+                    return false;
+                }
+
+                if (robot.Integrity < 0 || robot.Integrity > Robot.MaxLevel)
+                {
+                    message = string.Format(Resources.Load_InvalidRobot, number, Resources.Err_Invalid_integrity);
+                    return false;
+                }
+
+                if (!usedIds.Add(robot.Id))
+                {
+                    message = string.Format(Resources.Load_DuplicateId, number, robot.Id);
+                    return false;
+                }
+
+                built.Add((entry, robot));
+            }
+
+            ApplyLoadedRobots(built);
+            message = string.Format(Resources.Load_Done, built.Count);
+            return true;
+        }
+
+        private void ApplyLoadedRobots(List<(IRobotType Entry, Robot Robot)> built)
+        {
+            foreach (IRobotType entry in _types.Values)
+                entry.Clear();
+            _robots.Clear();
+
+            foreach ((IRobotType entry, Robot robot) in built)
+            {
+                entry.Restore(robot);
+                _robots.Add(robot);
+            }
+        }
+
+        private RobotKind KindOf(Robot robot)
+        {
+            foreach (var pair in _types)
+            {
+                if (pair.Value.Owns(robot))
+                    return pair.Key;
+            }
+            throw new InvalidOperationException(Resources.World_UnknownKind);
+        }
+
+        private static bool TryParseName<TEnum>(string text, out TEnum value) where TEnum : struct, Enum
+        {
+            value = default;
+            string trimmed = text.Trim();
+            if (trimmed.Length == 0 || int.TryParse(trimmed, out _))
+                return false;
+            return Enum.TryParse(trimmed, ignoreCase: true, out value) && Enum.IsDefined(value);
+        }
 
         public string ChangeGroup(Robot? robot, RobotGroup group)
         {
             if (robot == null) return Resources.World_NoRobot;
             return robot.ChangeGroup(group);
         }
-
-        // ---- helpers ----
-
-        private RobotKind KindOf(Robot robot)
-        {
-            foreach (KeyValuePair<RobotKind, IRobotType> pair in _types)
-            {
-                if (pair.Value.Owns(robot))
-                    return pair.Key;
-            }
-            throw new InvalidOperationException(string.Format(Resources.Repo_NotInRepository, robot.Name));
-        }
-
-        /// <summary>
-        /// Reads an enum from its exact name. Numbers ("1") and other spellings are rejected,
-        /// because a file must contain the names this program wrote.
-        /// </summary>
-        private static bool TryParseName<TEnum>(string text, out TEnum value) where TEnum : struct, Enum =>
-            Enum.TryParse(text, ignoreCase: false, out value) && Enum.IsDefined(value) && value.ToString() == text;
     }
 }

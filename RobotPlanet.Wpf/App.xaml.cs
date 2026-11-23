@@ -1,7 +1,5 @@
-﻿using System.Windows;
-using Microsoft.Data.SqlClient;
+using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using RobotPlanet.Core;
 using RobotPlanet.Core.storage;
 using AppResources = RobotPlanet.Wpf.Properties.Resources;
 using RobotPlanet.Wpf.Services;
@@ -26,7 +24,7 @@ namespace RobotPlanet.Wpf
         {
             base.OnStartup(e);
 
-            // appsettings.json and the command line decide which storage is used (--storage=LocalDb).
+            // appsettings.json and the command line decide which storage is used (--storage=EfCore | LocalDb | File).
             AppSettings settings = AppSettings.Load(e.Args);
             if (settings.Warning != null)
                 MessageBox.Show(settings.Warning, AppResources.Settings_Title);
@@ -47,19 +45,8 @@ namespace RobotPlanet.Wpf
         {
             services.AddSingleton(_ => DemoWorld.Create());
 
-            // THE choice of the storage implementation. The ViewModel only asks for IWorldStorage.
-            if (settings.UseLocalDb)
-            {
-                // The factory is the only place that knows the real database provider (Microsoft.Data.SqlClient).
-                services.AddSingleton<IWorldStorage>(_ =>
-                    new LocalDbWorldStorage(connectionString => new SqlConnection(connectionString), settings.LocalDbConnectionString));
-            }
-            else
-            {
-                services.AddSingleton<JsonWorldStorage>();
-                services.AddSingleton<XmlWorldStorage>();
-                services.AddSingleton<IWorldStorage, FileWorldStorage>();   // JSON or XML by file extension
-            }
+            // THE choice of the storage implementation (File, LocalDb ADO.NET, or EfCore TPH).
+            StorageProviderFactory.RegisterStorage(services, settings);
 
             services.AddSingleton<IFileDialogService, WpfFileDialogService>();
             services.AddSingleton<MainViewModel>();

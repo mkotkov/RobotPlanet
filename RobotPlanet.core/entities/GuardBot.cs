@@ -1,4 +1,5 @@
-﻿using RobotPlanet.Core.computation;
+using RobotPlanet.Core.computation;
+using RobotPlanet.Core.entities;
 using RobotPlanet.Core.@interface;
 using RobotPlanet.Core.Properties;
 
@@ -6,6 +7,8 @@ namespace RobotPlanet.Core.entities
 {
     public class GuardBot : Robot, IScan
     {
+        private GuardBot() { }
+
         public GuardBot(int id, string name, int battery = MaxLevel, int integrity = MaxLevel)
             : base(id, name, battery, integrity) { }
 

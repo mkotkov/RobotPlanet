@@ -1,4 +1,4 @@
-﻿using RobotPlanet.Core.computation;
+using RobotPlanet.Core.computation;
 using RobotPlanet.Core.entities;
 using RobotPlanet.Core.@interface;
 using RobotPlanet.Core.Properties;
@@ -7,6 +7,8 @@ namespace RobotPlanet.Core.@interface
 {
     public class RepairBot : Robot, IChargeable, IRepair
     {
+        private RepairBot() { }
+
         public RepairBot(int id, string name, int battery = MaxLevel, int integrity = MaxLevel)
             : base(id, name, battery, integrity) { }
 
