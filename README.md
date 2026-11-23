@@ -5,6 +5,7 @@ WPF-rakendus, kus erinevad robotid elavad samas maailmas, kuid käituvad erineva
 * **Vol.1 (Kodutöö 3):** pärilus, liidesed, polümorfism, `CrazyAction()`, kollektsioon.
 * **Vol.2 (Kodutöö 4):** tüübipõhised hoidlad (generics), sündmused ja naabrite reaktsioonid, LINQ-päringud ja kohustuslik MVVM.
 * **Vol.3 (Ülesanne 5-1):** ressursimahukad CPU-arvutused järjestikku ja paralleelselt (`Task.Run` + `Task.WhenAll`), hetktõmmis, tühistamine (`CancellationToken`), vea- ja tühistuskäsitlus ning raport. UI jääb töö ajal reageerivaks.
+* **Vol.4 (Ülesanne 6-1):** maailma oleku salvestamine ja taastamine (DTO-d, JSON, XML, LocalDB/ADO.NET), sõltuvuste süstimine (DI), failidialoogiteenus, rühmade haldus ning tehinguline andmebaasipüsivus.
 
 Sama maailm ja samad tegelased kasvavad edasi: uut universumit ega uut projekti ei loodud.
 
@@ -21,72 +22,89 @@ Sama maailm ja samad tegelased kasvavad edasi: uut universumit ega uut projekti 
 9. [MVVM: Model, ViewModel, View](#9-mvvm-model-viewmodel-view)
 10. [Vol.3: ressursimahukad arvutused](#10-vol3-ressursimahukad-arvutused)
 11. [Vol.3 lühike käivitusjuhend ja demo](#11-vol3-lühike-käivitusjuhend-ja-demo)
-12. [Kasutajaliides](#12-kasutajaliides)
-13. [Iseseisvalt õpitud WPF UI elemendid](#13-iseseisvalt-õpitud-wpf-ui-elemendid)
-14. [Kontrollitud kasutusjuhud](#14-kontrollitud-kasutusjuhud)
-15. [Git-koostöö](#15-git-koostöö)
-16. [Esitamine](#16-esitamine)
-17. [AI kasutamine](#17-ai-kasutamine)
+12. [Vol.4: salvestamine (DTO, JSON, XML, LocalDB/ADO.NET, DI)](#12-vol4-salvestamine-dto-json-xml-localdbadonet-di)
+13. [Vol.4 käivitusjuhend (sh LocalDB) ja demo](#13-vol4-käivitusjuhend-sh-localdb-ja-demo)
+14. [Kasutajaliides](#14-kasutajaliides)
+15. [Iseseisvalt õpitud WPF UI elemendid](#15-iseseisvalt-õpitud-wpf-ui-elemendid)
+16. [Kontrollitud kasutusjuhud](#16-kontrollitud-kasutusjuhud)
+17. [Git-koostöö](#17-git-koostöö)
+18. [Esitamine](#18-esitamine)
+19. [AI kasutamine](#19-ai-kasutamine)
 
 ---
 
 ## 1. Valitud maailm ja rakenduse eesmärk
 
-Valitud maailm: **ROBOT PLANET**. Planeedil elavad kaheksa tüüpi roboteid: `CleanerBot`, `ExplorerBot`, `RepairBot`, `GuardBot`, `JesterBot`, `DeliveryBot`, `InspectorBot` ja `RescueBot`. Neil on ühine baastüüp `Robot` (aku ja terviklikkus), kuid igaühel on oma tavaline tegevus, oma võimed (liidesed) ja oma hullumeelne tegevus `CrazyAction()`.
+Valitud maailm: **ROBOT PLANET**. Planeedil elavad kaheksa tüüpi roboteid: `CleanerBot`, `ExplorerBot`, `RepairBot`, `GuardBot`, `JesterBot`, `DeliveryBot`, `InspectorBot` ja `RescueBot`. Neil on ühine baastüüp `Robot` (aku, terviklikkus ja rühmakuuluvus `RobotGroup`), kuid igaühel on oma tavaline tegevus, oma võimed (liidesed) ja oma hullumeelne tegevus `CrazyAction()`.
 
 **Praktikumi garaaži põhimõte (Vol.2):** iga robotitüüp saab oma hoidla ning selles olevad robotid reageerivad üksteise tegevusele. Näiteks kui üks `CleanerBot` küürib end värvist puhtaks, koristavad teised `CleanerBot`-id tema segaduse ära. `ExplorerBot`-id seda ei märka, sest nad elavad teises hoidlas.
 
-Kõik domeenireeglid (robotid, hoidlad, sündmused, reaktsioonid) asuvad Core-projektis. WPF-projekt ainult juhib ja kuvab.
+Kõik domeenireeglid (robotid, rühmad, hoidlad, sündmused, reaktsioonid, DTO-d, salvestusteenused) asuvad Core-projektis. WPF-projekt ainult seadistab DI, juhib ja kuvab.
 
 ## 2. Käivitamisjuhend
 
-**Nõuded:** Windows 10/11, .NET 10 SDK, Visual Studio töökoormusega *.NET desktop development*.
+**Nõuded:** Windows 10/11, .NET 10 SDK, Visual Studio töökoormusega *.NET desktop development* (LocalDB režiimi jaoks ka töökoormus *Data storage and processing* või SQL Server Express LocalDB).
 
 ```bash
 git clone <REPOSITORY-URL>
 cd RobotPlanet
-git checkout vol3/parallel-cpu
+git checkout vol4/persistence
 dotnet run --project RobotPlanet.Wpf -c Release
 ```
 
 Alternatiiv: ava `RobotPlanet.slnx` Visual Studios, määra `RobotPlanet.Wpf` käivitusprojektiks ja vajuta **F5**.
 
-Kiirenemise nägemiseks käivita **Release**-konfiguratsioonis (Visual Studios vali *Release* ja vajuta **Ctrl+F5**). *Debug*-ehitus on aeglasem ja annab väiksema vahe. Vol.2 töö asub harus `vol2/events-linq-mvvm`.
+* Vaikimisi käivitub rakendus failipõhise salvestusega (`FileWorldStorage`, mis toetab `.json` ja `.xml` faile).
+* LocalDB režiimis käivitamiseks määra `RobotPlanet.Wpf/appsettings.json` failis `"Storage": "LocalDb"` või käivita argumendiga:
+  ```bash
+  dotnet run --project RobotPlanet.Wpf -c Release -- --storage=LocalDb
+  ```
+* Kiirenemise nägemiseks (Vol.3) käivita **Release**-konfiguratsioonis (Visual Studios vali *Release* ja vajuta **Ctrl+F5**). Varasemad tööd asuvad harudes `vol2/events-linq-mvvm` ja `vol3/parallel-cpu`.
 
-**Demoandmed** (lisatakse käivitamisel):
+**Demoandmed** (lisatakse käivitamisel teenusest `DemoWorld`):
 
-| ID | Nimi | Tüüp | Aku | Terviklikkus |
-|---|---|---|---|---|
-| 1 | Sädel | CleanerBot | 100 | 100 |
-| 2 | Läige | CleanerBot | 100 | 100 |
-| 3 | Kosmos | ExplorerBot | 80 | 100 |
-| 4 | Mutrivõti | RepairBot | 100 | 60 |
-| 5 | Vaht | GuardBot | 100 | 100 |
+| ID | Nimi | Tüüp | Aku | Terviklikkus | Vaikerühm |
+|---|---|---|---|---|---|
+| 1 | Sädel | CleanerBot | 100 | 100 | Alfa |
+| 2 | Läige | CleanerBot | 100 | 100 | Alfa |
+| 3 | Kosmos | ExplorerBot | 80 | 100 | Alfa |
+| 4 | Mutrivõti | RepairBot | 100 | 60 | Alfa |
+| 5 | Vaht | GuardBot | 100 | 100 | Alfa |
+| *(lisaks partneri tüübid)* | *(Jester, Delivery, Inspector, Rescue)* | — | — | — | Alfa |
 
 ## 3. Projekti struktuur
 
 ```
 RobotPlanet.slnx
-├── RobotPlanet.Core                 MODEL (klassiteek, ei sõltu WPF-ist)
-│   ├── entities/                    Robot, CleanerBot, ExplorerBot, RepairBot, GuardBot,
-│   │                                JesterBot, DeliveryBot, InspectorBot, RescueBot
+├── database.sql                     valikuline SQL-skript (LocalDB tabelid loodakse ka automaatselt)
+├── RobotPlanet.Core                 MODEL (klassiteek, ei sõltu WPF-ist ega SQL-pakettidest)
+│   ├── entities/                    Robot, RobotGroup (Alfa, Beeta, Gamma), CleanerBot,
+│   │                                ExplorerBot, RepairBot, GuardBot, JesterBot, DeliveryBot,
+│   │                                InspectorBot, RescueBot
 │   ├── interface/                   IChargeable, IScan, IRepair, IRepository<T>, IRobotRepository
 │   ├── events/                      RobotEventKind, RobotEventArgs, ReactionEventArgs
-│   ├── repository/                  Repository<T>
+│   ├── repository/                  Repository<T>, Repository.Restore.cs (vaikne taastamine)
 │   ├── computation/                 RobotSnapshot, RobotCalculations, RobotCalculationRunner (Vol.3)
+│   ├── storage/                     WorldDto, RobotDto, IWorldStorage, WorldStorageException, (Vol.4)
+│   │                                FileWorldStorage (JSON + XML), LocalDbSql, LocalDbWorldStorage
 │   ├── RobotKind.cs                 roboti tüüpide loend
 │   ├── RobotWorld.cs                hoidlate register + domeenireeglid
-│   └── Properties/Resources.resx    teated (eesti keeles)
+│   ├── RobotWorld.Persistence.cs    CreateDto() ja TryLoad() (atomaarne maailma taastamine) (Vol.4)
+│   └── Properties/Resources.resx    teated (eesti keeles, sh laadimise ja andmebaasi teated)
 └── RobotPlanet.Wpf                  VIEWMODEL + VIEW (viitab Core-projektile)
+    ├── Services/                    IFileDialogService, WpfFileDialogService, DemoWorld, AppSettings (Vol.4)
     ├── ViewModels/
     │   ├── ViewModelBase.cs         INotifyPropertyChanged
     │   ├── RelayCommand.cs          ICommand + CanExecute
-    │   ├── MainViewModel.cs         valik, käsud, LINQ-tulemused, logi
+    │   ├── MainViewModel.cs         valik, käsud (sh Salvesta, Laadi, Muuda rühma), LINQ, logi
     │   ├── ViewModelTypes.cs        SortChoice, GroupSummary, RepositoryItem
     │   ├── CalculationViewModel.cs  arvutuste valik, käsud, tühistamine, raportid (Vol.3)
     │   └── CalculationParts.cs      CalculationTarget, OutcomeRow, ModeReportViewModel
-    ├── MainWindow.xaml              VIEW: neli lehte (TabControl), logi (Expander), ainult sidumised (binding)
-    ├── MainWindow.xaml.cs           ainult paigutus (kitsal ekraanil)
+    ├── App.xaml                     rakenduse ressursid (StartupUri eemaldatud)
+    ├── App.xaml.cs                  DI-konteiner (ServiceCollection), salvestusteenuse valik ja käivitus
+    ├── appsettings.json             salvestusviisi ("File" / "LocalDb") ja ühendusstringi seadistus
+    ├── MainWindow.xaml              VIEW: neli lehte (TabControl), salvestusriba, logi (Expander)
+    ├── MainWindow.xaml.cs           ainult paigutus (kitsal ekraanil), ViewModel tuleb konstruktorist
     └── Properties/Resources.resx    kasutajaliidese tekstid
 ```
 
@@ -100,6 +118,8 @@ classDiagram
         +string Name
         +int Battery
         +int Integrity
+        +RobotGroup Group
+        +ChangeGroup(RobotGroup) string
         +DoWork() string
         +CrazyAction() string*
         +ReactToAdded(Robot) string
@@ -118,6 +138,11 @@ classDiagram
     class IRepair {
         <<interface>>
         +Repair(Robot) string
+    }
+    class IWorldStorage {
+        <<interface>>
+        +SaveAsync(WorldDto, string, CancellationToken) Task
+        +LoadAsync(string, CancellationToken) Task~WorldDto~
     }
 
     Robot <|-- CleanerBot
@@ -142,6 +167,9 @@ classDiagram
     IScan <|.. InspectorBot
     IChargeable <|.. RescueBot
     IScan <|.. RescueBot
+
+    IWorldStorage <|.. FileWorldStorage
+    IWorldStorage <|.. LocalDbWorldStorage
 ```
 
 ### Klassid
@@ -168,6 +196,8 @@ classDiagram
 | `IRepair` | `string Repair(Robot target)` | robot oskab teist robotit parandada |
 | `IRepository<T>` | `Add`, `Remove`, `GetAll`, `Find` | tüübipõhine hoidla (vt punkt 6) |
 | `IRobotRepository` | `Title`, `Count`, `Robots` | hoidla kirjutuskaitstud vaade registrile ja UI-le |
+| `IWorldStorage` | `SaveAsync`, `LoadAsync` | maailma DTO salvestamine ja lugemine (JSON/XML või LocalDB) (Vol.4) |
+| `IFileDialogService` | `PickSaveFile`, `PickOpenFile` | eraldab failidialoogi ViewModelist (Vol.4) |
 
 `GuardBot` ei ole laetav (tal on reaktor). See on teadlik valik, et võimete kontroll `is` / `as` operaatoriga annaks tüüpide vahel päris erineva tulemuse.
 
@@ -212,9 +242,10 @@ classDiagram
 * `Id`: 0–999999 ja **unikaalne kogu maailmas** (kontrollib `RobotWorld.TryAdd`, ka teise tüübi robotite vastu).
 * `Name`: pärast `Trim()` 2–20 märki, mitte tühi.
 * `Battery` ja `Integrity`: 0–100. Setter on `private`, muutmine käib ainult kaitstud meetoditega `TrySpendBattery`, `TryAddBattery`, `TryDamage`, `TryRestoreIntegrity`.
-* Need meetodid **keelduvad vigasest sisendist ja ei muuda olekut** (negatiivne kogus, liiga vähe akut).
+* **Rühmakuuluvus (`Group`):** `RobotGroup` (`Alfa`, `Beeta`, `Gamma`), vaikimisi `Alfa`. Muutmine käib meetodiga `ChangeGroup(RobotGroup)`, mis kontrollib `Enum.IsDefined`, teavitab UI-d (`INotifyPropertyChanged`) ja salvestatakse koos roboti olekuga.
+* Need meetodid **keelduvad vigasest sisendist ja ei muuda olekut** (negatiivne kogus, liiga vähe akut, tundmatu rühm).
 * `ReceiveRepair(int)` on ainus avalik remondisisend: kogus 1–100, ideaalses seisus robotit ei paranda.
-* Vigane konstruktoriargument annab `ArgumentException`, mille `RobotWorld.TryAdd` püüab kinni ja tagastab sõnumina. Rakendus ei sulgu.
+* Vigane konstruktoriargument annab `ArgumentException`, mille `RobotWorld.TryAdd` ja `RobotWorld.TryLoad` püüavad kinni ja tagastavad sõnumina. Rakendus ei sulgu.
 * Tekstisisend muudetakse arvuks ViewModelis (`int.TryParse`), ülejäänud reeglid kontrollib Core.
 
 ## 6. Hoidlad ja generics
@@ -228,10 +259,10 @@ public interface IRepository<T> where T : Robot
     T? Find(Func<T, bool> predicate);
 }
 
-public class Repository<T> : IRepository<T>, IRobotRepository where T : Robot
+public partial class Repository<T> : IRepository<T>, IRobotRepository where T : Robot
 ```
 
-* **Iga konkreetse tüübi jaoks eraldi hoidla:** `Repository<CleanerBot>`, `Repository<ExplorerBot>`, `Repository<RepairBot>`, `Repository<GuardBot>`. Hoidlad on loodud selle maailma enda klassidest.
+* **Iga konkreetse tüübi jaoks eraldi hoidla:** `Repository<CleanerBot>`, `Repository<ExplorerBot>`, `Repository<RepairBot>`, `Repository<GuardBot>` jne. Hoidlad on loodud selle maailma enda klassidest.
 * **Piirang `where T : Robot`** tuleneb maailma olemasolevast ühisest baastüübist. Vale tüübi lisamist takistab **kompilaator**, mitte nimede võrdlemine kasutajaliideses:
 
   | Katse | Kompilaatori vastus |
@@ -246,7 +277,7 @@ public class Repository<T> : IRepository<T>, IRobotRepository where T : Robot
   Register(RobotKind.Cleaner, (id, name, battery, integrity) => new CleanerBot(id, name, battery, integrity));
   ```
 
-  Uue tüübi lisamiseks piisab uuest klassist, uuest `RobotKind` väärtusest ja ühest `Register`-reast. Hoidla, sündmused, tellimused ja UI-kuvamine tekivad automaatselt.
+  Uue tüübi lisamiseks piisab uuest klassist, uuest `RobotKind` väärtusest ja ühest `Register`-reast. Hoidla, sündmused, tellimused, UI-kuvamine ning ka JSON/XML/LocalDB salvestus ja taastamine toimivad automaatselt.
 * `RobotWorld` leiab roboti hoidla **täpse tüübi** järgi (`GetType() == typeof(T)`), seega robot ei satu kunagi teise tüübi hoidlasse.
 
 ```mermaid
@@ -286,6 +317,7 @@ Iga sündmus kannab `RobotEventArgs`: `Source` (milline robot tegevuse põhjusta
 
 * `Add`: robot lisatakse kollektsiooni ja **tellitakse** kõigile kolmele sündmusele.
 * `Remove`: robot **tühistab** kõik kolm tellimust enne, kui `ItemRemoved` tõstetakse. Seetõttu ei reageeri eemaldatud robot ei oma lahkumisele ega hilisematele sündmustele.
+* `Restore` ja `ClearSilently` (Vol.4): failist või andmebaasist maailma taastamisel tühistatakse vanade robotite tellimused ning uued robotid lisatakse hoidlasse **ilma tervitusreaktsioone käivitamata** (nii ei kuluta nt `ExplorerBot` laadimisel akut ja olek jääb täpselt salvestatuks). Pärast taastamist on kõik kolm sündmusetellimust aktiivsed.
 * `React(...)` jätab sündmuse vahele, kui `e.Source` on reageerija ise.
 * Tellimuste hoidmiseks on `Dictionary<T, Subscription>`, et sama delegaadi saaks hiljem tühistada.
 
@@ -359,16 +391,16 @@ Kolm päringut asuvad `MainViewModel`-is ja nende tulemused kuvatakse kasutajali
 
 * Otsing ja sorteerimine töötavad valitud hoidla robotitel (`VisibleRobots`).
 * Kokkuvõte ühendab kõigi hoidlate lugemisvaated (`RobotWorld.Robots`) ja näitab iga tüübi robotite arvu ning keskmist akut ja terviklikkust.
-* Pärast iga tegevust arvutatakse päringud uuesti, seega nimekiri ja kokkuvõte uuenevad automaatselt.
+* Pärast iga tegevust ja pärast maailma laadimist arvutatakse päringud uuesti, seega nimekiri ja kokkuvõte uuenevad automaatselt.
 * Nimekirja uuendab `Sync(...)` meetod (`Remove` / `Move` / `Insert`, mitte `Clear` + `Add`), et valitud robot jääks valituks.
 
 ## 9. MVVM: Model, ViewModel, View
 
 | Kiht | Vastutus | Kus |
 |---|---|---|
-| **Model (Core)** | robotid, hoidlad, sündmused, reaktsioonide reeglid, valideerimine. Ei sõltu WPF-ist | `RobotPlanet.Core` |
-| **ViewModel** | valitud hoidla ja robot, kuvatavad loendid, LINQ-päringute tulemused, logi, kasutaja käsud (`ICommand`) | `RobotPlanet.Wpf/ViewModels` |
-| **View** | ainult kujundus ja sidumised (`Binding`). Kood-taga on ainult paigutus | `MainWindow.xaml` |
+| **Model (Core)** | robotid, rühmad, hoidlad, sündmused, reaktsioonid, valideerimine, DTO-d, faili- ja LocalDB-salvestus. Ei sõltu WPF-ist | `RobotPlanet.Core` |
+| **ViewModel** | valitud hoidla ja robot, rühmavalik, kuvatavad loendid, LINQ-päringud, logi, kasutaja käsud (`ICommand`), salvestamise ja laadimise koordineerimine | `RobotPlanet.Wpf/ViewModels` |
+| **View + käivitus** | ainult kujundus ja sidumised (`Binding`). `App.xaml.cs` seadistab DI ja teenused (`IWorldStorage`, `IFileDialogService`) | `MainWindow.xaml`, `App.xaml.cs`, `Services` |
 
 ### Käsud ja `CanExecute`
 
@@ -377,10 +409,13 @@ Tegevused käivitatakse `ICommand`-käskudega (`RelayCommand`). `CanExecute` kee
 | Käsk | Lubatud, kui |
 |---|---|
 | `WorkCommand`, `CrazyCommand`, `RemoveCommand` | on valitud robot |
+| `ChangeGroupCommand` (Vol.4) | on valitud robot ja rühm, ning ei käi salvestamine/laadimine |
 | `ChargeCommand` | valitud robot `is IChargeable` |
 | `ScanCommand` | valitud robot `is IScan` |
 | `RepairCommand` | valitud robot `is IRepair` ja on valitud sihtmärk |
 | `AddCommand` | on valitud tüüp ning ID ja nimi pole tühjad |
+| `SaveCommand` (Vol.4) | ei käi salvestamine/laadimine |
+| `LoadCommand` (Vol.4) | ei käi salvestamine/laadimine ega Vol.3 CPU-arvutus |
 | `ClearLogCommand` | alati |
 | `RunSequentialCommand`, `RunParallelCommand`, `RunBothCommand` (Vol.3) | on valitud vähemalt üks objekt ja töö ei käi |
 | `CancelCommand` (Vol.3) | töö käib ja tühistamist pole veel küsitud |
@@ -391,10 +426,10 @@ Vol.3 käsud asuvad eraldi alam-ViewModelis `CalculationViewModel`, mida `MainVi
 ### Automaatsed uuendused
 
 * **Loend:** `ObservableCollection<T>` / `ReadOnlyObservableCollection<T>` (`CollectionChanged`).
-* **Roboti olek:** `Robot` realiseerib `INotifyPropertyChanged` (liides on .NET baasteegist, mitte WPF-ist, seega Core ei sõltu WPF-ist).
-* **Kokkuvõte ja logi:** `Run(...)` uuendab need pärast iga tegevust.
-* **Käskude lubatavus:** ViewModel kutsub `RaiseCanExecuteChanged()` valiku ja sisendi muutudes.
-* **UI-koodis puudub** hoidlate ega tegelaste äriloogika: kood-taga ei sisalda `Click`-käsitlejaid ega `_world` viiteid.
+* **Roboti olek ja rühm:** `Robot` realiseerib `INotifyPropertyChanged` (liides on .NET baasteegist, mitte WPF-ist, seega Core ei sõltu WPF-ist).
+* **Kokkuvõte ja logi:** `Run(...)` ja `LoadAsync()` uuendavad need pärast iga tegevust või laadimist.
+* **Käskude lubatavus:** ViewModel kutsub `RaiseCanExecuteChanged()` valiku, sisendi, salvestamise/laadimise ja arvutuste oleku muutudes.
+* **UI-koodis puudub** hoidlate, failivormingu ega andmebaasi äriloogika: kood-taga ei sisalda `Click`-käsitlejaid ega `_world` viiteid.
 
 ## 10. Vol.3: ressursimahukad arvutused
 
@@ -402,7 +437,7 @@ Vol.3 lisab samasse projekti ja hoidlasse **CPU-mahukad arvutused**. Kasutaja va
 
 ### Objektid ja nende arvutused
 
-Valitud on kõik neli robotitüüpi (nõutud vähemalt kolm). Iga tüüp valib oma arvutuse polümorfselt (`Robot.CreateCalculation()` on `virtual`, ilma `switch`-ita):
+Valitud on kõik robotitüübid (nõutud vähemalt kolm). Iga tüüp valib oma arvutuse polümorfselt (`Robot.CreateCalculation()` on `virtual`, ilma `switch`-ita):
 
 | Robot | Arvutus | Mida arvutab | Mida hetktõmmisest kasutab | Tulemus |
 |---|---|---|---|---|
@@ -503,44 +538,132 @@ Kolm demostsenaariumi (leht **Arvutused**, tulemused lehel **Raportid**):
 
 | Demo | Sammud | Mida näed |
 |---|---|---|
-| **1. Mõlemad režiimid** | Vajuta **Vali kõik**, töömaht 10, **Võrdle mõlemat** | Lehel **Arvutused** täitub edenemisriba, kell tiksub ja laimikaardil on kiirenemine ning "Tulemused ühtivad: jah". Lehel **Raportid** on kaks raportit (**Järjestikku**, **Paralleelselt**) neljarealiselt, kõik **Õnnestus** |
-| **2. Viga** | Lehel **Haldus** lisa vormis tüüp `Explorer`, nimi `Tühiaku`, aku `0`. Lehel **Arvutused** vali kõik objektid, **Võrdle mõlemat** | Lehel **Raportid** on `Tühiaku` rida punane **Viga** koos veateatega, ülejäänud neli on **Õnnestus**. Töö lõpeb olekuga "Valmis." |
+| **1. Mõlemad režiimid** | Vajuta **Vali kõik**, töömaht 10, **Võrdle mõlemat** | Lehel **Arvutused** täitub edenemisriba, kell tiksub ja laimikaardil on kiirenemine ning "Tulemused ühtivad: jah". Lehel **Raportid** on kaks raportit (**Järjestikku**, **Paralleelselt**), kõik **Õnnestus** |
+| **2. Viga** | Lehel **Haldus** lisa vormis tüüp `Explorer`, nimi `Tühiaku`, aku `0`. Lehel **Arvutused** vali kõik objektid, **Võrdle mõlemat** | Lehel **Raportid** on `Tühiaku` rida punane **Viga** koos veateatega, ülejäänud on **Õnnestus**. Töö lõpeb olekuga "Valmis." |
 | **3. Tühistamine** | Töömaht 50, vajuta **Paralleelselt** ja varsti **Tühista** | Lehel **Raportid** muutuvad kõik read halliks **Tühistatud**, lehel **Arvutused** kell peatub, olek "Tühistatud." Uus käivitus töötab normaalselt |
 
 Kiirenemine sõltub protsessori tuumade arvust: mitmetuumalisel arvutil on paralleelne režiim märgatavalt kiirem, ühe tuumaga arvutil on vahe väike.
 
-## 12. Kasutajaliides
+## 12. Vol.4: salvestamine (DTO, JSON, XML, LocalDB/ADO.NET, DI)
 
-Ühel ekraanil on vähe elemente: sisu on jaotatud **neljale lehele** (`TabControl`), logi on all kokkuvolditav (`Expander`) ja nähtav igal lehel.
+Vol.4 lisab sama maailma, MVVM-i ja `Repository<T>` lahenduse peale maailma oleku püsiva salvestamise ning taastamise nii faili (JSON, XML) kui ka LocalDB relatsioonilisse andmebaasi.
+
+### DTO-d ja domeenimudeli eraldatus
+
+* Maailma ei serialiseerita otse UI- ega domeeniobjektidena (aknad, `ICommand`-id, sündmustellimused ja hoidlad jäävad kõrvale).
+* `RobotWorld.CreateDto()` koostab UI-lõimes puhta andmeedastusmudeli `WorldDto` (versioon `1` + `List<RobotDto>`), kus iga `RobotDto` sisaldab omadusi: `Id`, `Type` (`RobotKind`), `Name`, `Battery`, `Integrity` ja `Group` (`RobotGroup`).
+* Kõik DTO väljad on nullable (`int?`, `string?`), et vigases failis puuduv väli tuvastataks selge veana, mitte ei asenduks vaikselt nulliga.
+
+### Ohutu laadimine ja reaktsioonide taastamine (`RobotWorld.TryLoad`)
+
+1. `IWorldStorage.LoadAsync(...)` loeb andmed (JSON, XML või SQL) `WorldDto` kujule ja edastab selle `RobotWorld.TryLoad(dto, out message)` meetodile.
+2. **Eelkontroll enne muutmist:** kontrollitakse andmeversiooni, kohustuslike väljade olemasolu, roboti tüüpi (`RobotKind`), rühma (`RobotGroup`), konstruktori äriloogika reegleid (`Id` vahemik, nime pikkus, `Battery`/`Integrity` 0–100) ning ID-de unikaalsust kogu failis.
+3. **Atomaarne asendus:** alles siis, kui **kõik** kirjed on kehtivad, tühjendatakse vanad hoidlad (`ClearSilently` tühistab vanade robotite sündmustellimused) ja luuakse õiged robotitüübid vastavatesse `Repository<T>` hoidlatesse (`Restore`).
+4. Kui fail või andmebaas on vigane, jääb senine maailm täielikult muutmata, ühtegi sündmust ei käivitata ning logisse kuvatakse täpne põhjus koos reaga *"Senine maailm jäi muutmata."*
+5. Taastatud maailmas on kõik sündmustellimused aktiivsed, kuid laadimise enda ajal naabrite tervitusreaktsioone ei käivitata (et seis vastaks täpselt salvestatule).
+
+### Salvestusteenused (`IWorldStorage`)
+
+```csharp
+public interface IWorldStorage
+{
+    Task SaveAsync(WorldDto world, string path, CancellationToken token = default);
+    Task<WorldDto> LoadAsync(string path, CancellationToken token = default);
+}
+```
+
+* **`FileWorldStorage` (JSON ja XML):**
+  * Valib vormingu faililaiendi järgi (`.json` → `System.Text.Json`, `.xml` → `System.Xml.Serialization.XmlSerializer`, kus DTD on turvalisuse huvides keelatud `DtdProcessing.Prohibit`).
+  * Kirjutamine on atomaarne: esmalt kirjutatakse ajutisse faili (`*.tmp`) ja alles õnnestumise korral asendatakse sihtfail (`File.Move(..., overwrite: true)`), et katkenud salvestus ei rikuks olemasolevat faili.
+  * JSON näide:
+    ```json
+    {
+      "version": 1,
+      "robots": [
+        { "id": 1, "type": "Cleaner", "name": "Sädel", "battery": 100, "integrity": 100, "group": "Alfa" }
+      ]
+    }
+    ```
+* **`LocalDbWorldStorage` (LocalDB ja ADO.NET):**
+  * Kasutab ainult `System.Data.Common` abstraktsioone (`DbConnection`, `DbTransaction`, `DbCommand`), seega `RobotPlanet.Core` jääb ilma välistest NuGet-pakettidest. Tegeliku `SqlConnection`-i tehase (`Microsoft.Data.SqlClient`) annab `App.xaml.cs` DI kaudu.
+  * **Andmebaasi skeem** (luuakse esmakordsel pöördumisel automaatselt või skriptist `database.sql`):
+    * `RobotGroups` (`Id INT PRIMARY KEY`, `Name NVARCHAR(32) NOT NULL UNIQUE`) — rühmad `Alfa`, `Beeta`, `Gamma`.
+    * `Robots` (`Id INT PRIMARY KEY`, `Position INT NOT NULL`, `Type NVARCHAR(32) NOT NULL`, `Name NVARCHAR(64) NOT NULL`, `Battery INT NOT NULL CHECK (Battery BETWEEN 0 AND 100)`, `Integrity INT NOT NULL CHECK (Integrity BETWEEN 0 AND 100)`, `GroupId INT NOT NULL FOREIGN KEY REFERENCES RobotGroups(Id)`) — välisvõti seob roboti rühmaga ja `Position` säilitab järjekorra.
+    * `WorldInfo` (`Id INT PRIMARY KEY`, `Version INT NOT NULL`) — andmeskeemi versioon.
+  * **Parametriseeritud SQL ja üks tehing:** kõik väärtused edastatakse SQL-parameetritena (`@Id`, `@Name`, `@GroupId` jne), et välistada SQL-süstimine. Kogu salvestus (`DELETE` vanad kirjed + `INSERT` rühmad ja robotid + `WorldInfo`) toimub **ühes `DbTransaction` tehingus** — mistahes vea korral teeb `RollbackAsync()` muudatused tagasi ja eelmine maailm andmebaasis jääb terveks.
+
+### Sõltuvuste süstimine (DI) ja dialoogiteenus
+
+* `MainViewModel` ei loo salvestusteenust ega dialooge ise, vaid võtab konstruktoris vastu liidesed `(RobotWorld, IWorldStorage, IFileDialogService, ...)`.
+* `App.xaml.cs` ehitab `Microsoft.Extensions.DependencyInjection` konteineri, loeb `appsettings.json`-i ja käsurea argumendid (`AppSettings`) ning registreerib vastava `IWorldStorage` teostuse (`FileWorldStorage` või `LocalDbWorldStorage`).
+* Faili asukoha valib `WpfFileDialogService` (`IFileDialogService`); `MainViewModel` saab tagasi ainult failitee stringi ja edastab selle `IWorldStorage`-ile. LocalDB režiimis failidialoogi ei avata ning ülaribal kuvatakse valitud DI-teostus: **`Salvestusteenus: FileWorldStorage`** või **`Salvestusteenus: LocalDbWorldStorage`**.
+
+## 13. Vol.4 käivitusjuhend (sh LocalDB) ja demo
+
+### LocalDB eeldused ja seadistamine
+
+1. **Eeldused:** Windows ning paigaldatud SQL Server Express LocalDB (Visual Studio Installeris komponent *Data storage and processing*).
+2. **Eksemplari kontroll:** käsureal `sqllocaldb info` peab kuvama `MSSQLLocalDB`. Vajadusel käivita see käsuga:
+   ```bash
+   sqllocaldb start MSSQLLocalDB
+   ```
+3. **Ühendusstring (`RobotPlanet.Wpf/appsettings.json`):**
+   ```json
+   {
+     "Storage": "LocalDb",
+     "ConnectionStrings": {
+       "RobotPlanet": "Server=(localdb)\\MSSQLLocalDB;Database=RobotPlanet;Integrated Security=true;TrustServerCertificate=true;"
+     }
+   }
+   ```
+   *(Märkus: `TrustServerCertificate=true` on vajalik, sest `Microsoft.Data.SqlClient` kasutab vaikimisi krüpteeritud ühendust.)*
+4. **Andmebaasi ja tabelite loomine:**
+   * **Automaatselt (vaikimisi):** rakendus ühendub esimesel `Salvesta` või `Laadi` vajutusel süsteemibaasiga `master`, loob andmebaasi `RobotPlanet` (kui see puudub) ja käivitab idempotentse tabelite loomise skripti. Esimene käivitus võib võtta paar sekundit, kuni LocalDB eksemplar ärkab.
+   * **Käsitsi (valikuline):** skripti saab käivitada ka käsuga `sqlcmd -S "(localdb)\MSSQLLocalDB" -i database.sql` ning tabeleid vaadata Visual Studios (*View → SQL Server Object Explorer*).
+5. **Režiimi vahetamine käivitamisel (DI):** muuda `appsettings.json`-is `"Storage"` väärtuseks `"File"` või `"LocalDb"`, või anna käsurealt `--storage=LocalDb` (Visual Studios: *Project Properties → Debug → General → Open debug launch profiles UI → Command line arguments*).
+
+### Demo stsenaarium (Vol.4 slaidi järgi)
+
+| Samm | Tegevus | Oodatud tulemus |
+|---|---|---|
+| **1. Muuda maailma ja salvesta faili** | Käivita rakendus (`Storage: File`, ülaribal `Salvestusteenus: FileWorldStorage`). Lisa uus robot, tee mõnele robotile **Hullumeelne tegevus!** (olek muutub) ja muuda valitud roboti rühma (**Rühm → Beeta → Muuda rühma**). Vajuta **Salvesta** ja salvesta maailm nii `.json` kui ka `.xml` faili. | Logis kinnitused salvestatud tegelaste arvuga; mõlemad failid luuakse kettale. |
+| **2. Taaskäivita ja laadi** | Sulge rakendus. Käivita uuesti (taastuvad algandmed), vajuta **Laadi** ja vali `.json` fail. Muuda maailma ja laadi seejärel `.xml` fail. | Taastuvad täpselt samad ID-d, tüübid, nimed, aku/terviklikkuse väärtused ja rühmad (`Beeta`). Kokkuvõtte ja arvutuste nimekirjad uuenevad. |
+| **3. CrazyAction pärast laadimist** | Vali taastatud maailmas `CleanerBot` ja vajuta **Hullumeelne tegevus!** | Tegija olek muutub ja sama hoidla teised `CleanerBot`-id reageerivad (aku väheneb, logis `↳` reaktsioonid, UI ribad liiguvad). |
+| **4. Vigane fail** | Vajuta **Laadi** ja vali vigane fail (nt katkine JSON, tundmatu tüüp või `.txt` fail). | Logis kuvatakse arusaadav eestikeelne veateade ja *"Senine maailm jäi muutmata."*; praegune maailm jääb alles. |
+| **5. LocalDB ja DI** | Käivita rakendus argumendiga `--storage=LocalDb` (või `"Storage": "LocalDb"`). Näita ülaribal silti **`Salvestusteenus: LocalDbWorldStorage`**. Vajuta **Salvesta** (ilma failidialoogita), sulge rakendus, käivita uuesti ja vajuta **Laadi**. | Andmed kirjutatakse ühe tehinguga LocalDB tabelitesse `RobotGroups` ja `Robots` ning taaskäivitamisel taastub täpselt sama maailm. |
+
+## 14. Kasutajaliides
+
+Ühel ekraanil on vähe elemente: ülaribal on salvestusnupud (**Salvesta**, **Laadi**) ja aktiivse DI-teenuse silt (`Salvestusteenus: ...`), sisu on jaotatud **neljale lehele** (`TabControl`) ning logi on all kokkuvolditav (`Expander`) ja nähtav igal lehel.
 
 | Leht | Sisu |
 |---|---|
-| **Robotid** | vasakul hoidlate "chip"-id koos robotite arvuga, otsing ja sorteerimine ning valitud hoidla robotid (aku- ja terviklikkuseribadega); paremal valitud roboti üksikasjad (laimikaart) ja tegevusnupud (Tööta, Hullumeelne tegevus!, Lae, Skanni, Paranda) |
+| **Robotid** | vasakul hoidlate "chip"-id koos robotite arvuga, otsing ja sorteerimine ning valitud hoidla robotid (aku- ja terviklikkuseribadega); paremal valitud roboti üksikasjad (sh praegune **Rühm**), tegevusnupud (Tööta, Hullumeelne tegevus!, Lae, Skanni, Paranda) ning rühmavahetus (**Rühm** + **Muuda rühma**) |
 | **Haldus** | vorm "Lisa robot" koos nupuga **Eemalda valitud** ning tüüpide **Kokkuvõte** (`GroupBy`) |
 | **Arvutused** (Vol.3) | objektide märkeruudud, töömahu liugur (1–50), nupud **Järjestikku**, **Paralleelselt**, **Võrdle mõlemat** ja **Tühista**, edenemisriba, olek ja elav kell, laimikaart **Võrdlus** (kiirenemine ja tulemuste kokkulangevus) |
 | **Raportid** (Vol.3) | kaks raportit (järjestikune, paralleelne): iga rida näitab nime, värvilist lõppolekut, kestust ning tulemust või veateadet, all loendurid ja kogu töö aeg |
 
-* **Logi** (all): tegevused ja naabrite reaktsioonid. Vorm "Lisa robot" ja veateated asuvad eri lehel kui logi vaatamise koht, seetõttu on logi alati näha.
+* **Logi** (all): tegevused, naabrite reaktsioonid ning salvestamise/laadimise teated ja vead. Kuna nupud **Salvesta**/**Laadi** ja vorm "Lisa robot" asuvad ülal või teisel lehel, on logi alati näha.
 * **Lehtede vahetamine ei mõjuta andmeid:** kogu seis (valitud hoidla ja robot, vormi väljad, käimasolev arvutus) on ViewModelis. Arvutus jätkub ka siis, kui vahetad lehte, ja read ilmuvad lehele **Raportid** ükshaaval.
 * **Kitsal ekraanil** (alla ~860 px) liigub lehel **Robotid** parem veerg vasaku alla. Iga leht kerib vajadusel ise vertikaalselt, pealkiri, lehed ja logi jäävad paigale.
 * Tekstid on ressursifailides (`Resources.resx`), mitte koodis.
 
-## 13. Iseseisvalt õpitud WPF UI elemendid
+## 15. Iseseisvalt õpitud WPF UI elemendid
 
 Valitud elemendid: **`DataTemplate`**, **`ProgressBar`**, **`Slider`**, **`TabControl`** ja **`Expander`**, lisaks `ControlTemplate`, `DataTrigger` ja `ItemsControl`.
 
 **Põhjendus:**
 * `DataTemplate` määrab, kuidas `Robot`, `RepositoryItem` ja `GroupSummary` objektid loendis välja näevad. Kuvamine on andmetest eraldatud: ViewModel annab andmed, mall otsustab välimuse. Uue `Robot` alamklassi lisamisel ei pea nimekirja koodi muutma.
-* `ProgressBar` sobib aku ja terviklikkuse jaoks loomulikult: väärtus 0–100 on vahemik, mille muutumist on kohe näha. Sidumine `Mode=OneWay` ja `INotifyPropertyChanged` muudavad ribad "elavaks" ilma lisakoodita (reaktsioon muudab teise roboti akut ja riba liigub ise).
+* `ProgressBar` sobib aku ja terviklikkuse jaoks loomulikult: väärtus 0–100 on vahemik, mille muutumist on kohe näha. Sidumine `Mode=OneWay` ja `INotifyPropertyChanged` muudavad ribad "elavaks" ilma lisakoodita.
 * `ControlTemplate` ja `DataTrigger` võimaldavad nuppe, kaarte ja nimekirjaridu kujundada ümber ning kuvada vihje "Vali nimekirjast robot." ainult siis, kui valikut pole. Nupu tuhmumine põhineb `IsEnabled` olekul, mille määrab `CanExecute`.
 * `ItemsControl` + `DataTemplate` ehitavad `GroupBy` kokkuvõtte tabeli ilma vaikimisi tabelikomponendita.
-* `Slider` (Vol.3) sobib töömahu valimiseks: täisarvuline vahemik 1–50, sidumine `IsSnapToTickEnabled`-iga annab ainult täisarvud. Piirid tulevad ViewModelist (`WorkloadMin`, `WorkloadMax`), seega number 50 on kirjas ainult Core-projektis. Liuguri välimuse tegin ise `ControlTemplate`-iga (`Track`, `Thumb`, `RepeatButton`) ning see tuhmub, kui töö käib (`IsEnabled` ← `CanEdit`).
+* `Slider` (Vol.3) sobib töömahu valimiseks: täisarvuline vahemik 1–50, sidumine `IsSnapToTickEnabled`-iga annab ainult täisarvud. Piirid tulevad ViewModelist (`WorkloadMin`, `WorkloadMax`), seega number 50 on kirjas ainult Core-projektis.
 * `ProgressBar` näitab ka arvutuste edenemist (valmis objekte / kõik objektid), mille uuendab `Progress<T>` UI-lõimes.
-* `TabControl` jagab sisu neljale lehele ja `Expander` voldib logi kokku, et ühel ekraanil oleks vähem elemente. Ülesehitus ja ViewModel jäid samaks: leht vahetab ainult seda, mida kuvatakse. Mõlema välimuse (pillikujulised lehepealkirjad, noolega päis) tegin `ControlTemplate`-iga.
+* `TabControl` jagab sisu neljale lehele ja `Expander` voldib logi kokku, et ühel ekraanil oleks vähem elemente.
 
-## 14. Kontrollitud kasutusjuhud
+## 16. Kontrollitud kasutusjuhud
 
-Lehed: **Robotid** (hoidlad, nimekiri, üksikasjad, tegevused), **Haldus** (vorm "Lisa robot", **Eemalda valitud**, **Kokkuvõte**), **Arvutused** ja **Raportid**. Valik (valitud hoidla ja robot) säilib lehtede vahetamisel.
+Lehed: **Robotid** (hoidlad, nimekiri, üksikasjad, tegevused, rühm), **Haldus** (vorm "Lisa robot", **Eemalda valitud**, **Kokkuvõte**), **Arvutused** ja **Raportid**. Valik (valitud hoidla ja robot) säilib lehtede vahetamisel.
 
 Märgi tulemus pärast käsitsi katsetamist (☑ = kontrollitud). Kõik juhud eeldavad **värskelt käivitatud rakendust** demoandmetega (punkt 2), kui pole öeldud teisiti.
 
@@ -556,7 +679,7 @@ A = Sädel, B = Läige. Hoidlas olevad C-d lisatakse kasutajaliidese kaudu.
 | A4 | Vali Gamma ja vajuta uuesti **Hullumeelne tegevus!** | Gamma aku 70, terv. 80. Reageerib **ainult Sädel** (aku 94). Läige reaktsiooni logis pole | ☑ |
 | A5 | Vaata hoidlaid `ExplorerBot`, `RepairBot`, `GuardBot` | Kosmos (aku 80), Mutrivõti (terv. 60) ja Vaht (100/100) ei ole muutunud ega esine logis (teised hoidlad ei reageeri) | ☑ |
 
-### Muud kasutusjuhud
+### Muud kasutusjuhud (Vol.1–Vol.2)
 
 | # | Tegevus | Oodatud tulemus | ☑ |
 |---|---|---|---|
@@ -567,7 +690,7 @@ A = Sädel, B = Läige. Hoidlas olevad C-d lisatakse kasutajaliidese kaudu.
 | 5 | Lehel **Haldus** lisa tüüp `Explorer`, nimi `Väsinud`, aku `15`. Uus robot valitakse automaatselt, lehel **Robotid** vajuta **Hullumeelne tegevus!** | Robot keeldub (aku jääb 15). Kosmos reageerib katsele üldise reaktsiooniga (vt punkt "Teadlikud otsused") | ☑ |
 | 6 | Vali Vaht (`GuardBot`) | **Lae** on tuhm (`is IChargeable` ei ole täidetud), **Skanni** aktiivne | ☑ |
 | 7 | Vali Sädel (`CleanerBot`) | **Skanni** on tuhm (`is IScan` ei ole täidetud), **Lae** aktiivne | ☑ |
-| 8 | Ära vali ühtegi robotit | **Tööta**, **Hullumeelne tegevus!**, **Lae**, **Skanni**, **Paranda** ja **Eemalda valitud** (lehel **Haldus**) on tuhmid. Üksikasjade kaardil on vihje | ☑ |
+| 8 | Ära vali ühtegi robotit | **Tööta**, **Hullumeelne tegevus!**, **Lae**, **Skanni**, **Paranda**, **Muuda rühma** ja **Eemalda valitud** on tuhmid. Üksikasjade kaardil on vihje | ☑ |
 | 9 | Käivita rakendus ja vaata lehel **Haldus** vormi "Lisa robot" (tüüp valimata, nimi tühi) | **Lisa** on tuhm. Muutub aktiivseks, kui tüüp on valitud ja nimi sisestatud (ID pakutakse automaatselt) | ☑ |
 | 10 | Lehel **Haldus** vali tüüp, sisesta nimi ja ID `abc` ning vajuta **Lisa** | Logis "ID peab olema täisarv.", robotit ei lisata | ☑ |
 | 11 | Lehel **Haldus** lisa robot ID-ga, mis on juba kasutusel (nt `1`) | Logis "ID 1 on juba kasutusel.", robotit ei lisata (kehtib ka teise tüübi puhul) | ☑ |
@@ -577,31 +700,46 @@ A = Sädel, B = Läige. Hoidlas olevad C-d lisatakse kasutajaliidese kaudu.
 | 15 | Vali Sädel, sisesta laadimiskogus `-5` ja vajuta **Lae** | Logis "Sädel: vigane laadimiskogus (-5), olek jäi muutmata.", aku ei muutu | ☑ |
 | 16 | **LINQ Where:** kirjuta otsingusse `säd` (hoidla `CleanerBot`) | Nimekirjas on ainult Sädel (suur- ja väiketähti ei arvestata). Tühjenda väli: mõlemad tagasi. Otsing `2` leiab Läige (ID järgi) | ☑ |
 | 17 | **LINQ OrderBy:** juhu 4 või A2 järel vali sorteerimine "Aku" | Nimekiri järjestub aku järgi kasvavalt. Märkeruut "Kahanevalt" pöörab järjekorra. Valitud robot jääb valituks | ☑ |
-| 18 | **LINQ GroupBy:** vaata lehel **Haldus** kaarti "Kokkuvõte" | Neli rida (`CleanerBot` 2, 100 % / 100 %; `ExplorerBot` 1, 80 % / 100 %; `GuardBot` 1, 100 % / 100 %; `RepairBot` 1, 100 % / 60 %). Pärast **Sädeli Hullumeelset tegevust** on `CleanerBot` keskmine aku 91 % ja terviklikkus 95 % | ☑ |
+| 18 | **LINQ GroupBy:** vaata lehel **Haldus** kaarti "Kokkuvõte" | Näitab iga tüübi arvu ning keskmist akut ja terviklikkust. Pärast **Sädeli Hullumeelset tegevust** on `CleanerBot` keskmine aku 91 % ja terviklikkus 95 % | ☑ |
 | 19 | Lisa või eemalda robot (leht **Haldus**) ja vaata lehel **Robotid** hoidla "chip"-i | Hoidla "chip" näitab uut robotite arvu kohe | ☑ |
 | 20 | Vähenda akent alla ~860 px | Parem veerg liigub vasaku alla, leht kerib vertikaalselt, midagi ei lõigata ära | ☑ |
 
 ### Vol.3 kasutusjuhud (arvutused)
 
-Lehel **Arvutused** (tulemused lehel **Raportid**). Kui pole öeldud teisiti, on töömaht 10 ja kõik neli demorobotit valitud (**Vali kõik**).
+Lehel **Arvutused** (tulemused lehel **Raportid**). Kui pole öeldud teisiti, on töömaht 10 ja demorobotid valitud (**Vali kõik**).
 
 | # | Tegevus | Oodatud tulemus | ☑ |
 |---|---|---|---|
-| V1 | **Võrdle mõlemat** | Lehel **Raportid** on mõlemad raportid (**Järjestikku**, **Paralleelselt**) täidetud, kummaski neli rida staatusega **Õnnestus**. Mõlemal on "Kogu töö aeg" ja nimede/tulemuste kokkuvõte. Laimikaardil on "Kiirenemine: ×…" ja "Tulemused ühtivad: jah". Olek "Valmis." | ☑ |
+| V1 | **Võrdle mõlemat** | Lehel **Raportid** on mõlemad raportid (**Järjestikku**, **Paralleelselt**) täidetud staatusega **Õnnestus**. Laimikaardil on "Kiirenemine: ×…" ja "Tulemused ühtivad: jah". Olek "Valmis." | ☑ |
 | V2 | Ainult **Järjestikku** | Ilmub ainult järjestikune raport. Paralleelne raport on peidus ja võrdluskaart näitab vihjet "Võrdluseks käivita mõlemad režiimid…" | ☑ |
-| V3 | Ainult **Paralleelselt** | Ilmub ainult paralleelne raport, nelja rea järjekord on sama mis valikus | ☑ |
+| V3 | Ainult **Paralleelselt** | Ilmub ainult paralleelne raport, ridade järjekord on sama mis valikus | ☑ |
 | V4 | Ilma valikuta (**Tühjenda valik**) | **Järjestikku**, **Paralleelselt** ja **Võrdle mõlemat** on tuhmid, **Tühista** on tuhm. **Vali kõik** teeb need aktiivseks | ☑ |
-| V5 | Töö ajal (töömaht 30 ja **Võrdle mõlemat**) | Kell "Kulunud aeg" tiksub, edenemisriba täitub, akent saab liigutada ning lehti vahetada (lehel **Raportid** ilmuvad read ükshaaval). Märkeruudud ja liugur on töö ajal tuhmid | ☑ |
-| V6 | **Viga:** lehel **Haldus** lisa tüüp `Explorer`, nimi `Tühiaku`, aku `0`; lehel **Arvutused** vali kõik, **Võrdle mõlemat** | Tühiaku rida on punase staatusega **Viga** ja veateatega ("… ei ole töökorras …"). Ülejäänud neli on **Õnnestus**. Loendur "Viga: 1". Töö lõpeb olekuga "Valmis." (mitte tühistatud). Mõlemas režiimis sama tulemus | ☑ |
+| V5 | Töö ajal (töömaht 30 ja **Võrdle mõlemat**) | Kell "Kulunud aeg" tiksub, edenemisriba täitub, akent saab liigutada ning lehti vahetada. Märkeruudud ja liugur on töö ajal tuhmid | ☑ |
+| V6 | **Viga:** lehel **Haldus** lisa tüüp `Explorer`, nimi `Tühiaku`, aku `0`; lehel **Arvutused** vali kõik, **Võrdle mõlemat** | Tühiaku rida on punase staatusega **Viga** ja veateatega ("… ei ole töökorras …"). Ülejäänud on **Õnnestus**. Töö lõpeb olekuga "Valmis." | ☑ |
 | V7 | **Tühistamine paralleelselt:** töömaht 50, **Paralleelselt**, varsti **Tühista** | Kõik read on halli staatusega **Tühistatud**, töö peatub vähem kui sekundiga, **Tühista** tuhmub, olek "Tühistatud." | ☑ |
-| V8 | **Tühistamine järjestikku:** töömaht 50, **Järjestikku**, varsti **Tühista** | Käimasoleva objekti rida: "Tühistati töö ajal.", järgmiste ridade tekst: "Tühistati enne alustamist." (neid ei alustatud) | ☑ |
+| V8 | **Tühistamine järjestikku:** töömaht 50, **Järjestikku**, varsti **Tühista** | Käimasoleva objekti rida: "Tühistati töö ajal.", järgmiste ridade tekst: "Tühistati enne alustamist." | ☑ |
 | V9 | **Võrdle mõlemat** ja tühista järjestikuse režiimi ajal | Paralleelne režiim ei alga, paralleelset raportit pole, võrdluskaart näitab vihjet | ☑ |
 | V10 | Pärast tühistamist käivita uuesti töömahuga 5 | Uus käivitus töötab tavaliselt ja lõpeb olekuga "Valmis." | ☑ |
-| V11 | **Hetktõmmis:** vali ainult Sädel, käivita ja jäta tulemus meelde. Tee Sädelile kaks korda **Hullumeelne tegevus!** (aku langeb), käivita uuesti | Uus tulemus on teine (väiksem kaetus), sest uus hetktõmmis on muutunud andmetest | ☑ |
+| V11 | **Hetktõmmis:** vali ainult Sädel, käivita ja jäta tulemus meelde. Tee Sädelile kaks korda **Hullumeelne tegevus!**, käivita uuesti | Uus tulemus on teine (väiksem kaetus), sest uus hetktõmmis on muutunud andmetest | ☑ |
 | V12 | Käivita sama sisend kaks korda (sama valik ja töömaht) | Tulemuste tekstid ja numbrid on iga kord täpselt samad (deterministlik), ainult kestused erinevad | ☑ |
 | V13 | Vähenda akent alla ~860 px | Märkeruudud, nupud ja raporti read murduvad uuele reale, midagi ei lõigata ära | ☑ |
 
-## 15. Git-koostöö
+### Vol.4 kasutusjuhud (salvestamine, taastamine, DI, LocalDB)
+
+| # | Tegevus | Oodatud tulemus | ☑ |
+|---|---|---|---|
+| S1 | Vali Sädel, muuda rühmaks `Gamma` ja vajuta **Muuda rühma** | Üksikasjades muutub rühm `Gamma`-ks; logis `"Sädel kuulub nüüd rühma Gamma."`. Uuesti vajutades `"Sädel on juba rühmas Gamma."` | [ ] |
+| S2 | Tee Sädelile **Hullumeelne tegevus!**, muuda rühma ja lisa uus robot. Vajuta **Salvesta** ning salvesta `.json` faili | Dialoog avaneb, fail kirjutatakse kettale, logis `"Salvestatud: N tegelast (...)."` | [ ] |
+| S3 | Salvesta sama maailm ka `.xml` faili | XML-fail luuakse kettale, logis kinnitus | [ ] |
+| S4 | Taaskäivita rakendus ja laadi `.json` fail (**Laadi**) | Taastuvad täpselt samad ID-d, tüübid, nimed, aku, terviklikkus ja rühmad (`Gamma`). Logis `"Maailm laaditud: N tegelast. Allikas: ..."` | [ ] |
+| S5 | Muuda maailma ja laadi `.xml` fail | Taastub täpselt sama seis mis JSON-failist; Kokkuvõte (`GroupBy`) ja lehe **Arvutused** valikuloend on uuenenud | [ ] |
+| S6 | Pärast laadimist tee `CleanerBot`-ile **Hullumeelne tegevus!** ja lisa uus robot | Naabrite reaktsioonid töötavad tavapäraselt; laadimise enda ajal reaktsioone ei tekkinud | [ ] |
+| S7 | Vajuta **Laadi** ja vali katkine JSON/XML, tundmatu robotitüübiga fail, duplikaat-ID-ga fail või `.txt` fail | Logis selge eestikeelne veateade ja `"Senine maailm jäi muutmata."`. Olemasolev maailm ei muutu | [ ] |
+| S8 | Käivita rakendus LocalDB režiimis (`--storage=LocalDb` või `"Storage": "LocalDb"`) | Ülaribal kuvatakse DI-ga valitud teenus: `Salvestusteenus: LocalDbWorldStorage` | [ ] |
+| S9 | LocalDB režiimis muuda maailma, vajuta **Salvesta**, sulge rakendus, käivita uuesti ja vajuta **Laadi** | Failidialoogi ei avata; andmebaas ja tabelid luuakse automaatselt ning taaskäivitamisel taastub täpselt salvestatud maailm | [ ] |
+| S10 | Käivita rakendus vigase väärtusega `"Storage": "Vale"` failis `appsettings.json` | Rakendus ei kuku kokku, kuvab teate tundmatust salvestusviisist ja lülitub automaatselt `FileWorldStorage` peale | [ ] |
+
+## 17. Git-koostöö
 
 <!-- TÄIDA: nimed, lingid ja commit'ide hash'id pärast pull request'ide merge'i. Kustuta see kommentaar. -->
 
@@ -631,19 +769,6 @@ Lehel **Arvutused** (tulemused lehel **Raportid**). Kui pole öeldud teisiti, on
 4. Mina kontrollisin muudatused (checklist allpool), käivitasin rakenduse, jätsin **review**, **approve**'isin ja **merge**'isin.
 5. Samamoodi tegin partneri projektis mina kolm uut tüüpi ja esitasin pull request'i.
 
-**Partnerile antud ülesanne:** lisa maailma kolm uut tegelasetüüpi/klassi, igaühel erinev käitumine, vähemalt üks eksemplar igast uuest tüübist (demoandmetesse). Kolmest olemasoleva tüübi eksemplarist ei piisa.
-
-**Review checklist (mida kontrollisin):**
-
-* [ ] Uus klass pärib `Robot`-ist ja kasutab `override`-i (`CrazyAction`, vähemalt üks `ReactTo...`).
-* [ ] Uus `RobotKind` väärtus ja üks `Register`-rida `RobotWorld`-is.
-* [ ] Tüübil on oma hoidla ja ta ei satu teise hoidlasse.
-* [ ] Vähemalt üks reaktsioon jätab logikirje ja muudab reageerija olekut.
-* [ ] Tegija ei reageeri iseendale ja eemaldatud robot enam ei reageeri.
-* [ ] Domeeniloogika on Core-projektis, kood-taga ja View ei sisalda äriloogikat.
-* [ ] Tekstid on ressurssides, vigane sisend ei muuda olekut.
-* [ ] Lahendus kompileerub ja rakendus käivitub puhtalt clone'itud repost.
-
 ### Vol.3
 
 | | |
@@ -652,12 +777,20 @@ Lehel **Arvutused** (tulemused lehel **Raportid**). Kui pole öeldud teisiti, on
 | Vol.3 pull request | `<PR-LINK>` (base: `<BASE-HARU>`) |
 | Vol.3 lõpp-commit | `<HASH>` |
 
-**Töövoog:**
-1. Haru `vol3/parallel-cpu` loodi harust `vol2/events-linq-mvvm` pärast partneri pull request'i merge'i.
-2. Muudatused tehti väikeste commit'idena: hetktõmmis ja arvutused, jooksutaja (`RobotCalculationRunner`), `CalculationViewModel`, XAML, README.
-3. Avati pull request, mille kirjelduses on lühike käivitusjuhend (vt punkt 11) ja demo kolm stsenaariumi.
+### Vol.4
 
-## 16. Esitamine
+| | |
+|---|---|
+| Vol.4 haru | `vol4/persistence` |
+| Vol.4 pull request | `<PR-LINK>` (base: `vol3/parallel-cpu`) |
+| Vol.4 lõpp-commit | `<HASH>` |
+
+**Töövoog:**
+1. Haru `vol4/persistence` loodi harust `vol3/parallel-cpu`.
+2. Muudatused tehti väikeste commit'idena: `RobotGroup` ja DTO-d, JSON/XML salvestus (`FileWorldStorage`), ViewModel + DI + dialoogiteenus + UI, LocalDB/ADO.NET (`LocalDbWorldStorage` + `database.sql`), README.
+3. Avati pull request, mille kirjelduses on käivitusjuhend (sh LocalDB seadistus) ja demosammud.
+
+## 18. Esitamine
 
 <!-- TÄIDA: sama info, mis läheb Moodle'isse. -->
 
@@ -670,72 +803,54 @@ Moodle'isse lisatud andmed:
 | Vol.2 haru | `vol2/events-linq-mvvm` |
 | Vol.2 lõpp-commit | `<HASH>` |
 | Partneri MR/PR link | `<PR-LINK>` |
+| Vol.3 pull request | `<PR-LINK>` |
+| Vol.4 pull request | `<PR-LINK>` |
 
 Hoidla ajaloost on nähtav partneri panus, põhiautori (minu) review/approve ja merge.
 
-**Enne esitamist kontrolli (vt punkt 14):**
-
-| Nõue | Kontrollitud juhud |
-|---|---|
-| Reageerivad ainult sama hoidla teised objektid | A1–A5, 1–3 |
-| Eemaldatud objekt enam ei reageeri | A3, A4 |
-| Vähemalt üks reaktsioon muudab olekut | A2, 1, 2 |
-| UI ja logi uuenevad automaatselt | A2, 4, 17, 18, 19 |
-| LINQ-päringud töötavad | 16, 17, 18 |
-| Käsu `CanExecute` töötab | 6–9 |
-| Vigane sisend ei muuda olekut | 10–15 |
-
-### Vol.3
-
-| | |
-|---|---|
-| Vol.3 pull request | `<PR-LINK>` |
-| Käivitusjuhend | punkt 11 (ja PR-i kirjeldus) |
-| Demo | punkt 11: mõlemad režiimid, viga, tühistamine |
-
-**Ülesande nõuded ja kus need kontrollitakse:**
+### Vol.4 nõuded ja kus need kontrollitakse
 
 | Nõue | Kus / kontrollitud juhud |
 |---|---|
-| Vähemalt kolm objekti, igaühel ressursimahukas CPU-arvutus | punkt 10, V1 |
-| Objektide andmete hetktõmmis | `RobotSnapshot`, V11 |
-| Kasutaja valib objektid ja töömahu | märkeruudud ja liugur, V4 |
-| Järjestikune režiim: oodatakse ühe objekti lõppu enne järgmist | punkt 10, V1, V2 |
-| Paralleelne režiim: `Task.Run` + `Task.WhenAll` | punkt 10, V1, V3 |
-| Sama sisend mõlemas režiimis, tulemuste võrdlus, `Stopwatch` | V1, V12 |
-| UI reageerib töö ajal | V5 |
-| "Tühista" saadab ühise `CancellationToken`-i, iga tsükkel kontrollib | V7–V10 |
-| Edu, viga ja tühistus iga objekti kohta, ühe viga ei peata teisi | V6 |
-| Raport: nimi, lõppolek, tulemus või veateade, kestus, kogu töö aeg | V1, V6 |
-| PR ja lühike käivitusjuhend, demo (mõlemad režiimid, viga, tühistus) | punkt 11 |
+| Maailma olek salvestatakse: ID, tüüp, nimi, muutuvad väljad ja rühmakuuluvus (`RobotGroup`) | `WorldDto`, `RobotDto`, S1–S5 |
+| Eraldi DTO-d; ei salvestata aknaid, käske ega sündmuste tellimusi | `RobotPlanet.Core/storage/WorldDto.cs` |
+| JSON- ja XML-teostus sama `IWorldStorage` lepingu järgi | `FileWorldStorage`, S2–S5 |
+| ViewModel saab `IWorldStorage` konstruktorist (DI), teostus registreeritakse käivitamisel | `MainViewModel`, `App.xaml.cs`, S8 |
+| Dialoogiteenus valib failitee, I/O jääb salvestusteenusesse | `IFileDialogService`, `WpfFileDialogService` |
+| Laadimisel luuakse õiged tüübid, `Repository<T>` hoidlad ja reaktsioonide seosed | `RobotWorld.Persistence.cs`, S4–S6 |
+| Maailm asendatakse alles pärast edukat lugemist ja kontrolli; UI-d teavitatakse | `RobotWorld.TryLoad`, S7 |
+| LocalDB/ADO.NET hoidla: tabelid ID-de ja välisvõtmetega (`RobotGroups`, `Robots`), parametriseeritud SQL, üks tehing | `LocalDbWorldStorage`, `LocalDbSql`, `database.sql`, S8–S9 |
+| Käivitusjuhend (LocalDB eeldused, andmebaasi/tabelite loomine, ühenduse seadistus) ja demo | punkt 13 |
 
-## 17. AI kasutamine
+## 19. AI kasutamine
 
 <!-- KONTROLLI: jäta alles ainult need punktid, mida tegid ise. -->
 
 * **Tööriist:** Claude (Anthropic).
-* **Kasutusotstarve:** Vol.1 kavandamine ja koodimustandid. Vol.2-s hoidlate, sündmuste ja reaktsioonide kavandamine, `RobotWorld` registri, ViewModeli ja XAML-i mustandid, LINQ-päringute näited, README mustand ning vigade põhjuste otsimine. Vol.3-s CPU-arvutuste, jooksutaja (`RobotCalculationRunner`), `CalculationViewModel`i ja XAML-i mustandid.
-* **AI poolt tehtud kontroll:** Core- ja ViewModel-loogikat kontrolliti ajutise konsoolprogrammiga väljaspool minu projekti (A/B/C stsenaarium, valideerimine, `CanExecute`, LINQ). Vol.3 jooksutajat (järjestikune ja paralleelne režiim, viga, tühistamine, hetktõmmis) kontrolliti samuti ajutise programmiga, kuid ühe protsessorituumaga keskkonnas, seega **tegelikku kiirenemist** mõõtsin ise oma arvutis. See **ei asenda** minu enda käsitsi kontrolli: WPF-i välimuse ja kasutusjuhud punktis 14 kontrollisin ise.
+* **Kasutusotstarve:** Vol.1–Vol.3 kavandamine ja koodimustandid. Vol.4-s DTO-de, `RobotWorld.TryLoad`, JSON/XML salvestuse (`FileWorldStorage`), DI seadistuse (`App.xaml.cs`), failidialoogiteenuse, LocalDB/ADO.NET salvestuse (`LocalDbWorldStorage`, `LocalDbSql`, `database.sql`) ja README mustandid.
+* **AI poolt tehtud kontroll:**
+  * Vol.1–Vol.3 Core- ja ViewModel-loogikat kontrolliti ajutise konsoolprogrammiga väljaspool projekti.
+  * Vol.4 Core-salvestust ja laadimist kontrolliti 78 testjuhuga (JSON/XML edasi-tagasi, vigased ja poolikud failid, XML DOCTYPE, sündmuste vaigistamine laadimisel ja taastamine pärast laadimist, rühmade muutmine).
+  * Vol.4 ViewModeli ja käske kontrolliti 43 testjuhuga emuleeritud UI-lõimes (salvestamine, laadimine, dialoogi tühistamine, vigane fail, `CanExecute`).
+  * Vol.4 LocalDB loogikat ja SQL-i kontrolliti mälupõhise ADO.NET testpakkujaga (38 kontrolli: tehingu tagasivõtmine vea korral, parametriseeritud SQL, andmebaasi nime valideerimine, ühenduste sulgemine), T-SQL süntaksikontrolliga ja SQLite välisvõtmete testidega (9 kontrolli), lisaks 15 käivitusseadistuste kontrolli.
+  * AI keskkonnas puudusid Windows, WPF ja päris SQL Server LocalDB, seega WPF-käivituse, failidialoogid, DI-konteineri ja päris LocalDB ühenduse kontrollisin ise oma arvutis.
 * **Enda tehtud kontrollid ja muudatused:**
-  * lõin harud ja commit'id ise ning kontrollisin, et Core ei sõltuks WPF-ist;
-  * viisin kõik teated ressursifailidesse (eesti keeles) ja parandasin vigased ressursid;
-  * katsetasin käsitsi kõiki punktis 14 kirjeldatud kasutusjuhte;
-  * mõõtsin ise järjestikuse ja paralleelse režiimi kestused ning kontrollisin vea ja tühistamise demo;
+  * lõin harud ja commit'id ise ning kontrollisin, et `RobotPlanet.Core` ei sõltuks WPF-ist ega SQL-pakettidest;
+  * paigaldasin NuGet-paketid (`Microsoft.Extensions.DependencyInjection`, `Microsoft.Data.SqlClient`) ja lisasin kõik uued eestikeelsed ressursivõtmed `Resources.resx` failidesse;
+  * katsetasin käsitsi kõiki punktis 16 kirjeldatud kasutusjuhte (sh Vol.4 faili- ja LocalDB-demo);
   * kontrollisin partneri pull request'i (review, approve, merge);
-  * kohandasin AI pakutud koodi (nimeruumid, kaustade ja failide nimed, väärtuste piirid);
-  * oskan seletada sündmuse teekonna (punkt 7) ning Modeli, ViewModeli ja View vastutused (punkt 9).
+  * oskan selgitada sündmuse teekonna (punkt 7), MVVM vastutused (punkt 9) ning DTO, DI ja LocalDB tehingulise salvestuse toimimise (punkt 12).
 * Vastutan lõpliku lahenduse eest ja oskan selgitada iga koodiosa.
 
 ## Teadlikud otsused ja piirangud
 
+* **Rühma (`RobotGroup`) eristamine hoidlast:** kuna roboti tüübipõhine hoidla (`Repository<T>`) määrab reaktsioonid ja seda ei saa muuta, lisati eraldi muudetav rühmakuuluvus `RobotGroup` (`Alfa`, `Beeta`, `Gamma`), mis salvestatakse DTO-sse ja andmebaasi `RobotGroups` tabelisse.
+* **Üks `FileWorldStorage` nii JSON-i kui ka XML-i jaoks:** `IWorldStorage` leping on sama, `FileWorldStorage` valib vormingu faililaiendi (`.json` / `.xml`) järgi, nii saab demos mõlemat vormingut kasutada rakendust vahepeal taaskäivitamata. `LocalDbWorldStorage` on eraldi teostus, mis valitakse käivitamisel DI kaudu.
 * **Reaktsioon ka luhtunud katsele:** hoidla tõstab `CrazyActionPerformed` iga katse järel, ka siis, kui tegija keeldus (nt liiga vähe akut). Naabrid "näevad katset".
 * **`GuardBot` ei ole laetav** ja ei kuluta akut: see on teadlik jutuline erand, mis näitab `is IChargeable` kontrolli.
 * **Reaktsioonid on tüübisisesed:** kõik `CleanerBot`-id kuuluvad ühte hoidlasse. Teise tüübi robotid ei reageeri neile.
 * **ID on unikaalne kogu maailmas**, mitte ainult hoidlas.
 * **Remondi sihtmärk** võib olla mis tahes robot (ka teisest hoidlast). `Repair` ise ei tekita sündmust.
-* **Arvutused on puhtad:** nad loevad ainult hetktõmmist ega muuda robotit. Sama sisend annab alati sama tulemuse (igal robotil on oma `Random`, mille seeme tuleb ID-st ja töömahust), seega kahte režiimi saab ausalt võrrelda.
-* **Viga tekib loomulikult:** robot, mis ei ole töökorras (aku või terviklikkus 0), ei saa arvutust teha. Demos lisatakse selline robot käsitsi. Ühe objekti viga läheb raportisse ja teised tööd jätkuvad, sest iga ülesanne püüab oma erandid kinni ja `Task.WhenAll` ei visata.
-* **`Task.Run` + `Task.WhenAll`:** paralleelne režiim kasutab täpselt neid, nagu ülesanne nõuab (mitte `Parallel.ForEach`).
-* **Kiirenemine sõltub tuumadest:** neljal objektil on parim võimalik kiirendus umbes tuumade arvu ulatuses, aga ühe tuumaga arvutis on see ≈ ×1. Kui objekte on vähem kui tuumi, piirab tulemust kõige pikem arvutus. *Debug*-ehitus on aeglasem kui *Release*.
-* **Tühistamine on koostööpõhine:** token ei peata lõime jõuga, vaid iga CPU-tsükkel kontrollib seda ja viskab `OperationCanceledException`-i. Objektid, mille tööd polnud veel alanud, märgitakse tühistatuks enne alustamist.
-* **Arvutused ei tekita sündmusi:** Vol.2 reaktsioonid ja Vol.3 arvutused on eraldi teemad. Arvutus ei muuda roboti olekut ega käivita naabrite reaktsioone.
+* **Arvutused on puhtad:** nad loevad ainult hetktõmmist ega muuda robotit. Sama sisend annab alati sama tulemuse, seega kahte režiimi saab ausalt võrrelda.
+* **`Task.Run` + `Task.WhenAll`:** paralleelne režiim kasutab täpselt neid, nagu ülesanne nõab (mitte `Parallel.ForEach`).
+* **Tühistamine on koostööpõhine:** token ei peata lõime jõuga, vaid iga CPU-tsükkel kontrollib seda ja viskab `OperationCanceledException`-i.
