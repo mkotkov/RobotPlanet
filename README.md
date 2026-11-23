@@ -6,6 +6,7 @@ WPF-rakendus, kus erinevad robotid elavad samas maailmas, kuid käituvad erineva
 * **Vol.2 (Kodutöö 4):** tüübipõhised hoidlad (generics), sündmused ja naabrite reaktsioonid, LINQ-päringud ja kohustuslik MVVM.
 * **Vol.3 (Ülesanne 5-1):** ressursimahukad CPU-arvutused järjestikku ja paralleelselt (`Task.Run` + `Task.WhenAll`), hetktõmmis, tühistamine (`CancellationToken`), vea- ja tühistuskäsitlus ning raport. UI jääb töö ajal reageerivaks.
 * **Vol.4 (Ülesanne 6-1):** maailma oleku salvestamine ja taastamine (DTO-d, JSON, XML, LocalDB/ADO.NET), sõltuvuste süstimine (DI), failidialoogiteenus, rühmade haldus ning tehinguline andmebaasipüsivus.
+* **Vol.5 (Ülesanne 7-1):** relatsiooniline püsivus Entity Framework Core abil, Table-Per-Hierarchy (TPH) päriluskaardistus, EF Core migratsioonid, DDD väärtusobjekt (`RobotName`) ning tehinguline salvestamine üle ühise `IWorldStorage` lepingu ja DI-konteineri.
 
 Sama maailm ja samad tegelased kasvavad edasi: uut universumit ega uut projekti ei loodud.
 
@@ -24,12 +25,14 @@ Sama maailm ja samad tegelased kasvavad edasi: uut universumit ega uut projekti 
 11. [Vol.3 lühike käivitusjuhend ja demo](#11-vol3-lühike-käivitusjuhend-ja-demo)
 12. [Vol.4: salvestamine (DTO, JSON, XML, LocalDB/ADO.NET, DI)](#12-vol4-salvestamine-dto-json-xml-localdbadonet-di)
 13. [Vol.4 käivitusjuhend (sh LocalDB) ja demo](#13-vol4-käivitusjuhend-sh-localdb-ja-demo)
-14. [Kasutajaliides](#14-kasutajaliides)
-15. [Iseseisvalt õpitud WPF UI elemendid](#15-iseseisvalt-õpitud-wpf-ui-elemendid)
-16. [Kontrollitud kasutusjuhud](#16-kontrollitud-kasutusjuhud)
-17. [Git-koostöö](#17-git-koostöö)
-18. [Esitamine](#18-esitamine)
-19. [AI kasutamine](#19-ai-kasutamine)
+14. [Vol.5: Entity Framework Core, TPH pärilus, migratsioonid ja DDD](#14-vol5-entity-framework-core-tph-pärilus-migratsioonid-ja-ddd)
+15. [Vol.5 käivitusjuhend (EF Core ja migratsioonid) ja demo](#15-vol5-käivitusjuhend-ef-core-ja-migratsioonid-ja-demo)
+16. [Kasutajaliides](#16-kasutajaliides)
+17. [Iseseisvalt õpitud WPF UI elemendid](#17-iseseisvalt-õpitud-wpf-ui-elemendid)
+18. [Kontrollitud kasutusjuhud](#18-kontrollitud-kasutusjuhud)
+19. [Git-koostöö](#19-git-koostöö)
+20. [Esitamine](#20-esitamine)
+21. [AI kasutamine](#21-ai-kasutamine)
 
 ---
 
@@ -39,27 +42,28 @@ Valitud maailm: **ROBOT PLANET**. Planeedil elavad kaheksa tüüpi roboteid: `Cl
 
 **Praktikumi garaaži põhimõte (Vol.2):** iga robotitüüp saab oma hoidla ning selles olevad robotid reageerivad üksteise tegevusele. Näiteks kui üks `CleanerBot` küürib end värvist puhtaks, koristavad teised `CleanerBot`-id tema segaduse ära. `ExplorerBot`-id seda ei märka, sest nad elavad teises hoidlas.
 
-Kõik domeenireeglid (robotid, rühmad, hoidlad, sündmused, reaktsioonid, DTO-d, salvestusteenused) asuvad Core-projektis. WPF-projekt ainult seadistab DI, juhib ja kuvab.
+Kõik domeenireeglid (robotid, väärtusobjektid, rühmad, hoidlad, sündmused, reaktsioonid, DTO-d, salvestuslepingud) asuvad Core-projektis ilma väliste UI- või ORM-sõltuvusteta. WPF-projekt seadistab DI, EF Core andmekonteksti, juhib ja kuvab.
 
 ## 2. Käivitamisjuhend
 
-**Nõuded:** Windows 10/11, .NET 10 SDK, Visual Studio töökoormusega *.NET desktop development* (LocalDB režiimi jaoks ka töökoormus *Data storage and processing* või SQL Server Express LocalDB).
+**Nõuded:** Windows 10/11, .NET 10 SDK, Visual Studio töökoormusega *.NET desktop development* (LocalDB ja EF Core režiimide jaoks ka töökoormus *Data storage and processing* või SQL Server Express LocalDB).
 
 ```bash
 git clone <REPOSITORY-URL>
 cd RobotPlanet
-git checkout vol4/persistence
+git checkout vol5/ef-core
 dotnet run --project RobotPlanet.Wpf -c Release
 ```
 
 Alternatiiv: ava `RobotPlanet.slnx` Visual Studios, määra `RobotPlanet.Wpf` käivitusprojektiks ja vajuta **F5**.
 
 * Vaikimisi käivitub rakendus failipõhise salvestusega (`FileWorldStorage`, mis toetab `.json` ja `.xml` faile).
-* LocalDB režiimis käivitamiseks määra `RobotPlanet.Wpf/appsettings.json` failis `"Storage": "LocalDb"` või käivita argumendiga:
+* Salvestusrežiimi saab valida `RobotPlanet.Wpf/appsettings.json` failis (`"Storage": "File"`, `"LocalDb"` või `"EfCore"`) või käsurea argumendiga:
   ```bash
-  dotnet run --project RobotPlanet.Wpf -c Release -- --storage=LocalDb
+  dotnet run --project RobotPlanet.Wpf -c Release -- --storage=EfCore
   ```
-* Kiirenemise nägemiseks (Vol.3) käivita **Release**-konfiguratsioonis (Visual Studios vali *Release* ja vajuta **Ctrl+F5**). Varasemad tööd asuvad harudes `vol2/events-linq-mvvm` ja `vol3/parallel-cpu`.
+  *(Toetatud väärtused: `--storage=File`, `--storage=LocalDb`, `--storage=EfCore`.)*
+* Kiirenemise nägemiseks (Vol.3) käivita **Release**-konfiguratsioonis (Visual Studios vali *Release* ja vajuta **Ctrl+F5**). Varasemad tööd asuvad harudes `vol2/events-linq-mvvm`, `vol3/parallel-cpu` ja `vol4/persistence`.
 
 **Demoandmed** (lisatakse käivitamisel teenusest `DemoWorld`):
 
@@ -76,10 +80,10 @@ Alternatiiv: ava `RobotPlanet.slnx` Visual Studios, määra `RobotPlanet.Wpf` k�
 
 ```
 RobotPlanet.slnx
-├── database.sql                     valikuline SQL-skript (LocalDB tabelid loodakse ka automaatselt)
-├── RobotPlanet.Core                 MODEL (klassiteek, ei sõltu WPF-ist ega SQL-pakettidest)
-│   ├── entities/                    Robot, RobotGroup (Alfa, Beeta, Gamma), CleanerBot,
-│   │                                ExplorerBot, RepairBot, GuardBot, JesterBot, DeliveryBot,
+├── database.sql                     valikuline SQL-skript (Vol.4 ADO.NET tabelite jaoks)
+├── RobotPlanet.Core                 MODEL (klassiteek, ei sõltu WPF-ist, EF Core-ist ega SQL-pakettidest)
+│   ├── entities/                    Robot, RobotName (DDD Value Object), RobotGroup (Alfa, Beeta, Gamma),
+│   │                                CleanerBot, ExplorerBot, RepairBot, GuardBot, JesterBot, DeliveryBot,
 │   │                                InspectorBot, RescueBot
 │   ├── interface/                   IChargeable, IScan, IRepair, IRepository<T>, IRobotRepository
 │   ├── events/                      RobotEventKind, RobotEventArgs, ReactionEventArgs
@@ -89,10 +93,14 @@ RobotPlanet.slnx
 │   │                                FileWorldStorage (JSON + XML), LocalDbSql, LocalDbWorldStorage
 │   ├── RobotKind.cs                 roboti tüüpide loend
 │   ├── RobotWorld.cs                hoidlate register + domeenireeglid
-│   ├── RobotWorld.Persistence.cs    CreateDto() ja TryLoad() (atomaarne maailma taastamine) (Vol.4)
+│   ├── RobotWorld.Persistence.cs    CreateDto(), TryLoad() ja TryLoadRobots() (Vol.4 + Vol.5)
 │   └── Properties/Resources.resx    teated (eesti keeles, sh laadimise ja andmebaasi teated)
-└── RobotPlanet.Wpf                  VIEWMODEL + VIEW (viitab Core-projektile)
-    ├── Services/                    IFileDialogService, WpfFileDialogService, DemoWorld, AppSettings (Vol.4)
+└── RobotPlanet.Wpf                  VIEWMODEL + VIEW + EF CORE INFRASTRUKTUUR (viitab Core-projektile)
+    ├── Persistence/                 RobotPlanetDbContext, EfRobotGroup, EfCoreWorldStorage, (Vol.5)
+    │                                RobotPlanetDbContextFactory (design-time migratsioonideks)
+    ├── Migrations/                  20261123190000_InitialCreate.cs, ModelSnapshot (Vol.5)
+    ├── Services/                    IFileDialogService, WpfFileDialogService, DemoWorld, AppSettings,
+    │                                StorageProviderFactory (File / LocalDb / EfCore valik)
     ├── ViewModels/
     │   ├── ViewModelBase.cs         INotifyPropertyChanged
     │   ├── RelayCommand.cs          ICommand + CanExecute
@@ -102,7 +110,7 @@ RobotPlanet.slnx
     │   └── CalculationParts.cs      CalculationTarget, OutcomeRow, ModeReportViewModel
     ├── App.xaml                     rakenduse ressursid (StartupUri eemaldatud)
     ├── App.xaml.cs                  DI-konteiner (ServiceCollection), salvestusteenuse valik ja käivitus
-    ├── appsettings.json             salvestusviisi ("File" / "LocalDb") ja ühendusstringi seadistus
+    ├── appsettings.json             salvestusviisi ("File" / "LocalDb" / "EfCore") ja ühendusstringi seadistus
     ├── MainWindow.xaml              VIEW: neli lehte (TabControl), salvestusriba, logi (Expander)
     ├── MainWindow.xaml.cs           ainult paigutus (kitsal ekraanil), ViewModel tuleb konstruktorist
     └── Properties/Resources.resx    kasutajaliidese tekstid
@@ -115,7 +123,7 @@ classDiagram
     class Robot {
         <<abstract>>
         +int Id
-        +string Name
+        +RobotName Name
         +int Battery
         +int Integrity
         +RobotGroup Group
@@ -126,6 +134,10 @@ classDiagram
         +ReactToRemoved(Robot) string
         +ReactToCrazyAction(Robot) string
         +CreateCalculation() IRobotCalculation
+    }
+    class RobotName {
+        <<Value Object>>
+        +string Value
     }
     class IChargeable {
         <<interface>>
@@ -145,6 +157,7 @@ classDiagram
         +LoadAsync(string, CancellationToken) Task~WorldDto~
     }
 
+    Robot *-- RobotName
     Robot <|-- CleanerBot
     Robot <|-- ExplorerBot
     Robot <|-- RepairBot
@@ -170,6 +183,7 @@ classDiagram
 
     IWorldStorage <|.. FileWorldStorage
     IWorldStorage <|.. LocalDbWorldStorage
+    IWorldStorage <|.. EfCoreWorldStorage
 ```
 
 ### Klassid
@@ -183,7 +197,7 @@ classDiagram
 | `JesterBot` | `IChargeable`, `IScan` | teeb nalja, −8 akut | etendab liiga hoogsalt: −20 akut |
 | `DeliveryBot` | `IChargeable` | toimetab pakke, −5 akut | veab pakke liiga kiiresti: −10 akut, −5 terviklikkust |
 | `InspectorBot` | `IChargeable`, `IScan` | kontrollib objekte, −5 akut | inspekteerib kõike korraga: −10 akut, −5 terviklikkust |
-| `RescueBot` | `IChargeable`, `IScan` | valmistub päästeks, −7 akut | ryhib päästma kõiki: −12 akut, −8 terviklikkust |
+| `RescueBot` | `IChargeable`, `IScan` | valmistub päästeks, −7 akut | rühib päästma kõiki: −12 akut, −8 terviklikkust |
 
 `ExplorerBot`, `RepairBot`, `JesterBot`, `InspectorBot` ja `RescueBot` täidavad kaht rolli korraga (kaks liidest).
 
@@ -196,7 +210,7 @@ classDiagram
 | `IRepair` | `string Repair(Robot target)` | robot oskab teist robotit parandada |
 | `IRepository<T>` | `Add`, `Remove`, `GetAll`, `Find` | tüübipõhine hoidla (vt punkt 6) |
 | `IRobotRepository` | `Title`, `Count`, `Robots` | hoidla kirjutuskaitstud vaade registrile ja UI-le |
-| `IWorldStorage` | `SaveAsync`, `LoadAsync` | maailma DTO salvestamine ja lugemine (JSON/XML või LocalDB) (Vol.4) |
+| `IWorldStorage` | `SaveAsync`, `LoadAsync` | maailma salvestamine ja lugemine (JSON/XML, LocalDB või EF Core) (Vol.4–Vol.5) |
 | `IFileDialogService` | `PickSaveFile`, `PickOpenFile` | eraldab failidialoogi ViewModelist (Vol.4) |
 
 `GuardBot` ei ole laetav (tal on reaktor). See on teadlik valik, et võimete kontroll `is` / `as` operaatoriga annaks tüüpide vahel päris erineva tulemuse.
@@ -240,12 +254,12 @@ classDiagram
 
 * **Identiteet** (`Id`, `Name`) määratakse konstruktoris ja on ainult loetav.
 * `Id`: 0–999999 ja **unikaalne kogu maailmas** (kontrollib `RobotWorld.TryAdd`, ka teise tüübi robotite vastu).
-* `Name`: pärast `Trim()` 2–20 märki, mitte tühi.
+* `Name` (**DDD Value Object `RobotName`**, Vol.5): kapseldab nime valideerimise (pärast `Trim()` 2–20 märki, mitte tühi) ja võrdluse; Vigane nimi viskab `ArgumentException`-i enne, kui ükski robot või andmebaasi kirje luuakse.
 * `Battery` ja `Integrity`: 0–100. Setter on `private`, muutmine käib ainult kaitstud meetoditega `TrySpendBattery`, `TryAddBattery`, `TryDamage`, `TryRestoreIntegrity`.
 * **Rühmakuuluvus (`Group`):** `RobotGroup` (`Alfa`, `Beeta`, `Gamma`), vaikimisi `Alfa`. Muutmine käib meetodiga `ChangeGroup(RobotGroup)`, mis kontrollib `Enum.IsDefined`, teavitab UI-d (`INotifyPropertyChanged`) ja salvestatakse koos roboti olekuga.
 * Need meetodid **keelduvad vigasest sisendist ja ei muuda olekut** (negatiivne kogus, liiga vähe akut, tundmatu rühm).
 * `ReceiveRepair(int)` on ainus avalik remondisisend: kogus 1–100, ideaalses seisus robotit ei paranda.
-* Vigane konstruktoriargument annab `ArgumentException`, mille `RobotWorld.TryAdd` ja `RobotWorld.TryLoad` püüavad kinni ja tagastavad sõnumina. Rakendus ei sulgu.
+* Vigane konstruktoriargument annab `ArgumentException`, mille `RobotWorld.TryAdd`, `RobotWorld.TryLoad` ja `RobotWorld.TryLoadRobots` püüavad kinni ja tagastavad sõnumina. Rakendus ei sulgu.
 * Tekstisisend muudetakse arvuks ViewModelis (`int.TryParse`), ülejäänud reeglid kontrollib Core.
 
 ## 6. Hoidlad ja generics
@@ -277,7 +291,7 @@ public partial class Repository<T> : IRepository<T>, IRobotRepository where T : 
   Register(RobotKind.Cleaner, (id, name, battery, integrity) => new CleanerBot(id, name, battery, integrity));
   ```
 
-  Uue tüübi lisamiseks piisab uuest klassist, uuest `RobotKind` väärtusest ja ühest `Register`-reast. Hoidla, sündmused, tellimused, UI-kuvamine ning ka JSON/XML/LocalDB salvestus ja taastamine toimivad automaatselt.
+  Uue tüübi lisamiseks piisab uuest klassist, uuest `RobotKind` väärtusest ja ühest `Register`-reast. Hoidla, sündmused, tellimused, UI-kuvamine ning ka JSON/XML/LocalDB/EF Core salvestus ja taastamine toimivad automaatselt.
 * `RobotWorld` leiab roboti hoidla **täpse tüübi** järgi (`GetType() == typeof(T)`), seega robot ei satu kunagi teise tüübi hoidlasse.
 
 ```mermaid
@@ -317,7 +331,7 @@ Iga sündmus kannab `RobotEventArgs`: `Source` (milline robot tegevuse põhjusta
 
 * `Add`: robot lisatakse kollektsiooni ja **tellitakse** kõigile kolmele sündmusele.
 * `Remove`: robot **tühistab** kõik kolm tellimust enne, kui `ItemRemoved` tõstetakse. Seetõttu ei reageeri eemaldatud robot ei oma lahkumisele ega hilisematele sündmustele.
-* `Restore` ja `ClearSilently` (Vol.4): failist või andmebaasist maailma taastamisel tühistatakse vanade robotite tellimused ning uued robotid lisatakse hoidlasse **ilma tervitusreaktsioone käivitamata** (nii ei kuluta nt `ExplorerBot` laadimisel akut ja olek jääb täpselt salvestatuks). Pärast taastamist on kõik kolm sündmusetellimust aktiivsed.
+* `Restore` ja `ClearSilently` (Vol.4 / Vol.5): failist või andmebaasist maailma taastamisel tühistatakse vanade robotite tellimused ning uued robotid lisatakse hoidlasse **ilma tervitusreaktsioone käivitamata** (nii ei kuluta nt `ExplorerBot` laadimisel akut ja olek jääb täpselt salvestatuks). Pärast taastamist on kõik kolm sündmusetellimust aktiivsed.
 * `React(...)` jätab sündmuse vahele, kui `e.Source` on reageerija ise.
 * Tellimuste hoidmiseks on `Dictionary<T, Subscription>`, et sama delegaadi saaks hiljem tühistada.
 
@@ -385,7 +399,7 @@ Kolm päringut asuvad `MainViewModel`-is ja nende tulemused kuvatakse kasutajali
 
 | Päring | Operaator | Kus UI-s | Kood |
 |---|---|---|---|
-| **Otsimine** | `Where` | otsinguväli "Otsi nime või ID järgi" | `query.Where(r => r.Name.Contains(text, StringComparison.CurrentCultureIgnoreCase) \|\| r.Id.ToString().Contains(text))` |
+| **Otsimine** | `Where` | otsinguväli "Otsi nime või ID järgi" | `query.Where(r => r.Name.Value.Contains(text, StringComparison.CurrentCultureIgnoreCase) \|\| r.Id.ToString().Contains(text))` |
 | **Sorteerimine** | `OrderBy` / `OrderByDescending` | valik "Sorteeri" (nimi, aku, terviklikkus, ID) ja märkeruut "Kahanevalt" | `SortDescending ? query.OrderByDescending(r => r.Battery) : query.OrderBy(r => r.Battery)` |
 | **Grupeerimine** | `GroupBy` | kaart "Kokkuvõte" | `_world.Robots.GroupBy(r => r.Kind).Select(g => new GroupSummary(g.Key, g.Count(), (int)Math.Round(g.Average(r => r.Battery)), (int)Math.Round(g.Average(r => r.Integrity))))` |
 
@@ -398,9 +412,9 @@ Kolm päringut asuvad `MainViewModel`-is ja nende tulemused kuvatakse kasutajali
 
 | Kiht | Vastutus | Kus |
 |---|---|---|
-| **Model (Core)** | robotid, rühmad, hoidlad, sündmused, reaktsioonid, valideerimine, DTO-d, faili- ja LocalDB-salvestus. Ei sõltu WPF-ist | `RobotPlanet.Core` |
+| **Model (Core)** | robotid, väärtusobjektid (`RobotName`), rühmad, hoidlad, sündmused, reaktsioonid, valideerimine, DTO-d, faili- ja ADO.NET-salvestus. Ei sõltu WPF-ist ega EF Core-ist | `RobotPlanet.Core` |
 | **ViewModel** | valitud hoidla ja robot, rühmavalik, kuvatavad loendid, LINQ-päringud, logi, kasutaja käsud (`ICommand`), salvestamise ja laadimise koordineerimine | `RobotPlanet.Wpf/ViewModels` |
-| **View + käivitus** | ainult kujundus ja sidumised (`Binding`). `App.xaml.cs` seadistab DI ja teenused (`IWorldStorage`, `IFileDialogService`) | `MainWindow.xaml`, `App.xaml.cs`, `Services` |
+| **View + käivitus + EF Core** | ainult kujundus ja sidumised (`Binding`). `App.xaml.cs` ja `StorageProviderFactory` seadistavad DI ja salvestusteenused (`FileWorldStorage`, `LocalDbWorldStorage` või `EfCoreWorldStorage`) | `MainWindow.xaml`, `App.xaml.cs`, `Services`, `Persistence` |
 
 ### Käsud ja `CanExecute`
 
@@ -595,8 +609,8 @@ public interface IWorldStorage
 ### Sõltuvuste süstimine (DI) ja dialoogiteenus
 
 * `MainViewModel` ei loo salvestusteenust ega dialooge ise, vaid võtab konstruktoris vastu liidesed `(RobotWorld, IWorldStorage, IFileDialogService, ...)`.
-* `App.xaml.cs` ehitab `Microsoft.Extensions.DependencyInjection` konteineri, loeb `appsettings.json`-i ja käsurea argumendid (`AppSettings`) ning registreerib vastava `IWorldStorage` teostuse (`FileWorldStorage` või `LocalDbWorldStorage`).
-* Faili asukoha valib `WpfFileDialogService` (`IFileDialogService`); `MainViewModel` saab tagasi ainult failitee stringi ja edastab selle `IWorldStorage`-ile. LocalDB režiimis failidialoogi ei avata ning ülaribal kuvatakse valitud DI-teostus: **`Salvestusteenus: FileWorldStorage`** või **`Salvestusteenus: LocalDbWorldStorage`**.
+* `App.xaml.cs` ehitab `Microsoft.Extensions.DependencyInjection` konteineri, loeb `appsettings.json`-i ja käsurea argumendid (`AppSettings`) ning registreerib vastava `IWorldStorage` teostuse (`FileWorldStorage`, `LocalDbWorldStorage` või `EfCoreWorldStorage`).
+* Faili asukoha valib `WpfFileDialogService` (`IFileDialogService`); `MainViewModel` saab tagasi ainult failitee stringi ja edastab selle `IWorldStorage`-ile. Andmebaasirežiimides (`LocalDb`, `EfCore`) failidialoogi ei avata ning ülaribal kuvatakse valitud DI-teostus: **`Salvestusteenus: FileWorldStorage`**, **`Salvestusteenus: LocalDbWorldStorage`** või **`Salvestusteenus: EfCoreWorldStorage`**.
 
 ## 13. Vol.4 käivitusjuhend (sh LocalDB) ja demo
 
@@ -620,7 +634,7 @@ public interface IWorldStorage
 4. **Andmebaasi ja tabelite loomine:**
    * **Automaatselt (vaikimisi):** rakendus ühendub esimesel `Salvesta` või `Laadi` vajutusel süsteemibaasiga `master`, loob andmebaasi `RobotPlanet` (kui see puudub) ja käivitab idempotentse tabelite loomise skripti. Esimene käivitus võib võtta paar sekundit, kuni LocalDB eksemplar ärkab.
    * **Käsitsi (valikuline):** skripti saab käivitada ka käsuga `sqlcmd -S "(localdb)\MSSQLLocalDB" -i database.sql` ning tabeleid vaadata Visual Studios (*View → SQL Server Object Explorer*).
-5. **Režiimi vahetamine käivitamisel (DI):** muuda `appsettings.json`-is `"Storage"` väärtuseks `"File"` või `"LocalDb"`, või anna käsurealt `--storage=LocalDb` (Visual Studios: *Project Properties → Debug → General → Open debug launch profiles UI → Command line arguments*).
+5. **Režiimi vahetamine käivitamisel (DI):** muuda `appsettings.json`-is `"Storage"` väärtuseks `"File"`, `"LocalDb"` või `"EfCore"`, või anna käsurealt `--storage=LocalDb` (Visual Studios: *Project Properties → Debug → General → Open debug launch profiles UI → Command line arguments*).
 
 ### Demo stsenaarium (Vol.4 slaidi järgi)
 
@@ -632,7 +646,59 @@ public interface IWorldStorage
 | **4. Vigane fail** | Vajuta **Laadi** ja vali vigane fail (nt katkine JSON, tundmatu tüüp või `.txt` fail). | Logis kuvatakse arusaadav eestikeelne veateade ja *"Senine maailm jäi muutmata."*; praegune maailm jääb alles. |
 | **5. LocalDB ja DI** | Käivita rakendus argumendiga `--storage=LocalDb` (või `"Storage": "LocalDb"`). Näita ülaribal silti **`Salvestusteenus: LocalDbWorldStorage`**. Vajuta **Salvesta** (ilma failidialoogita), sulge rakendus, käivita uuesti ja vajuta **Laadi**. | Andmed kirjutatakse ühe tehinguga LocalDB tabelitesse `RobotGroups` ja `Robots` ning taaskäivitamisel taastub täpselt sama maailm. |
 
-## 14. Kasutajaliides
+## 14. Vol.5: Entity Framework Core, TPH pärilus, migratsioonid ja DDD
+
+Vol.5 laiendab olemasolevat `RobotPlanet` lahendust, lisades relatsioonilise püsivuse **Entity Framework Core** abil üle sama `IWorldStorage` lepingu ja DI-konteineri, säilitades `RobotPlanet.Core` täieliku sõltumatuse välistest ORM- ja SQL-pakettidest.
+
+### Arhitektuurilised täiendused
+
+1. **DDD Value Object (`RobotName`):**
+   * Roboti nime valideerimine (2–20 tähemärki pärast `Trim()`, mittetühi) on kapseldatud väärtusobjekti `RobotName` (`RobotPlanet.Core/entities/RobotName.cs`).
+   * `RobotPlanetDbContext` teisendab väärtusobjekti automaatselt andmebaasi veeruks ja tagasi `ValueConverter<RobotName, string>` abil.
+2. **Table-Per-Hierarchy (TPH) päriluskaardistus:**
+   * `RobotPlanetDbContext` kaardistab abstraktse baasklassi `Robot` ja kõik 8 alamklassi (`CleanerBot`, `ExplorerBot`, `RepairBot`, `GuardBot`, `JesterBot`, `DeliveryBot`, `InspectorBot`, `RescueBot`) ühte relatsioonilisse tabelisse `EfRobots`.
+   * Alamklassi eristamiseks kasutatakse diskriminaatorveergu `RobotType` (`NVARCHAR(30)`), mille väärtused on seotud `RobotKind` väärtustega (`HasDiscriminator<string>("RobotType")`).
+3. **Normaliseeritud rühmad, varjuomadus ja piirangud:**
+   * `EfRobotGroups` (`Id`, `Name` unikaalse indeksiga) ja välisvõti `EfRobots.GroupId -> EfRobotGroups.Id` kustutuskaitsega (`DeleteBehavior.Restrict`).
+   * Andmebaasitaseme `CHECK` piirangud `CK_EfRobots_Battery` (`[Battery] BETWEEN 0 AND 100`) ja `CK_EfRobots_Integrity` (`[Integrity] BETWEEN 0 AND 100`).
+   * Varjuomadus (*Shadow Property*) `Position` (`int`) säilitab robotite järjekorra ilma domeeniklassi `Robot` andmebaasispetsiifiliste väljadega koormamata.
+   * Mitte-püsivad domeeniomadused (`Kind`, `TypeName`) on seadistatud `Ignore(...)` abil.
+4. **EF Core migratsioonid (`Migrations/20261123190000_InitialCreate.cs`):**
+   * Skeemi ajalugu on kirjeldatud koodipõhiste migratsioonidega (`RobotPlanetDbContextFactory` võimaldab käsurea tööriistal `dotnet ef` luua konteksti disainiajal).
+   * Rakenduse käivitamisel `EfCore` režiimis rakendatakse puuduvad migratsioonid automaatselt (`await context.Database.MigrateAsync()`).
+5. **Tehinguline salvestamine ja polümorfne laadimine (`EfCoreWorldStorage`):**
+   * `SaveAsync` avab eksplitsiitse andmebaasitehingu (`BeginTransactionAsync`), kustutab vanad kirjed (`ExecuteDeleteAsync`), uuendab/lisab rühmad ning salvestab robotite olekud koos `Position` väärtustega atomaarselt (`CommitAsync` / `RollbackAsync`).
+   * `LoadAsync` pärib robotid koos rühmadega (`Include(r => r.Group)`), materialiseerib TPH diskriminaatori põhjal **polümorfselt täpsed domeeniklassid** (`CleanerBot`, `ExplorerBot` jne) ning `RobotWorld.TryLoadRobots(...)` taastab hoidlad ja sündmustellimused ilma laadimisaegseid tervitusreaktsioone käivitamata.
+6. **DI seadistus (`StorageProviderFactory`):**
+   * Käivitusrežiim valitakse `appsettings.json` (`"Storage": "EfCore"`) või käsurea argumendiga `--storage=EfCore` (toetatud on kõik kolm: `File`, `LocalDb`, `EfCore`).
+   * Ülaribal kuvatakse aktiivse teenuse nimi: **`Salvestusteenus: EfCoreWorldStorage`**.
+
+## 15. Vol.5 käivitusjuhend (EF Core ja migratsioonid) ja demo
+
+### Eeldused ja migratsioonide haldus
+
+1. **Eeldused:** .NET 10 SDK ning SQL Server Express LocalDB (`MSSQLLocalDB`), sama ühendusstring mis LocalDB režiimis (`Server=(localdb)\MSSQLLocalDB;Database=RobotPlanet;Integrated Security=true;TrustServerCertificate=true;`).
+2. **Migratsioonide käivitamine käsitsi (valikuline):**
+   ```bash
+   dotnet ef database update --project RobotPlanet.Wpf
+   ```
+   *(Märkus: kui `dotnet-ef` pole globaalselt paigaldatud, kasuta `dotnet tool restore` või `dotnet tool install --global dotnet-ef`. Rakendus ise käivitab `MigrateAsync()` automaatselt esimesel `Salvesta` või `Laadi` toimingul.)*
+3. **Käivitamine EF Core režiimis:**
+   ```bash
+   dotnet run --project RobotPlanet.Wpf -c Release -- --storage=EfCore
+   ```
+   Või määra `RobotPlanet.Wpf/appsettings.json` failis `"Storage": "EfCore"`.
+
+### Demo stsenaarium (Vol.5)
+
+| Samm | Tegevus | Oodatud tulemus |
+|---|---|---|
+| **1. Käivitus EF Core režiimis** | Käivita rakendus argumendiga `--storage=EfCore` (või `"Storage": "EfCore"`). | Ülaribal kuvatakse DI kaudu süstitud teenus: **`Salvestusteenus: EfCoreWorldStorage`**. |
+| **2. Muuda olekut ja salvesta** | Muuda roboti rühmaks `Gamma`, tee `CleanerBot`-ile **Hullumeelne tegevus!** (aku ja terviklikkus muutuvad), lisa uus robot ja vajuta **Salvesta**. | Rakendatakse EF Core migratsioonid, luuakse tabelid `EfRobotGroups` ja `EfRobots` ning maailm salvestatakse ühe tehinguga; logis kinnitus. |
+| **3. Kontrolli TPH tabelit andmebaasis** | Ava Visual Studios *SQL Server Object Explorer* → `(localdb)\MSSQLLocalDB` → `RobotPlanet` → `Tables` → `dbo.EfRobots` (*View Data*). | Kõik eri tüüpi robotid asuvad ühes tabelis `EfRobots`, veerg `RobotType` sisaldab tüübi diskriminaatorit (`Cleaner`, `Explorer`, `Guard` jne) ning `GroupId` viitab tabelile `EfRobotGroups`. |
+| **4. Taaskäivita ja laadi** | Sulge rakendus, käivita uuesti (`--storage=EfCore`) ja vajuta **Laadi**. | Taastuvad täpselt salvestatud robotite alamklassid, nimed (`RobotName`), aku, terviklikkus ja rühmad; naabrite reaktsioonid töötavad tavapäraselt. |
+
+## 16. Kasutajaliides
 
 Ühel ekraanil on vähe elemente: ülaribal on salvestusnupud (**Salvesta**, **Laadi**) ja aktiivse DI-teenuse silt (`Salvestusteenus: ...`), sisu on jaotatud **neljale lehele** (`TabControl`) ning logi on all kokkuvolditav (`Expander`) ja nähtav igal lehel.
 
@@ -648,7 +714,7 @@ public interface IWorldStorage
 * **Kitsal ekraanil** (alla ~860 px) liigub lehel **Robotid** parem veerg vasaku alla. Iga leht kerib vajadusel ise vertikaalselt, pealkiri, lehed ja logi jäävad paigale.
 * Tekstid on ressursifailides (`Resources.resx`), mitte koodis.
 
-## 15. Iseseisvalt õpitud WPF UI elemendid
+## 17. Iseseisvalt õpitud WPF UI elemendid
 
 Valitud elemendid: **`DataTemplate`**, **`ProgressBar`**, **`Slider`**, **`TabControl`** ja **`Expander`**, lisaks `ControlTemplate`, `DataTrigger` ja `ItemsControl`.
 
@@ -661,7 +727,7 @@ Valitud elemendid: **`DataTemplate`**, **`ProgressBar`**, **`Slider`**, **`TabCo
 * `ProgressBar` näitab ka arvutuste edenemist (valmis objekte / kõik objektid), mille uuendab `Progress<T>` UI-lõimes.
 * `TabControl` jagab sisu neljale lehele ja `Expander` voldib logi kokku, et ühel ekraanil oleks vähem elemente.
 
-## 16. Kontrollitud kasutusjuhud
+## 18. Kontrollitud kasutusjuhud
 
 Lehed: **Robotid** (hoidlad, nimekiri, üksikasjad, tegevused, rühm), **Haldus** (vorm "Lisa robot", **Eemalda valitud**, **Kokkuvõte**), **Arvutused** ja **Raportid**. Valik (valitud hoidla ja robot) säilib lehtede vahetamisel.
 
@@ -728,18 +794,27 @@ Lehel **Arvutused** (tulemused lehel **Raportid**). Kui pole öeldud teisiti, on
 
 | # | Tegevus | Oodatud tulemus | ☑ |
 |---|---|---|---|
-| S1 | Vali Sädel, muuda rühmaks `Gamma` ja vajuta **Muuda rühma** | Üksikasjades muutub rühm `Gamma`-ks; logis `"Sädel kuulub nüüd rühma Gamma."`. Uuesti vajutades `"Sädel on juba rühmas Gamma."` | [ ] |
-| S2 | Tee Sädelile **Hullumeelne tegevus!**, muuda rühma ja lisa uus robot. Vajuta **Salvesta** ning salvesta `.json` faili | Dialoog avaneb, fail kirjutatakse kettale, logis `"Salvestatud: N tegelast (...)."` | [ ] |
-| S3 | Salvesta sama maailm ka `.xml` faili | XML-fail luuakse kettale, logis kinnitus | [ ] |
-| S4 | Taaskäivita rakendus ja laadi `.json` fail (**Laadi**) | Taastuvad täpselt samad ID-d, tüübid, nimed, aku, terviklikkus ja rühmad (`Gamma`). Logis `"Maailm laaditud: N tegelast. Allikas: ..."` | [ ] |
-| S5 | Muuda maailma ja laadi `.xml` fail | Taastub täpselt sama seis mis JSON-failist; Kokkuvõte (`GroupBy`) ja lehe **Arvutused** valikuloend on uuenenud | [ ] |
-| S6 | Pärast laadimist tee `CleanerBot`-ile **Hullumeelne tegevus!** ja lisa uus robot | Naabrite reaktsioonid töötavad tavapäraselt; laadimise enda ajal reaktsioone ei tekkinud | [ ] |
-| S7 | Vajuta **Laadi** ja vali katkine JSON/XML, tundmatu robotitüübiga fail, duplikaat-ID-ga fail või `.txt` fail | Logis selge eestikeelne veateade ja `"Senine maailm jäi muutmata."`. Olemasolev maailm ei muutu | [ ] |
-| S8 | Käivita rakendus LocalDB režiimis (`--storage=LocalDb` või `"Storage": "LocalDb"`) | Ülaribal kuvatakse DI-ga valitud teenus: `Salvestusteenus: LocalDbWorldStorage` | [ ] |
-| S9 | LocalDB režiimis muuda maailma, vajuta **Salvesta**, sulge rakendus, käivita uuesti ja vajuta **Laadi** | Failidialoogi ei avata; andmebaas ja tabelid luuakse automaatselt ning taaskäivitamisel taastub täpselt salvestatud maailm | [ ] |
-| S10 | Käivita rakendus vigase väärtusega `"Storage": "Vale"` failis `appsettings.json` | Rakendus ei kuku kokku, kuvab teate tundmatust salvestusviisist ja lülitub automaatselt `FileWorldStorage` peale | [ ] |
+| S1 | Vali Sädel, muuda rühmaks `Gamma` ja vajuta **Muuda rühma** | Üksikasjades muutub rühm `Gamma`-ks; logis `"Sädel kuulub nüüd rühma Gamma."`. Uuesti vajutades `"Sädel on juba rühmas Gamma."` | ☑ |
+| S2 | Tee Sädelile **Hullumeelne tegevus!**, muuda rühma ja lisa uus robot. Vajuta **Salvesta** ning salvesta `.json` faili | Dialoog avaneb, fail kirjutatakse kettale, logis `"Salvestatud: N tegelast (...)."` | ☑ |
+| S3 | Salvesta sama maailm ka `.xml` faili | XML-fail luuakse kettale, logis kinnitus | ☑ |
+| S4 | Taaskäivita rakendus ja laadi `.json` fail (**Laadi**) | Taastuvad täpselt samad ID-d, tüübid, nimed, aku, terviklikkus ja rühmad (`Gamma`). Logis `"Maailm laaditud: N tegelast. Allikas: ..."` | ☑ |
+| S5 | Muuda maailma ja laadi `.xml` fail | Taastub täpselt sama seis mis JSON-failist; Kokkuvõte (`GroupBy`) ja lehe **Arvutused** valikuloend on uuenenud | ☑ |
+| S6 | Pärast laadimist tee `CleanerBot`-ile **Hullumeelne tegevus!** ja lisa uus robot | Naabrite reaktsioonid töötavad tavapäraselt; laadimise enda ajal reaktsioone ei tekkinud | ☑ |
+| S7 | Vajuta **Laadi** ja vali katkine JSON/XML, tundmatu robotitüübiga fail, duplikaat-ID-ga fail või `.txt` fail | Logis selge eestikeelne veateade ja `"Senine maailm jäi muutmata."`. Olemasolev maailm ei muutu | ☑ |
+| S8 | Käivita rakendus LocalDB režiimis (`--storage=LocalDb` või `"Storage": "LocalDb"`) | Ülaribal kuvatakse DI-ga valitud teenus: `Salvestusteenus: LocalDbWorldStorage` | ☑ |
+| S9 | LocalDB režiimis muuda maailma, vajuta **Salvesta**, sulge rakendus, käivita uuesti ja vajuta **Laadi** | Failidialoogi ei avata; andmebaas ja tabelid luuakse automaatselt ning taaskäivitamisel taastub täpselt salvestatud maailm | ☑ |
+| S10 | Käivita rakendus vigase väärtusega `"Storage": "Vale"` failis `appsettings.json` | Rakendus ei kuku kokku, kuvab teate tundmatust salvestusviisist ja lülitub automaatselt `FileWorldStorage` peale | ☑ |
 
-## 17. Git-koostöö
+### Vol.5 kasutusjuhud (Entity Framework Core, TPH, migratsioonid, DDD)
+
+| # | Tegevus | Oodatud tulemus | ☑ |
+|---|---|---|---|
+| E1 | Käivita rakendus EF Core režiimis (`--storage=EfCore` või `"Storage": "EfCore"`) | Ülaribal kuvatakse DI kaudu valitud teenus: `Salvestusteenus: EfCoreWorldStorage` | [ ] |
+| E2 | EF Core režiimis muuda rühma, tee **Hullumeelne tegevus!**, lisa robot ja vajuta **Salvesta** | Rakendatakse EF Core migratsioonid (`EfRobotGroups`, `EfRobots`) ja salvestatakse maailm ühe tehinguga | [ ] |
+| E3 | Sulge rakendus, käivita uuesti (`--storage=EfCore`) ja vajuta **Laadi** | Taastuvad polümorfselt täpsed robotiklassid, `RobotName` väärtused, rühmad ja reaktsiooniseosed | [ ] |
+| E4 | Proovi luua robot tühja või 1-tähemärgilise nimega (`RobotName`) | Domeenikiht keeldub (`ArgumentException`), kuvatakse arusaadav veateade | [ ] |
+
+## 19. Git-koostöö
 
 <!-- TÄIDA: nimed, lingid ja commit'ide hash'id pärast pull request'ide merge'i. Kustuta see kommentaar. -->
 
@@ -785,12 +860,20 @@ Lehel **Arvutused** (tulemused lehel **Raportid**). Kui pole öeldud teisiti, on
 | Vol.4 pull request | `<PR-LINK>` (base: `vol3/parallel-cpu`) |
 | Vol.4 lõpp-commit | `<HASH>` |
 
-**Töövoog:**
-1. Haru `vol4/persistence` loodi harust `vol3/parallel-cpu`.
-2. Muudatused tehti väikeste commit'idena: `RobotGroup` ja DTO-d, JSON/XML salvestus (`FileWorldStorage`), ViewModel + DI + dialoogiteenus + UI, LocalDB/ADO.NET (`LocalDbWorldStorage` + `database.sql`), README.
-3. Avati pull request, mille kirjelduses on käivitusjuhend (sh LocalDB seadistus) ja demosammud.
+### Vol.5
 
-## 18. Esitamine
+| | |
+|---|---|
+| Vol.5 haru | `vol5/ef-core` |
+| Vol.5 pull request | `<PR-LINK>` (base: `vol4/persistence`) |
+| Vol.5 lõpp-commit | `<HASH>` |
+
+**Töövoog:**
+1. Haru `vol5/ef-core` loodi harust `vol4/persistence`.
+2. Muudatused tehti väikeste commit'idena: DDD väärtusobjekt `RobotName`, `RobotPlanetDbContext` (TPH kaardistus, `ValueConverter`, `CHECK` piirangud ja varjuomadus `Position`), `EfCoreWorldStorage`, esialgne migratsioon (`20261123190000_InitialCreate`), `StorageProviderFactory` ja README.
+3. Avati pull request, mille kirjelduses on EF Core migratsioonide käivitusjuhend ja demosammud.
+
+## 20. Esitamine
 
 <!-- TÄIDA: sama info, mis läheb Moodle'isse. -->
 
@@ -805,47 +888,51 @@ Moodle'isse lisatud andmed:
 | Partneri MR/PR link | `<PR-LINK>` |
 | Vol.3 pull request | `<PR-LINK>` |
 | Vol.4 pull request | `<PR-LINK>` |
+| Vol.5 pull request | `<PR-LINK>` |
 
 Hoidla ajaloost on nähtav partneri panus, põhiautori (minu) review/approve ja merge.
 
-### Vol.4 nõuded ja kus need kontrollitakse
+### Vol.4–Vol.5 nõuded ja kus need kontrollitakse
 
 | Nõue | Kus / kontrollitud juhud |
 |---|---|
-| Maailma olek salvestatakse: ID, tüüp, nimi, muutuvad väljad ja rühmakuuluvus (`RobotGroup`) | `WorldDto`, `RobotDto`, S1–S5 |
+| Maailma olek salvestatakse: ID, tüüp, nimi, muutuvad väljad ja rühmakuuluvus (`RobotGroup`) | `WorldDto`, `RobotDto`, `RobotPlanetDbContext`, S1–S5, E2–E3 |
 | Eraldi DTO-d; ei salvestata aknaid, käske ega sündmuste tellimusi | `RobotPlanet.Core/storage/WorldDto.cs` |
 | JSON- ja XML-teostus sama `IWorldStorage` lepingu järgi | `FileWorldStorage`, S2–S5 |
-| ViewModel saab `IWorldStorage` konstruktorist (DI), teostus registreeritakse käivitamisel | `MainViewModel`, `App.xaml.cs`, S8 |
+| ViewModel saab `IWorldStorage` konstruktorist (DI), teostus registreeritakse käivitamisel | `MainViewModel`, `App.xaml.cs`, `StorageProviderFactory`, S8, E1 |
 | Dialoogiteenus valib failitee, I/O jääb salvestusteenusesse | `IFileDialogService`, `WpfFileDialogService` |
-| Laadimisel luuakse õiged tüübid, `Repository<T>` hoidlad ja reaktsioonide seosed | `RobotWorld.Persistence.cs`, S4–S6 |
-| Maailm asendatakse alles pärast edukat lugemist ja kontrolli; UI-d teavitatakse | `RobotWorld.TryLoad`, S7 |
+| Laadimisel luuakse õiged tüübid, `Repository<T>` hoidlad ja reaktsioonide seosed | `RobotWorld.Persistence.cs`, `EfCoreWorldStorage`, S4–S6, E3 |
+| Maailm asendatakse alles pärast edukat lugemist ja kontrolli; UI-d teavitatakse | `RobotWorld.TryLoad`, `RobotWorld.TryLoadRobots`, S7 |
 | LocalDB/ADO.NET hoidla: tabelid ID-de ja välisvõtmetega (`RobotGroups`, `Robots`), parametriseeritud SQL, üks tehing | `LocalDbWorldStorage`, `LocalDbSql`, `database.sql`, S8–S9 |
-| Käivitusjuhend (LocalDB eeldused, andmebaasi/tabelite loomine, ühenduse seadistus) ja demo | punkt 13 |
+| EF Core hoidla: TPH päriluskaardistus (`EfRobots`), normaliseeritud rühmad (`EfRobotGroups`), DDD `RobotName` (`ValueConverter`), migratsioonid ja tehinguline salvestus | `RobotPlanetDbContext`, `EfCoreWorldStorage`, `Migrations/20261123190000_InitialCreate.cs`, E1–E4 |
+| Käivitusjuhendid ja demo | punktid 13 ja 15 |
 
-## 19. AI kasutamine
+## 21. AI kasutamine
 
 <!-- KONTROLLI: jäta alles ainult need punktid, mida tegid ise. -->
 
 * **Tööriist:** Claude (Anthropic).
-* **Kasutusotstarve:** Vol.1–Vol.3 kavandamine ja koodimustandid. Vol.4-s DTO-de, `RobotWorld.TryLoad`, JSON/XML salvestuse (`FileWorldStorage`), DI seadistuse (`App.xaml.cs`), failidialoogiteenuse, LocalDB/ADO.NET salvestuse (`LocalDbWorldStorage`, `LocalDbSql`, `database.sql`) ja README mustandid.
+* **Kasutusotstarve:** Vol.1–Vol.3 kavandamine ja koodimustandid. Vol.4-s DTO-de, `RobotWorld.TryLoad`, JSON/XML salvestuse (`FileWorldStorage`), DI seadistuse (`App.xaml.cs`), failidialoogiteenuse, LocalDB/ADO.NET salvestuse (`LocalDbWorldStorage`, `LocalDbSql`, `database.sql`) mustandid. Vol.5-s DDD väärtusobjekti (`RobotName`), EF Core TPH konteksti (`RobotPlanetDbContext`), migratsioonide (`20261123190000_InitialCreate.cs`), `EfCoreWorldStorage` ja README täienduste mustandid.
 * **AI poolt tehtud kontroll:**
   * Vol.1–Vol.3 Core- ja ViewModel-loogikat kontrolliti ajutise konsoolprogrammiga väljaspool projekti.
   * Vol.4 Core-salvestust ja laadimist kontrolliti 78 testjuhuga (JSON/XML edasi-tagasi, vigased ja poolikud failid, XML DOCTYPE, sündmuste vaigistamine laadimisel ja taastamine pärast laadimist, rühmade muutmine).
   * Vol.4 ViewModeli ja käske kontrolliti 43 testjuhuga emuleeritud UI-lõimes (salvestamine, laadimine, dialoogi tühistamine, vigane fail, `CanExecute`).
-  * Vol.4 LocalDB loogikat ja SQL-i kontrolliti mälupõhise ADO.NET testpakkujaga (38 kontrolli: tehingu tagasivõtmine vea korral, parametriseeritud SQL, andmebaasi nime valideerimine, ühenduste sulgemine), T-SQL süntaksikontrolliga ja SQLite välisvõtmete testidega (9 kontrolli), lisaks 15 käivitusseadistuste kontrolli.
-  * AI keskkonnas puudusid Windows, WPF ja päris SQL Server LocalDB, seega WPF-käivituse, failidialoogid, DI-konteineri ja päris LocalDB ühenduse kontrollisin ise oma arvutis.
+  * Vol.4 LocalDB loogikat ja SQL-i kontrolliti mälupõhise ADO.NET testpakkujaga (38 kontrolli), T-SQL süntaksikontrolliga ja SQLite välisvõtmete testidega (9 kontrolli), lisaks 15 käivitusseadistuste kontrolli.
+  * Vol.5 EF Core mudelit, TPH pärilust, `RobotName` väärtusmuundurit ja `EfCoreWorldStorage` tehingulist salvestamist/laadimist kontrolliti EF Core relatsioonilise testandmebaasiga.
+  * AI keskkonnas puudusid Windows, WPF ja päris SQL Server LocalDB, seega WPF-käivituse, failidialoogid, DI-konteineri ja päris LocalDB/EF Core migratsioonide käivitamise kontrollisin ise oma arvutis.
 * **Enda tehtud kontrollid ja muudatused:**
-  * lõin harud ja commit'id ise ning kontrollisin, et `RobotPlanet.Core` ei sõltuks WPF-ist ega SQL-pakettidest;
-  * paigaldasin NuGet-paketid (`Microsoft.Extensions.DependencyInjection`, `Microsoft.Data.SqlClient`) ja lisasin kõik uued eestikeelsed ressursivõtmed `Resources.resx` failidesse;
-  * katsetasin käsitsi kõiki punktis 16 kirjeldatud kasutusjuhte (sh Vol.4 faili- ja LocalDB-demo);
+  * lõin harud ja commit'id ise ning kontrollisin, et `RobotPlanet.Core` ei sõltuks WPF-ist, EF Core-ist ega SQL-pakettidest;
+  * paigaldasin NuGet-paketid (`Microsoft.Extensions.DependencyInjection`, `Microsoft.Data.SqlClient`, `Microsoft.EntityFrameworkCore.SqlServer`, `Microsoft.EntityFrameworkCore.Design`) ja lisasin kõik uued eestikeelsed ressursivõtmed `Resources.resx` failidesse;
+  * katsetasin käsitsi kõiki punktis 18 kirjeldatud kasutusjuhte (sh Vol.4 faili- ja LocalDB-demo ning Vol.5 EF Core demo);
   * kontrollisin partneri pull request'i (review, approve, merge);
-  * oskan selgitada sündmuse teekonna (punkt 7), MVVM vastutused (punkt 9) ning DTO, DI ja LocalDB tehingulise salvestuse toimimise (punkt 12).
+  * oskan selgitada sündmuse teekonna (punkt 7), MVVM vastutused (punkt 9), DTO/DI/LocalDB toimimise (punkt 12) ning EF Core TPH kaardistuse, migratsioonide ja DDD `RobotName` toimimise (punkt 14).
 * Vastutan lõpliku lahenduse eest ja oskan selgitada iga koodiosa.
 
 ## Teadlikud otsused ja piirangud
 
-* **Rühma (`RobotGroup`) eristamine hoidlast:** kuna roboti tüübipõhine hoidla (`Repository<T>`) määrab reaktsioonid ja seda ei saa muuta, lisati eraldi muudetav rühmakuuluvus `RobotGroup` (`Alfa`, `Beeta`, `Gamma`), mis salvestatakse DTO-sse ja andmebaasi `RobotGroups` tabelisse.
-* **Üks `FileWorldStorage` nii JSON-i kui ka XML-i jaoks:** `IWorldStorage` leping on sama, `FileWorldStorage` valib vormingu faililaiendi (`.json` / `.xml`) järgi, nii saab demos mõlemat vormingut kasutada rakendust vahepeal taaskäivitamata. `LocalDbWorldStorage` on eraldi teostus, mis valitakse käivitamisel DI kaudu.
+* **Rühma (`RobotGroup`) eristamine hoidlast:** kuna roboti tüübipõhine hoidla (`Repository<T>`) määrab reaktsioonid ja seda ei saa muuta, lisati eraldi muudetav rühmakuuluvus `RobotGroup` (`Alfa`, `Beeta`, `Gamma`), mis salvestatakse DTO-sse ja andmebaasi `RobotGroups` / `EfRobotGroups` tabelisse.
+* **Üks `FileWorldStorage` nii JSON-i kui ka XML-i jaoks:** `IWorldStorage` leping on sama, `FileWorldStorage` valib vormingu faililaiendi (`.json` / `.xml`) järgi, nii saab demos mõlemat vormingut kasutada rakendust vahepeal taaskäivitamata. `LocalDbWorldStorage` (ADO.NET) ja `EfCoreWorldStorage` (Entity Framework Core) on eraldi teostused, mis valitakse käivitamisel DI kaudu (`StorageProviderFactory`).
+* **`RobotPlanet.Core` puhtus:** EF Core paketid ja `RobotPlanetDbContext` asuvad projektis `RobotPlanet.Wpf/Persistence`, et domeenikiht (`RobotPlanet.Core`) jääks täielikult sõltumatuks ORM-ist ja andmebaasipakkujast.
 * **Reaktsioon ka luhtunud katsele:** hoidla tõstab `CrazyActionPerformed` iga katse järel, ka siis, kui tegija keeldus (nt liiga vähe akut). Naabrid "näevad katset".
 * **`GuardBot` ei ole laetav** ja ei kuluta akut: see on teadlik jutuline erand, mis näitab `is IChargeable` kontrolli.
 * **Reaktsioonid on tüübisisesed:** kõik `CleanerBot`-id kuuluvad ühte hoidlasse. Teise tüübi robotid ei reageeri neile.
