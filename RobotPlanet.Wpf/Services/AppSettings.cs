@@ -5,15 +5,17 @@ using RobotPlanet.Wpf.Properties;
 namespace RobotPlanet.Wpf.Services
 {
     /// <summary>
-    /// What the application is started with: which storage it uses and how to reach LocalDB.
+    /// What the application is started with: which storage it uses (File, LocalDb, EfCore) and how to reach LocalDB.
     /// Read once at startup from appsettings.json (next to the exe); the command line wins over the file,
-    /// e.g.  RobotPlanet.Wpf.exe --storage=LocalDb
+    /// e.g. RobotPlanet.Wpf.exe --storage=EfCore
     /// A wrong setting never stops the application: it falls back to the file storage and tells the user.
     /// </summary>
     public sealed class AppSettings
     {
         public const string FileStorage = "File";
         public const string LocalDbStorage = "LocalDb";
+        public const string EfCoreStorage = "EfCore";
+
         public const string DefaultConnectionString =
             @"Server=(localdb)\MSSQLLocalDB;Database=RobotPlanet;Integrated Security=true;TrustServerCertificate=true";
 
@@ -24,6 +26,7 @@ namespace RobotPlanet.Wpf.Services
         public string? Warning { get; init; }
 
         public bool UseLocalDb => Storage == LocalDbStorage;
+        public bool UseEfCore => Storage == EfCoreStorage;
 
         /// <param name="args">The command line arguments of the application.</param>
         /// <param name="settingsPath">Only for tests; by default the file next to the exe is used.</param>
@@ -46,9 +49,14 @@ namespace RobotPlanet.Wpf.Services
                     {
                         if (root.TryGetProperty("Storage", out JsonElement s) && s.ValueKind == JsonValueKind.String)
                             storage = s.GetString() ?? FileStorage;
+
                         if (root.TryGetProperty("LocalDbConnectionString", out JsonElement c) && c.ValueKind == JsonValueKind.String
                             && !string.IsNullOrWhiteSpace(c.GetString()))
                             connection = c.GetString()!;
+                        else if (root.TryGetProperty("ConnectionStrings", out JsonElement cs) && cs.ValueKind == JsonValueKind.Object
+                            && cs.TryGetProperty("RobotPlanet", out JsonElement rp) && rp.ValueKind == JsonValueKind.String
+                            && !string.IsNullOrWhiteSpace(rp.GetString()))
+                            connection = rp.GetString()!;
                     }
                 }
                 catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
@@ -67,6 +75,7 @@ namespace RobotPlanet.Wpf.Services
 
             if (storage.Equals(FileStorage, StringComparison.OrdinalIgnoreCase)) storage = FileStorage;
             else if (storage.Equals(LocalDbStorage, StringComparison.OrdinalIgnoreCase)) storage = LocalDbStorage;
+            else if (storage.Equals(EfCoreStorage, StringComparison.OrdinalIgnoreCase)) storage = EfCoreStorage;
             else
             {
                 warnings.Add(string.Format(Resources.Settings_UnknownStorage, storage));

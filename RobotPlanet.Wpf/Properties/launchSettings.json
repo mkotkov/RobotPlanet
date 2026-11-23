@@ -1,8 +1,16 @@
 {
   "profiles": {
-    "RobotPlanet.Wpf": {
+    "RobotPlanet.Wpf (EF Core)": {
+      "commandName": "Project",
+      "commandLineArgs": "--storage=EfCore"
+    },
+    "RobotPlanet.Wpf (LocalDB ADO.NET)": {
       "commandName": "Project",
       "commandLineArgs": "--storage=LocalDb"
+    },
+    "RobotPlanet.Wpf (File JSON/XML)": {
+      "commandName": "Project",
+      "commandLineArgs": "--storage=File"
     }
   }
 }

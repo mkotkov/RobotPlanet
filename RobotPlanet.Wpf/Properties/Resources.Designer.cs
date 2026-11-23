@@ -340,6 +340,51 @@ namespace RobotPlanet.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to EF Core andmebaasi skeemi versioon {0} ei ole toetatud (toetatud versioon: {1})..
+        /// </summary>
+        public static string EfCore_BadVersion {
+            get {
+                return ResourceManager.GetString("EfCore_BadVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EF Core andmebaasi viga: {0} Kontrolli, et LocalDB on paigaldatud ja migratsioonid on rakendatud..
+        /// </summary>
+        public static string EfCore_Failed {
+            get {
+                return ResourceManager.GetString("EfCore_Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EF Core salvestamiseks edastatud andmed on puudulikud..
+        /// </summary>
+        public static string EfCore_InvalidDto {
+            get {
+                return ResourceManager.GetString("EfCore_InvalidDto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EF Core andmebaasis ei ole veel salvestatud maailma..
+        /// </summary>
+        public static string EfCore_NoWorld {
+            get {
+                return ResourceManager.GetString("EfCore_NoWorld", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tundmatu roboti tüüp EF Core salvestamisel: {0}..
+        /// </summary>
+        public static string EfCore_UnknownType {
+            get {
+                return ResourceManager.GetString("EfCore_UnknownType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Kogus peab olema täisarv..
         /// </summary>
         public static string Err_Amount_NotNumber {
